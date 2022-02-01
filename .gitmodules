@@ -1,0 +1,21 @@
+[submodule "src/LuaJIT"]
+	path = src/LuaJIT
+	url = https://github.com/LuaJIT/LuaJIT
+[submodule "src/raylib"]
+	path = src/raylib
+	url = https://github.com/raysan5/raylib.git
+[submodule "src/raygui"]
+	path = src/raygui
+	url = https://github.com/raysan5/raygui
+[submodule "src/Yuescript"]
+	path = src/Yuescript
+	url = https://github.com/pigpigyyy/Yuescript.git
+[submodule "src/Physac"]
+	path = src/Physac
+	url = https://github.com/victorfisac/Physac.git
+[submodule "src/luautf8"]
+	path = src/luautf8
+	url = https://github.com/starwing/luautf8.git
+[submodule "src/box2d"]
+	path = src/box2d
+	url = https://github.com/erincatto/box2d.git

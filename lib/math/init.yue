@@ -1,0 +1,7 @@
+m = { k, v for k, v in pairs(require('lib.math.funcs')) }
+m.Vector2 = require('lib.math.Vector2')
+m.Vector3 = require('lib.math.Vector3')
+m.Quaternion = require('lib.math.Quaternion')
+m.Matrix = require('lib.math.Matrix')
+
+setmetatable(m, { __index: math })

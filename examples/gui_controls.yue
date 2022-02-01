@@ -1,0 +1,210 @@
+--*******************************************************************************************
+--
+--   raygui - controls test suite
+--
+--   TEST CONTROLS:
+--       - GuiDropdownBox()
+--       - GuiCheckBox()
+--       - GuiSpinner()
+--       - GuiValueBox()
+--       - GuiTextBox()
+--       - GuiButton()
+--       - GuiComboBox()
+--       - GuiListView()
+--       - GuiToggleGroup()
+--       - GuiTextBoxMulti()
+--       - GuiColorPicker()
+--       - GuiSlider()
+--       - GuiSliderBar()
+--       - GuiProgressBar()
+--       - GuiColorBarAlpha()
+--       - GuiScrollPanel()
+--
+--   LICENSE: zlib/libpng
+--
+--   Copyright (c) 2016-2022 Ramon Santamaria (@raysan5)
+--
+--   Adapted for yuema by megagrump@pm.me
+--
+--*********************************************************************************************/
+import 'lib.core.all' as {
+	:window
+	:draw
+	:input
+	:time
+	:filesystem
+	:Color
+	:Rectangle
+}
+
+import 'lib.math.Vector2'
+import 'lib.gui'
+import keyboard from input
+
+screenWidth = 690
+screenHeight = 560
+
+window.init(screenWidth, screenHeight, "raygui - controls test suite")
+keyboard.setExitKey(0)
+
+dropdownBox000Active = { 0 }
+dropDown000EditMode = false
+
+dropdownBox001Active = { 0 }
+dropDown001EditMode = false
+
+spinner001Value = { 0 }
+spinnerEditMode = false
+
+valueBox002Value = { 0 }
+valueBoxEditMode = false
+
+textBoxText = { "Text box" }
+textBoxEditMode = false
+
+listViewScrollIndex = { 0 }
+listViewActive = -1
+
+listViewExScrollIndex = { 0 }
+listViewExActive = 2
+listViewExFocus = { -1 }
+
+listViewExList = { "This", "is", "a", "list view", "with", "disable", "elements", "amazing!" }
+
+multiTextBoxText = { "Multi text box" }
+multiTextBoxEditMode = false
+colorPickerValue = Color.RED
+
+sliderValue = 50
+sliderBarValue = 60
+progressValue = 0.4
+
+forceSquaredChecked = false
+
+alphaValue = 0.5
+
+comboBoxActive = 1
+
+toggleGroupActive = 0
+
+viewScroll = Vector2!
+
+-- Custom GUI font loading
+-- Font font = LoadFontEx("fonts/rainyhearts16.ttf", 12, 0, 0)
+-- GuiSetFont(font)
+
+exitWindow = false
+showMessageBox = false
+
+textInput = { "" }
+showTextInputBox = false
+
+textInputFileName = ""
+
+time.setTargetFPS(60)
+
+while not exitWindow
+	exitWindow = window.shouldClose!
+
+	if keyboard.isPressed(keyboard.ESCAPE)
+		showMessageBox = not showMessageBox
+
+	if keyboard.isDown(keyboard.LEFT_CONTROL) and keyboard.isPressed(keyboard.S)
+		showTextInputBox = true
+
+	if (filesystem.isFileDropped!)
+		droppedFiles = filesystem.getDroppedFiles!
+		if #droppedFiles > 0 and filesystem.isExtension(droppedFiles[1], ".rgs")
+			gui.loadStyle(droppedFiles[1])
+
+	with draw
+		.beginDrawing!
+
+		.clearBackground(Color.fromInt(gui.getStyle(gui.DEFAULT, gui.BACKGROUND_COLOR)))
+
+		if dropDown000EditMode or dropDown001EditMode
+			gui.lock!
+		elseif not dropDown000EditMode and not dropDown001EditMode
+			gui.unlock!
+
+		forceSquaredChecked = gui.checkBox(Rectangle(25, 108, 15, 15), "FORCE CHECK!", forceSquaredChecked)
+
+		gui.setStyle(gui.TEXTBOX, gui.TEXT_ALIGNMENT, gui.TEXT_ALIGN_CENTER)
+		if gui.spinner(Rectangle(25, 135, 125, 30), nil, spinner001Value, 0, 100, spinnerEditMode)
+			spinnerEditMode = not spinnerEditMode
+
+		if gui.valueBox(Rectangle(25, 175, 125, 30), nil, valueBox002Value, 0, 100, valueBoxEditMode)
+			valueBoxEditMode = not valueBoxEditMode
+
+		gui.setStyle(gui.TEXTBOX, gui.TEXT_ALIGNMENT, gui.TEXT_ALIGN_LEFT)
+		if gui.textBox(Rectangle(25, 215, 125, 30), textBoxText, 64, textBoxEditMode)
+			textBoxEditMode = not textBoxEditMode
+
+		gui.setStyle(gui.BUTTON, gui.TEXT_ALIGNMENT, gui.TEXT_ALIGN_CENTER)
+
+		if gui.button(Rectangle(25, 255, 125, 30), gui.iconText(gui.ICON_FILE_SAVE, "Save File"))
+			showTextInputBox = true
+
+		gui.groupBox(Rectangle(25, 310, 125, 150), "STATES")
+		gui.setState(gui.STATE_NORMAL)
+		gui.button(Rectangle(30, 320, 115, 30), "NORMAL")
+		gui.setState(gui.STATE_FOCUSED)
+		gui.button(Rectangle(30, 355, 115, 30), "FOCUSED")
+		gui.setState(gui.STATE_PRESSED)
+		gui.button(Rectangle(30, 390, 115, 30), "#15#PRESSED")
+		gui.setState(gui.STATE_DISABLED)
+		gui.button(Rectangle(30, 425, 115, 30), "DISABLED")
+		gui.setState(gui.STATE_NORMAL)
+
+		comboBoxActive = gui.comboBox(Rectangle(25, 470, 125, 30), "ONE;TWO;THREE;FOUR", comboBoxActive)
+
+		gui.setStyle(gui.DROPDOWNBOX, gui.TEXT_ALIGNMENT, gui.TEXT_ALIGN_LEFT)
+		if gui.dropdownBox(Rectangle(25, 65, 125, 30), "#01#ONE;#02#TWO;#03#THREE;#04#FOUR", dropdownBox001Active, dropDown001EditMode)
+			dropDown001EditMode = not dropDown001EditMode
+
+		gui.setStyle(gui.DROPDOWNBOX, gui.TEXT_ALIGNMENT, gui.TEXT_ALIGN_CENTER)
+		if gui.dropdownBox(Rectangle(25, 25, 125, 30), "ONE;TWO;THREE", dropdownBox000Active, dropDown000EditMode)
+			dropDown000EditMode = not dropDown000EditMode
+
+		listViewActive = gui.listView(Rectangle(165, 25, 140, 140), "Charmander;Bulbasaur;#18#Squirtel;Pikachu;Eevee;Pidgey", listViewScrollIndex, listViewActive)
+		listViewExActive = gui.listViewEx(Rectangle(165, 180, 140, 200), listViewExList, 8, listViewExFocus, listViewExScrollIndex, listViewExActive)
+
+		toggleGroupActive = gui.toggleGroup(Rectangle(165, 400, 140, 25), "#1#ONE\n#3#TWO\n#8#THREE\n#23#", toggleGroupActive)
+
+		if gui.textBoxMulti(Rectangle(320, 25, 225, 140), multiTextBoxText, 256, multiTextBoxEditMode)
+			multiTextBoxEditMode = not multiTextBoxEditMode
+
+		colorPickerValue = gui.colorPicker(Rectangle(320, 185, 196, 192), nil, colorPickerValue)
+
+		sliderValue = gui.slider(Rectangle(355, 400, 165, 20), "TEST", ("%2.2f")::format(sliderValue), sliderValue, -50, 100)
+		sliderBarValue = gui.sliderBar(Rectangle(320, 430, 200, 20), nil, ("%i")::format(sliderBarValue), sliderBarValue, 0, 100)
+		progressValue = gui.progressBar(Rectangle(320, 460, 200, 20), nil, nil, progressValue, 0, 1)
+
+		view = gui.scrollPanel(Rectangle(560, 25, 100, 160), "", Rectangle(560, 25, 200, 400), viewScroll)
+
+		gui.statusBar(Rectangle(0, window.getHeight! - 20, window.getWidth!, 20), "This is a status bar")
+
+		alphaValue = gui.colorBarAlpha(Rectangle(320, 490, 200, 30), nil, alphaValue)
+
+		if showMessageBox
+			.rectangle(0, 0, window.getWidth!, window.getHeight!, Color.fade(Color.RAYWHITE, 0.8))
+			result = gui.messageBox(Rectangle(window.getWidth!/2 - 125, window.getHeight!/2 - 50, 250, 100), gui.iconText(gui.ICON_EXIT, "Close Window"), "Do you really want to exit?", "Yes;No")
+
+			if result == 0 or result == 2
+				showMessageBox = false
+			elseif result == 1
+				exitWindow = true
+
+		if showTextInputBox
+			.rectangle(0, 0, window.getWidth!, window.getHeight!, Color.fade(Color.RAYWHITE, 0.8))
+			result = gui.textInputBox(Rectangle(window.getWidth!/2 - 120, window.getHeight!/2 - 60, 240, 140), gui.iconText(gui.ICON_FILE_SAVE, "Save file as..."), "Introduce a save file name", "Ok;Cancel", textInput)
+
+			if result == 1
+				textInputFileName = textInput[1]
+
+			if result == 0 or result == 1 or result == 2
+				showTextInputBox = false
+				textInput[1] = ""
+		.endDrawing!
+
+window.close!

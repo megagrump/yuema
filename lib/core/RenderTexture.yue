@@ -1,0 +1,14 @@
+import RL from yuema
+import 'ffi'
+
+RenderTexture = ffi.typeof('RenderTexture')
+
+gc = => ffi.gc(@, RL.UnloadRenderTexture)
+
+RenderTextureMT = {
+	load: (width, height) -> gc(RL.LoadRenderTexture(width, height))
+}
+
+RenderTextureMT.__index = RenderTextureMT
+
+ffi.metatype(RenderTexture, RenderTextureMT)

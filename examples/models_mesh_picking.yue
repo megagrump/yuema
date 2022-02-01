@@ -1,0 +1,165 @@
+--*******************************************************************************************
+--
+--   raylib [models] example - Mesh picking in 3d mode, ground plane, triangle, mesh
+--
+--   This example has been created using raylib 1.7 (www.raylib.com)
+--   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
+--
+--   Example contributed by Joel Davis (@joeld42) and reviewed by Ramon Santamaria (@raysan5)
+--
+--   Copyright (c) 2017 Joel Davis (@joeld42) and Ramon Santamaria (@raysan5)
+--
+--   Adapted for Yuema by megagrump@pm.me
+--
+--*******************************************************************************************
+import 'lib.core.all' as {
+	:window
+	:time
+	:input
+	:draw
+	:collision
+	:Color
+	:Camera3D
+	:Model
+	:Texture2D
+	:Material
+}
+
+import 'lib.math.Vector3'
+import mouse from input
+import RayCollision from collision
+
+window.init(800, 450, "raylib [models] example - mesh picking")
+
+camera = with Camera3D!
+	.position = Vector3(20, 20, 20)
+	.target = Vector3(0, 8, 0)
+	.up = Vector3(0, 1.6, 0)
+	.fovy = 45
+	.projection = Camera3D.PERSPECTIVE
+
+tower = Model.load("examples/resources/models/obj/turret.obj")
+texture = Texture2D.load("examples/resources/models/obj/turret_diffuse.png")
+tower.materials[0].maps[Material.MAP_DIFFUSE].texture = texture
+
+towerPos = Vector3!
+towerBBox = tower.meshes[0]::getBoundingBox!
+
+g0 = Vector3(-50, 0, -50)
+g1 = Vector3(-50, 0,  50)
+g2 = Vector3(-50, 0,  50)
+g3 = Vector3(-50, 0, -50)
+
+ta = Vector3(-25, 0.5, 0)
+tb = Vector3(-4, 2.5, 1)
+tc = Vector3(-8, 6.5, 0)
+
+bary = Vector3!
+
+sp = Vector3(-30, 5, 5)
+sr = 4
+
+camera::setMode(Camera3D.FREE)
+
+time.setTargetFPS(60)
+
+coll = RayCollision!
+
+while not window.shouldClose!
+	camera::update!
+
+	hitObjectName = "None"
+	coll.distance = math.huge
+	coll.hit = false
+	cursorColor = Color.WHITE
+
+	ray = camera::getMouseRay(mouse.getPosition!)
+	groundHitInfo = collision.getRayQuad(ray, g0, g1, g2, g3)
+
+	if groundHitInfo.hit and groundHitInfo.distance < coll.distance
+		coll = groundHitInfo
+		cursorColor = Color.GREEN
+		hitObjectName = "Ground"
+
+	triHitInfo = collision.getRayTriangle(ray, ta, tb, tc)
+
+	if triHitInfo.hit and triHitInfo.distance < coll.distance
+		coll = triHitInfo
+		cursorColor = Color.PURPLE
+		hitObjectName = "Triangle"
+
+		bary = coll.point::barycenter(ta, tb, tc)
+
+	sphereHitInfo = collision.getRaySphere(ray, sp, sr)
+
+	if sphereHitInfo.hit and sphereHitInfo.distance < coll.distance
+		coll = sphereHitInfo
+		cursorColor = Color.ORANGE
+		hitObjectName = "Sphere"
+
+	boxHitInfo = collision.getRayBox(ray, towerBBox)
+
+	if boxHitInfo.hit and boxHitInfo.distance < coll.distance
+		coll = boxHitInfo
+		cursorColor = Color.ORANGE
+		hitObjectName = "Box"
+
+		meshHitInfo = collision.getRayModel(ray, tower)
+
+		if meshHitInfo.hit
+			coll = meshHitInfo
+			cursorColor = Color.ORANGE
+			hitObjectName = "Mesh"
+
+	with draw
+		.beginDrawing!
+		.clearBackground(Color.RAYWHITE)
+
+		.beginMode3D(camera)
+		.model(tower, towerPos, 1, Color.WHITE)
+
+		.line3D(ta, tb, Color.PURPLE)
+		.line3D(tb, tc, Color.PURPLE)
+		.line3D(tc, ta, Color.PURPLE)
+
+		.sphereWires(sp, sr, 8, 8, Color.PURPLE)
+
+		if boxHitInfo.hit
+			.boundingBox(towerBBox, Color.LIME)
+
+		if coll.hit
+			.cube(coll.point, 0.3, 0.3, 0.3, cursorColor)
+			.cubeWires(coll.point, 0.3, 0.3, 0.3, Color.RED)
+
+			normalEnd = coll.point::add(coll.normal)
+
+			.line3D(coll.point, normalEnd, Color.RED)
+
+		.ray(ray, Color.MAROON)
+
+		.grid(10, 10)
+
+		.endMode3D!
+
+		.text("Hit Object: %s"::format(hitObjectName), 10, 50, 10, Color.BLACK)
+
+		if coll.hit
+			ypos = 70
+
+			.text("Distance: %3.2f"::format(coll.distance), 10, ypos, 10, Color.BLACK)
+			.text("Hit Pos: %3.2f %3.2f %3.2f"::format(coll.point.x, coll.point.y, coll.point.z),
+				10, ypos + 15, 10, Color.BLACK)
+
+			.text("Hit Norm: %3.2f %3.2f %3.2f"::format(coll.normal.x, coll.normal.y, coll.normal.z),
+				10, ypos + 30, 10, Color.BLACK)
+
+			if triHitInfo.hit and hitObjectName == "Triangle"
+				.text("Barycenter: %3.2f %3.2f %3.2f"::format(bary.x, bary.y, bary.z), 10, ypos + 45, 10, Color.BLACK)
+
+		.text("Use Mouse to Move Camera", 10, 430, 10, Color.GRAY)
+		.text("(c) Turret 3D model by Alberto Cano", 600, 430, 10, Color.GRAY)
+		.fps(10, 10)
+
+		.endDrawing!
+
+window.close!

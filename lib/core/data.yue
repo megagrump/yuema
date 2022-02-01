@@ -1,0 +1,34 @@
+import 'ffi'
+import RL from yuema
+
+{
+	memAlloc: (size) -> RL.MemAlloc(size)
+	memRealloc: (ptr, size) -> RL.MemRealloc(ptr, size)
+	memFree: (ptr) -> RL.MemFree(ptr)
+
+	saveStorageValue: (position, value) -> RL.SaveStorageValue(position, value)
+	loadStorageValue: (position) -> RL.LoadStorageValue(position)
+
+	compress: (data, dataLength) ->
+		dataLength or= #data
+		compDataLength = ffi.new('int[1]')
+		compData = RL.CompressData(data, dataLength, compDataLength)
+		compData, tonumber(compDataLength[0])
+
+	decompress: (compData, compDataLength)->
+		compDataLength or= #compData
+		dataLength = ffi.new('int[1]')
+		data = RL.DecompressData(compData, compDataLength, dataLength)
+		data, tonumber(dataLength[0])
+
+	encodeBase64: (data, dataLength) ->
+		dataLength or= #data
+		outputLength = ffi.new('int[1]')
+		b64 = RL.EncodeDataBase64(data, dataLength, outputLength)
+		ffi.string(b64, outputLength[0])
+
+	decodeBase64: (data) ->
+		outputLength = ffi.new('int[1]')
+		bin = RL.DecodeDataBase64(data, outputLength)
+		bin, tonumber(outputLength[0])
+}

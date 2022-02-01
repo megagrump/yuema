@@ -1,0 +1,41 @@
+import 'ffi'
+import RL from yuema
+
+Animation = ffi.typeof('ModelAnimation')
+
+gc = => ffi.gc(@, RL.UnloadModelAnimation)
+
+AnimationMT = {
+	loadAnimations: (fileName) ->
+		count = ffi.new('unsigned int[1]')
+		if anims = RL.LoadModelAnimations(fileName, count)
+			result = [ gc(anims[i]) for i = 0, count[0] - 1 ]
+			RL.UnloadModelAnimations(anims, count[0])
+			return result
+		nil
+}
+
+AnimationMT.__index = AnimationMT
+
+ffi.metatype(Animation, AnimationMT)
+
+Model = ffi.typeof('Model')
+
+ModelMT = {
+	:Animation
+
+	load: (fileName) -> ffi.gc(RL.LoadModel(fileName), RL.UnloadModel)
+	loadFromMesh: (mesh) -> ffi.gc(RL.LoadModelFromMesh(mesh), RL.UnloadModelKeepMeshes)
+
+	-- member functions --
+
+	getBoundingBox: => RL.GetModelBoundingBox(@)
+	setMeshMaterial: (meshId, materialId) => RL.SetModelMeshMaterial(@, meshId, materialId)
+	updateAnimation: (anim, frame) => RL.UpdateModelAnimation(@, anim, frame)
+	isAnimationValid: (anim) => RL.IsModelAnimationValid(@, anim)
+	unloadKeepMeshes: => RL.UnloadModelKeepMeshes(ffi.gc(@, nil))
+}
+
+ModelMT.__index = ModelMT
+
+ffi.metatype(Model, ModelMT)

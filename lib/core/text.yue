@@ -1,0 +1,28 @@
+import 'ffi'
+import RL from yuema
+import 'lib.core.data' as :memFree
+
+{
+	loadCodepoints: (text) ->
+		count = ffi.new('int[1]')
+		cp = RL.LoadCodepoints(text, count)
+		cp, tonumber(count[0])
+
+	getCodepointCount: (text) -> RL.GetCodepointCount(text)
+
+	getCodepoint: (text) ->
+		bytesProcessed = ffi.new('int[1]')
+		result = RL.GetCodepoint(text, bytesProcessed)
+		result, tonumber(bytesProcessed[0])
+
+	codepointToUTF8: (codepoint) ->
+		byteSize = ffi.new('int[1]')
+		result = RL.CodepointToUTF8(codepoint, byteSize)
+		ffi.string(result, byteSize[0])
+
+	codepointsToUTF8: (codepoints, length) ->
+		result = RL.TextCodepointsToUTF8(codepoints, length)
+		str = ffi.string(result)
+		memFree(result)
+		str
+}

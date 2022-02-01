@@ -1,0 +1,9 @@
+import 'ffi'
+
+Rectangle = ffi.typeof('Rectangle')
+
+RectangleMT = {
+	__tostring: => 'Rectangle(%f, %f, %f, %f)'\format(@x, @y, @width, @height)
+}
+
+ffi.metatype(Rectangle, RectangleMT)

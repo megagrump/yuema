@@ -1,0 +1,98 @@
+-- TODO: WIP! terrible code!
+------------------------------------------------------------------------------------------------
+--
+--   raylib.lights - Some useful functions to deal with lights data
+--
+--   LICENSE: zlib/libpng
+--
+--   Copyright (c) 2017-2020 Victor Fisac (@victorfisac) and Ramon Santamaria (@raysan5)
+--
+--   Yuescript version (c) 2022 megagrump
+--
+--   This software is provided "as-is", without any express or implied warranty. In no event
+--   will the authors be held liable for any damages arising from the use of this software.
+--
+--   Permission is granted to anyone to use this software for any purpose, including commercial
+--   applications, and to alter it and redistribute it freely, subject to the following restrictions:
+--
+--     1. The origin of this software must not be misrepresented; you must not claim that you
+--     wrote the original software. If you use this software in a product, an acknowledgment
+--     in the product documentation would be appreciated but is not required.
+--
+--     2. Altered source versions must be plainly marked as such, and must not be misrepresented
+--     as being the original software.
+--
+--     3. This notice may not be removed or altered from any source distribution.
+--
+-----------------------------------------------------------------------------------------------
+import 'ffi'
+
+ffi.cdef([[
+typedef struct {
+	int type;
+	Vector3 position;
+	Vector3 target;
+	Color color;
+	bool enabled;
+
+	// Shader locations
+	int enabledLoc;
+	int typeLoc;
+	int posLoc;
+	int targetLoc;
+	int colorLoc;
+} Light;
+]])
+
+Light = ffi.typeof('Light')
+
+lightsCount = 0
+
+LightMT = {
+	DIRECTIONAL: 0
+	POINT: 1
+
+	__new: (type, position, target, color, shader) =>
+		light = with ffi.new(@, type, position, target, color, true)
+			.enabledLoc = shader::getLocation('lights[%d].enabled'::format(lightsCount))
+			.typeLoc =    shader::getLocation('lights[%d].type'::format(lightsCount))
+			.posLoc =     shader::getLocation('lights[%d].pos'::format(lightsCount))
+			.targetLoc =  shader::getLocation('lights[%d].target'::format(lightsCount))
+			.colorLoc =   shader::getLocation('lights[%d].color'::format(lightsCount))
+
+		lightsCount += 1
+		light::update(shader)
+		light
+
+	update: (shader) =>
+		with shader
+			::setValue(@enabledLoc, @enabled, Shader.UNIFORM_INT)
+			::setValue(@typeLoc, @type, Shader.UNIFORM_INT)
+			::setValue(@posLoc, @position, Shader.UNIFORM_VEC3)
+			::setValue(@targetLoc, @target, Shader.UNIFORM_VEC3)
+			::setValue(@colorLoc, @color::normalize!, Shader.UNIFORM_VEC4)
+}
+
+LightMT.__index = LightMT
+
+ffi.metatype(Light, LightMT)
+
+-- void UpdateLightValues(Shader shader, Light light)
+-- {
+--     // Send to shader light enabled state and type
+--     SetShaderValue(shader, light.enabledLoc, &light.enabled, SHADER_UNIFORM_INT);
+--     SetShaderValue(shader, light.typeLoc, &light.type, SHADER_UNIFORM_INT);
+
+--     // Send to shader light position values
+--     float position[3] = { light.position.x, light.position.y, light.position.z };
+--     SetShaderValue(shader, light.posLoc, position, SHADER_UNIFORM_VEC3);
+
+--     // Send to shader light target position values
+--     float target[3] = { light.target.x, light.target.y, light.target.z };
+--     SetShaderValue(shader, light.targetLoc, target, SHADER_UNIFORM_VEC3);
+
+--     // Send to shader light color values
+--     float color[4] = { (float)light.color.r/(float)255, (float)light.color.g/(float)255,
+--                        (float)light.color.b/(float)255, (float)light.color.a/(float)255 };
+--     SetShaderValue(shader, light.colorLoc, color, SHADER_UNIFORM_VEC4);
+-- }

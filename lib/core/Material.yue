@@ -1,0 +1,38 @@
+import 'ffi'
+import RL from yuema
+import C from ffi
+
+Material = ffi.typeof('Material')
+
+gc = => ffi.gc(@, RL.UnloadMaterial)
+
+MaterialMT = {
+	MAP_DIFFUSE:    C.MATERIAL_MAP_ALBEDO
+	MAP_SPECULAR:   C.MATERIAL_MAP_METALNESS
+	MAP_ALBEDO:     C.MATERIAL_MAP_ALBEDO
+	MAP_METALNESS:  C.MATERIAL_MAP_METALNESS
+	MAP_NORMAL:     C.MATERIAL_MAP_NORMAL
+	MAP_ROUGHNESS:  C.MATERIAL_MAP_ROUGHNESS
+	MAP_OCCLUSION:  C.MATERIAL_MAP_OCCLUSION
+	MAP_EMISSION:   C.MATERIAL_MAP_EMISSION
+	MAP_HEIGHT:     C.MATERIAL_MAP_HEIGHT
+	MAP_CUBEMAP:    C.MATERIAL_MAP_CUBEMAP
+	MAP_IRRADIANCE: C.MATERIAL_MAP_IRRADIANCE
+	MAP_PREFILTER:  C.MATERIAL_MAP_PREFILTER
+	MAP_BRDF:       C.MATERIAL_MAP_BRDF
+
+	load: (fileName) ->
+		count = ffi.new('int[1]')
+		materials = RL.LoadMaterials(fileName, count)
+		[ gc(materials[i]) for i = 0, count[0] - 1 ]
+
+	loadDefault: -> gc(RL.LoadMaterialDefault!)
+
+	-- member functions --
+
+	setTexture: (mapType, texture) => RL.SetMaterialTexture(@, mapType, texture)
+}
+
+MaterialMT.__index = MaterialMT
+
+ffi.metatype(Material, MaterialMT)

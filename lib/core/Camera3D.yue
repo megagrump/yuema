@@ -1,0 +1,33 @@
+import 'ffi'
+import RL from yuema
+import C from ffi
+
+Camera3D = ffi.typeof('Camera3D')
+
+Camera3DMT = {
+	CUSTOM:       C.CAMERA_CUSTOM
+	FREE:         C.CAMERA_FREE
+	ORBITAL:      C.CAMERA_ORBITAL
+	FIRST_PERSON: C.CAMERA_FIRST_PERSON
+	THIRD_PERSON: C.CAMERA_THIRD_PERSON
+
+	PERSPECTIVE:  C.CAMERA_PERSPECTIVE
+	ORTHOGRAPHIC: C.CAMERA_ORTHOGRAPHIC
+
+	update: => RL.UpdateCamera(@)
+	getMouseRay: (mousePosition) => RL.GetMouseRay(mousePosition, @)
+	getMatrix: => RL.GetCameraMatrix(@)
+	getWorldToScreen: (position) => RL.GetWorldToScreen(position, @)
+	getWorldToScreenEx: (position, width, height) => RL.GetWorldToScreenEx(position, @, width, height)
+
+	setMode: (mode) => RL.SetCameraMode(@, mode)
+	setPanControl: (keyPan) -> RL.SetCameraPanControl(keyPan)
+	setAltControl: (keyAlt) -> RL.SetCameraAltControl(keyAlt)
+	setSmoothZoomControl: (keySmoothZoom) -> RL.SetCameraSmoothZoomControl(keySmoothZoom)
+	setMoveControls: (keyFront, keyBack, keyRight, keyLeft, keyUp, keyDown) ->
+		RL.SetCameraMoveControls(keyFront, keyBack, keyRight, keyLeft, keyUp, keyDown)
+}
+
+Camera3DMT.__index = Camera3DMT
+
+ffi.metatype(Camera3D, Camera3DMT)

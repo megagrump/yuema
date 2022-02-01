@@ -1,0 +1,246 @@
+import RL from yuema
+import 'ffi' as :C
+
+gestures = {
+	NONE:        C.GESTURE_NONE
+	TAP:         C.GESTURE_TAP
+	DOUBLETAP:   C.GESTURE_DOUBLETAP
+	HOLD:        C.GESTURE_HOLD
+	DRAG:        C.GESTURE_DRAG
+	SWIPE_RIGHT: C.GESTURE_SWIPE_RIGHT
+	SWIPE_LEFT:  C.GESTURE_SWIPE_LEFT
+	SWIPE_UP:    C.GESTURE_SWIPE_UP
+	SWIPE_DOWN:  C.GESTURE_SWIPE_DOWN
+	PINCH_IN:    C.GESTURE_PINCH_IN
+	PINCH_OUT:   C.GESTURE_PINCH_OUT
+
+	setEnabled: (flags) -> RL.SetGesturesEnabled(flags)
+	isGestureDetected: (gesture) -> RL.IsGestureDetected(gesture)
+	getGestureDetected: -> RL.GetGestureDetected!
+	getHoldDuration: -> RL.GetGestureHoldDuration!
+	getDragVector: -> RL.GetGestureDragVector!
+	getDragAngle: -> RL.GetGestureDragAngle!
+	getPinchVector: -> RL.GetGesturePinchVector!
+	getPinchAngle: -> RL.GetGesturePinchAngle!
+}
+
+gamepad = {
+	BUTTON_UNKNOWN: C.GAMEPAD_BUTTON_UNKNOWN
+	BUTTON_LEFT_FACE_UP: C.GAMEPAD_BUTTON_LEFT_FACE_UP
+	BUTTON_LEFT_FACE_RIGHT: C.GAMEPAD_BUTTON_LEFT_FACE_RIGHT
+	BUTTON_LEFT_FACE_DOWN: C.GAMEPAD_BUTTON_LEFT_FACE_DOWN
+	BUTTON_LEFT_FACE_LEFT: C.GAMEPAD_BUTTON_LEFT_FACE_LEFT
+	BUTTON_RIGHT_FACE_UP: C.GAMEPAD_BUTTON_RIGHT_FACE_UP
+	BUTTON_RIGHT_FACE_RIGHT: C.GAMEPAD_BUTTON_RIGHT_FACE_RIGHT
+	BUTTON_RIGHT_FACE_DOWN: C.GAMEPAD_BUTTON_RIGHT_FACE_DOWN
+	BUTTON_RIGHT_FACE_LEFT: C.GAMEPAD_BUTTON_RIGHT_FACE_LEFT
+	BUTTON_LEFT_TRIGGER_1: C.GAMEPAD_BUTTON_LEFT_TRIGGER_1
+	BUTTON_LEFT_TRIGGER_2: C.GAMEPAD_BUTTON_LEFT_TRIGGER_2
+	BUTTON_RIGHT_TRIGGER_1: C.GAMEPAD_BUTTON_RIGHT_TRIGGER_1
+	BUTTON_RIGHT_TRIGGER_2: C.GAMEPAD_BUTTON_RIGHT_TRIGGER_2
+	BUTTON_MIDDLE_LEFT: C.GAMEPAD_BUTTON_MIDDLE_LEFT
+	BUTTON_MIDDLE: C.GAMEPAD_BUTTON_MIDDLE
+	BUTTON_MIDDLE_RIGHT: C.GAMEPAD_BUTTON_MIDDLE_RIGHT
+	BUTTON_LEFT_THUMB: C.GAMEPAD_BUTTON_LEFT_THUMB
+	BUTTON_RIGHT_THUMB: C.GAMEPAD_BUTTON_RIGHT_THUMB
+
+	AXIS_LEFT_X: C.GAMEPAD_AXIS_LEFT_X
+	AXIS_LEFT_Y: C.GAMEPAD_AXIS_LEFT_Y
+	AXIS_RIGHT_X: C.GAMEPAD_AXIS_RIGHT_X
+	AXIS_RIGHT_Y: C.GAMEPAD_AXIS_RIGHT_Y
+	AXIS_LEFT_TRIGGER: C.GAMEPAD_AXIS_LEFT_TRIGGER
+	AXIS_RIGHT_TRIGGER: C.GAMEPAD_AXIS_RIGHT_TRIGGER
+
+	isAvailable: (gamepad) -> RL.IsGamepadAvailable(gamepad)
+	getName: (gamepad) -> RL.GetGamepadName(gamepad)
+	isPressed: (gamepad, button) -> RL.IsGamepadButtonPressed(gamepad, button)
+	isDown: (gamepad, button) -> RL.IsGamepadButtonDown(gamepad, button)
+	isReleased: (gamepad, button) -> RL.IsGamepadButtonReleased(gamepad, button)
+	isUp: (gamepad, button) -> RL.IsGamepadButtonUp(gamepad, button)
+	getPressed: -> RL.GetGamepadButtonPressed!
+	getAxisCount: (gamepad) -> RL.GetGamepadAxisCount(gamepad)
+	getAxisMovement: (gamepad, axis) -> RL.GetGamepadAxisMovement(gamepad, axis)
+	getMappings: (mappings) -> RL.SetGamepadMappings(mappings)
+}
+
+keyboard = {
+	NULL:          C.KEY_NULL
+	APOSTROPHE:    C.KEY_APOSTROPHE
+	COMMA:         C.KEY_COMMA
+	MINUS:         C.KEY_MINUS
+	PERIOD:        C.KEY_PERIOD
+	SLASH:         C.KEY_SLASH
+	ZERO:          C.KEY_ZERO
+	ONE:           C.KEY_ONE
+	TWO:           C.KEY_TWO
+	THREE:         C.KEY_THREE
+	FOUR:          C.KEY_FOUR
+	FIVE:          C.KEY_FIVE
+	SIX:           C.KEY_SIX
+	SEVEN:         C.KEY_SEVEN
+	EIGHT:         C.KEY_EIGHT
+	NINE:          C.KEY_NINE
+	SEMICOLON:     C.KEY_SEMICOLON
+	EQUAL:         C.KEY_EQUAL
+	A:             C.KEY_A
+	B:             C.KEY_B
+	C:             C.KEY_C
+	D:             C.KEY_D
+	E:             C.KEY_E
+	F:             C.KEY_F
+	G:             C.KEY_G
+	H:             C.KEY_H
+	I:             C.KEY_I
+	J:             C.KEY_J
+	K:             C.KEY_K
+	L:             C.KEY_L
+	M:             C.KEY_M
+	N:             C.KEY_N
+	O:             C.KEY_O
+	P:             C.KEY_P
+	Q:             C.KEY_Q
+	R:             C.KEY_R
+	S:             C.KEY_S
+	T:             C.KEY_T
+	U:             C.KEY_U
+	V:             C.KEY_V
+	W:             C.KEY_W
+	X:             C.KEY_X
+	Y:             C.KEY_Y
+	Z:             C.KEY_Z
+	LEFT_BRACKET:  C.KEY_LEFT_BRACKET
+	BACKSLASH:     C.KEY_BACKSLASH
+	RIGHT_BRACKET: C.KEY_RIGHT_BRACKET
+	GRAVE:         C.KEY_GRAVE
+	SPACE:         C.KEY_SPACE
+	ESCAPE:        C.KEY_ESCAPE
+	ENTER:         C.KEY_ENTER
+	TAB:           C.KEY_TAB
+	BACKSPACE:     C.KEY_BACKSPACE
+	INSERT:        C.KEY_INSERT
+	DELETE:        C.KEY_DELETE
+	RIGHT:         C.KEY_RIGHT
+	LEFT:          C.KEY_LEFT
+	DOWN:          C.KEY_DOWN
+	UP:            C.KEY_UP
+	PAGE_UP:       C.KEY_PAGE_UP
+	PAGE_DOWN:     C.KEY_PAGE_DOWN
+	HOME:          C.KEY_HOME
+	END:           C.KEY_END
+	CAPS_LOCK:     C.KEY_CAPS_LOCK
+	SCROLL_LOCK:   C.KEY_SCROLL_LOCK
+	NUM_LOCK:      C.KEY_NUM_LOCK
+	PRINT_SCREEN:  C.KEY_PRINT_SCREEN
+	PAUSE:         C.KEY_PAUSE
+	F1:            C.KEY_F1
+	F2:            C.KEY_F2
+	F3:            C.KEY_F3
+	F4:            C.KEY_F4
+	F5:            C.KEY_F5
+	F6:            C.KEY_F6
+	F7:            C.KEY_F7
+	F8:            C.KEY_F8
+	F9:            C.KEY_F9
+	F10:           C.KEY_F10
+	F11:           C.KEY_F11
+	F12:           C.KEY_F12
+	LEFT_SHIFT:    C.KEY_LEFT_SHIFT
+	LEFT_CONTROL:  C.KEY_LEFT_CONTROL
+	LEFT_ALT:      C.KEY_LEFT_ALT
+	LEFT_SUPER:    C.KEY_LEFT_SUPER
+	RIGHT_SHIFT:   C.KEY_RIGHT_SHIFT
+	RIGHT_CONTROL: C.KEY_RIGHT_CONTROL
+	RIGHT_ALT:     C.KEY_RIGHT_ALT
+	RIGHT_SUPER:   C.KEY_RIGHT_SUPER
+	KB_MENU:       C.KEY_KB_MENU
+	KP_0:          C.KEY_KP_0
+	KP_1:          C.KEY_KP_1
+	KP_2:          C.KEY_KP_2
+	KP_3:          C.KEY_KP_3
+	KP_4:          C.KEY_KP_4
+	KP_5:          C.KEY_KP_5
+	KP_6:          C.KEY_KP_6
+	KP_7:          C.KEY_KP_7
+	KP_8:          C.KEY_KP_8
+	KP_9:          C.KEY_KP_9
+	KP_DECIMAL:    C.KEY_KP_DECIMAL
+	KP_DIVIDE:     C.KEY_KP_DIVIDE
+	KP_MULTIPLY:   C.KEY_KP_MULTIPLY
+	KP_SUBTRACT:   C.KEY_KP_SUBTRACT
+	KP_ADD:        C.KEY_KP_ADD
+	KP_ENTER:      C.KEY_KP_ENTER
+	KP_EQUAL:      C.KEY_KP_EQUAL
+	BACK:          C.KEY_BACK
+	MENU:          C.KEY_MENU
+	VOLUME_UP:     C.KEY_VOLUME_UP
+	VOLUME_DOWN:   C.KEY_VOLUME_DOWN
+
+	isPressed: (key) -> RL.IsKeyPressed(key)
+	isDown: (key) -> RL.IsKeyDown(key)
+	isReleased: (key) -> RL.IsKeyReleased(key)
+	isUp: (key) -> RL.IsKeyUp(key)
+	setExitKey: (key) -> RL.SetExitKey(key)
+	getPressed: -> RL.GetKeyPressed!
+	getCharPressed: -> RL.GetCharPressed!
+}
+
+mouse = {
+	BUTTON_LEFT:    C.MOUSE_BUTTON_LEFT
+	BUTTON_RIGHT:   C.MOUSE_BUTTON_RIGHT
+	BUTTON_MIDDLE:  C.MOUSE_BUTTON_MIDDLE
+	BUTTON_SIDE:    C.MOUSE_BUTTON_SIDE
+	BUTTON_EXTRA:   C.MOUSE_BUTTON_EXTRA
+	BUTTON_FORWARD: C.MOUSE_BUTTON_FORWARD
+	BUTTON_BACK:    C.MOUSE_BUTTON_BACK
+
+	CURSOR_DEFAULT:       C.MOUSE_CURSOR_DEFAULT
+	CURSOR_ARROW:         C.MOUSE_CURSOR_ARROW
+	CURSOR_IBEAM:         C.MOUSE_CURSOR_IBEAM
+	CURSOR_CROSSHAIR:     C.MOUSE_CURSOR_CROSSHAIR
+	CURSOR_POINTING_HAND: C.MOUSE_CURSOR_POINTING_HAND
+	CURSOR_RESIZE_EW:     C.MOUSE_CURSOR_RESIZE_EW
+	CURSOR_RESIZE_NS:     C.MOUSE_CURSOR_RESIZE_NS
+	CURSOR_RESIZE_NWSE:   C.MOUSE_CURSOR_RESIZE_NWSE
+	CURSOR_RESIZE_NESW:   C.MOUSE_CURSOR_RESIZE_NESW
+	CURSOR_RESIZE_ALL:    C.MOUSE_CURSOR_RESIZE_ALL
+	CURSOR_NOT_ALLOWED:   C.MOUSE_CURSOR_NOT_ALLOWED
+
+	isPressed: (button) -> RL.IsMouseButtonPressed(button)
+	isDown: (button) -> RL.IsMouseButtonDown(button)
+	isReleased: (button) -> RL.IsMouseButtonReleased(button)
+	isUp: (button) -> RL.IsMouseButtonUp(button)
+
+	getX: -> RL.GetMouseX!
+	getY: -> RL.GetMouseY!
+	getPosition: -> RL.GetMousePosition!
+	getDelta: -> RL.GetMouseDelta!
+	getWheelMove: -> RL.GetMouseWheelMove!
+
+	setPosition: (x, y) -> RL.SetMousePosition(x, y)
+	setOffset: (x, y) -> RL.SetMouseOffset(x, y)
+	setScale: (x, y) -> RL.SetMouseScale(x, y)
+	setCursor: (cursor) -> RL.SetMouseCursor(cursor)
+
+	show: -> RL.ShowCursor!
+	hide: -> RL.HideCursor!
+	isHidden: -> RL.IsCursorHidden!
+	enable: -> RL.EnableCursor!
+	disable: -> RL.DisableCursor!
+	isOnScreen: -> RL.IsCursorOnScreen!
+}
+
+touch = {
+	getX: -> RL.GetTouchX!
+	getY: -> RL.GetTouchY!
+	getPosition: (index) -> RL.GetTouchPosition(index)
+	getPointId: (index) -> RL.GetTouchPointId(index)
+	getPointCount: -> RL.GetTouchPointCount!
+}
+
+{
+	:gestures
+	:gamepad
+	:keyboard
+	:mouse
+	:touch
+}

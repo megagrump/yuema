@@ -1,0 +1,14 @@
+import min, max from math
+
+clamp = (n, lo, hi) -> min(hi, max(lo, n))
+
+lerp = (a, b, amount) -> a + (b - a) * amount
+
+normalize = (value, lo, hi) -> (value - lo) / (hi - lo)
+
+remap = (value, inLo, inHi, outLo, outHi) ->
+	(value - inLo) / (inHi - inLo) * (outHi - outLo) + outLo
+
+{
+	:clamp, :lerp, :normalize, :remap
+}

@@ -1,0 +1,44 @@
+import 'ffi'
+import C from ffi
+import RL from yuema
+
+Texture2D = ffi.typeof('Texture2D')
+
+gc = => ffi.gc(@, RL.UnloadTexture)
+
+Texture2DMT = {
+	FILTER_POINT:           C.TEXTURE_FILTER_POINT
+	FILTER_BILINEAR:        C.TEXTURE_FILTER_BILINEAR
+	FILTER_TRILINEAR:       C.TEXTURE_FILTER_TRILINEAR
+	FILTER_ANISOTROPIC_4X:  C.TEXTURE_FILTER_ANISOTROPIC_4X
+	FILTER_ANISOTROPIC_8X:  C.TEXTURE_FILTER_ANISOTROPIC_8X
+	FILTER_ANISOTROPIC_16X: C.TEXTURE_FILTER_ANISOTROPIC_16X
+
+	WRAP_REPEAT:        C.TEXTURE_WRAP_REPEAT
+	WRAP_CLAMP:         C.TEXTURE_WRAP_CLAMP
+	WRAP_MIRROR_REPEAT: C.TEXTURE_WRAP_MIRROR_REPEAT
+	WRAP_MIRROR_CLAMP:  C.TEXTURE_WRAP_MIRROR_CLAMP
+
+	LAYOUT_AUTO_DETECT:         C.CUBEMAP_LAYOUT_AUTO_DETECT
+	LAYOUT_LINE_VERTICAL:       C.CUBEMAP_LAYOUT_LINE_VERTICAL
+	LAYOUT_LINE_HORIZONTAL:     C.CUBEMAP_LAYOUT_LINE_HORIZONTAL
+	LAYOUT_CROSS_THREE_BY_FOUR: C.CUBEMAP_LAYOUT_CROSS_THREE_BY_FOUR
+	LAYOUT_CROSS_FOUR_BY_THREE: C.CUBEMAP_LAYOUT_CROSS_FOUR_BY_THREE
+	LAYOUT_PANORAMA:            C.CUBEMAP_LAYOUT_PANORAMA
+
+	update: (pixels) => RL.UpdateTexture(@, pixels)
+	updateRec: (rec, pixels) => RL.UpdateTextureRec(@, rec, pixels)
+	genMipmaps: => RL.GenTextureMipmaps(@)
+	setFilter: (filter) => RL.SetTextureFilter(@, filter)
+	setWrap: (wrap) => RL.SetTextureWrap(@, wrap)
+
+	-- static functions --
+
+	load: (fileName) -> gc(RL.LoadTexture(fileName))
+	loadFromImage: (image) -> gc(RL.LoadTextureFromImage(image))
+	loadCubemap: (image, layout) -> gc(RL.LoadTextureCubemap(image, layout))
+}
+
+Texture2DMT.__index = Texture2DMT
+
+ffi.metatype(Texture2D, Texture2DMT)

@@ -1,0 +1,52 @@
+import 'ffi'
+import RL from yuema
+import 'lib.core.util' as :ptr
+
+{
+	loadData: (fileName) ->
+		read = ffi.new('unsigned int[1]')
+		if data = ptr(RL.LoadFileData(fileName, read))
+			result = ffi.string(data, read[0])
+			RL.UnloadFileData(data)
+			return result, tonumber(read[0])
+		nil, 0
+
+	loadText: (fileName) ->
+		if text = ptr(RL.LoadFileText(fileName))
+			result = ffi.string(text)
+			RL.UnloadFileText(text)
+			return result
+
+	saveData: (fileName, data, bytesToWrite) -> RL.SaveFileData(fileName, data, bytesToWrite or #data)
+
+	saveText: (fileName, text) -> RL.SaveFileText(fileName, text)
+	fileExists: (fileName) -> RL.FileExists(fileName)
+	directoryExists: (dirPath) -> RL.DirectoryExists(dirPath)
+	getFileLength: (fileName) -> RL.GetFileLength(fileName)
+	isFileExtension: (fileName, ext) -> RL.IsFileExtension(fileName, ext)
+	getFileExtension: (filename) -> RL.GetFileExtension(fileName)
+	getFileName: (filePath) -> RL.GetFileName(filePath)
+	getFileNameWithoutExt: (filePath) -> RL.GetFileNameWithoutExt(filePath)
+	getDirectoryPath: (filePath) -> RL.GetDirectoryPath(filePath)
+	getPrevDirectoryPath: (dirPath) -> RL.GetPrevDirectoryPath(dirPath)
+	getWorkingDirectory: -> RL.GetWorkingDirectory!
+	getApplicationDirectory: -> RL.GetApplicationDirectory
+	changeDirectory: (dir) -> RL.ChangeDirectory(dir)
+	getModTime: (fileName) -> RL.GetFileModTime(fileName)
+	isFileDropped: -> RL.IsFileDropped!
+
+	getDirectoryFiles: (dirPath) ->
+		count = ffi.new('int[1]')
+		files = RL.GetDirectoryFiles(dirPath, count)
+		result = [ ffi.string(files[i]) for i = 0, count[0] - 1 ]
+		RL.ClearDirectoryFiles!
+		result
+
+	getDroppedFiles: ->
+		count = ffi.new('int[1]')
+		files = RL.GetDroppedFiles(count)
+		result = [ ffi.string(files[i]) for i = 0, count[0] - 1 ]
+		RL.ClearDroppedFiles!
+		result
+
+}

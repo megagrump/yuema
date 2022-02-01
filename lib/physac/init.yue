@@ -1,0 +1,46 @@
+import 'ffi'
+import PS from yuema
+import C from ffi
+
+PhysicsBody = ffi.typeof('PhysicsBodyData')
+
+PhysicsBodyMT = {
+	addForce: (force) => PS.PhysicsAddForce(@, force)
+	addTorque: (amount) => PS.PhysicsAddTorque(@, amount)
+	shatter: (position, force) => PS.PhysicsShatter(@, position, force)
+	getShapeVertex: (vertex) => PS.GetPhysicsShapeVertex(@, vertex)
+	setRotation: (radians) => PS.SetPhysicsBodyRotation(@, radians)
+}
+
+PhysicsBodyMT.__index = PhysicsBodyMT
+ffi.metatype(PhysicsBody, PhysicsBodyMT)
+
+{
+	CIRCLE:  C.PHYSICS_CIRCLE
+	POLYGON: C.PHYSICS_POLYGON
+
+	init: -> PS.InitPhysics!
+	step: -> PS.RunPhysicsStep!
+	setTimeStep: (delta) -> PS.SetPhysicsTimeStep(delta)
+	isEnabled: -> PS.IsPhysicsEnabled!
+	setGravity: (x, y) -> PS.SetPhysicsGravity(x, y)
+	getBodiesCount: -> PS.GetPhysicsBodiesCount!
+	getBody: (index) -> PS.GetPhysicsBody(index)
+	getShapeType: (index) -> PS.GetPhysicsShapeType(index)
+	getShapeVerticesCount: (index) -> PS.GetPhysicsShapeVerticesCount(index)
+	destroyBody: (body) -> PS.DestroyPhysicsBody(ffi.gc(body, nil))
+
+	close: -> PS.ClosePhysics!
+
+	createBodyCircle: (pos, radius, density) ->
+		--ffi.gc(PS.CreatePhysicsBodyCircle(pos, radius, density), PS.DestroyPhysicsBody)
+		PS.CreatePhysicsBodyCircle(pos, radius, density)
+
+	createBodyRectangle: (pos, width, height, density) ->
+		--ffi.gc(PS.CreatePhysicsBodyRectangle(pos, width, height, density), PS.DestroyPhysicsBody)
+		PS.CreatePhysicsBodyRectangle(pos, width, height, density)
+
+	createBodyPolygon: (pos, radius, sides, density) ->
+		--ffi.gc(PS.CreatePhysicsBodyPolygon(pos, radius, sides, density), PS.DestroyPhysicsBody)
+		PS.CreatePhysicsBodyPolygon(pos, radius, sides, density)
+}

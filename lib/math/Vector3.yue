@@ -1,0 +1,120 @@
+import 'ffi'
+import sqrt, abs, atan2, min, max from math
+
+Vector3 = ffi.typeof('Vector3')
+
+Vector3MT = {
+	__tostring: => 'Vector3(%f, %f, %f)'::format(@x, @y, @z)
+
+	zero: -> Vector3!
+	one: -> Vector3(1, 1, 1)
+
+	set: (@x, @y, @z) =>
+	add: (rhs) => Vector3(@x + rhs.x, @y + rhs.y, @z + rhs.z)
+	addValue: (val) => Vector3(@x + val, @y + val, @z + val)
+	subtract: (rhs) => Vector3(@x - rhs.x, @y - rhs.y, @z - rhs.z)
+	subtractValue: (val) => Vector3(@x - val, @y - val, @z - val)
+	scale: (val) => Vector3(@x * val, @y * val, @z * val)
+	multiply: (rhs) => Vector3(@x * rhs.x, @y * rhs.y, @z * rhs.z)
+	divide: (rhs) => Vector3(@x / rhs.x, @y / rhs.y, @z / rhs.z)
+	length: => sqrt(@x * @x + @y * @y + @z * @z)
+	lengthSqr: => @x * @x + @y * @y + @z * @z
+	dotProduct: (rhs) => @x * rhs.x + @y * rhs.y + @z * rhs.z
+	angle: (rhs) => atan2(@crossProduct(rhs)::length!, @dotProduct(rhs))
+	negate: => Vector3(-@x, -@y, -@z)
+	min: (rhs) => Vector3(min(@x, rhs.x), min(@y, rhs.y), min(@z, rhs.z))
+	max: (rhs) => Vector3(max(@x, rhs.x), max(@y, rhs.y), max(@z, rhs.z))
+
+	crossProduct: (rhs) => Vector3(
+		@y * rhs.z - @z * rhs.y,
+		@z * rhs.x - @x * rhs.z,
+		@x * rhs.y - @y * rhs.x
+	)
+
+	perpendicular: =>
+		cardinal = Vector3(1, 0, 0)
+
+		lo = abs(@x)
+		do
+			ay = abs(@y)
+			if ay < lo
+				lo = ay
+				cardinal::set(0, 1, 0)
+
+		cardinal::set(0, 0, 1) if abs(@z) < lo
+
+		@crossProduct(cardinal)
+
+	distance: (rhs) =>
+		dx, dy, dy = @x - rhs.x, @y - rhs.y, @z - rhs.z
+		sqrt(dx * dx + dy * dy + dz * dz)
+
+	normalize: =>
+		len = @length!
+		len = 1 if len == 0
+		Vector3(@x / len, @y / len, @z / len)
+
+	orthoNormalize: (rhs) =>
+		v = @normalize!
+		vn1 = v::crossProduct(rhs)::normalize!
+		vn2 = vn1::crossProduct(v)
+		vn1, vn2
+
+	transform: (mat) => Vector3(
+		mat.m0 * @x + mat.m4 * @y + mat.m8 * @z + mat.m12,
+		mat.m1 * @x + mat.m5 * @y + mat.m9 * @z + mat.m13,
+		mat.m2 * @x + mat.m6 * @y + mat.m10 * @z + mat.m14
+	)
+
+	rotateByQuaternion: (q) =>
+		{ :x, :y, :z, :w } = q
+		Vector3(
+			@x * ( x * x + w * w - y * y - z * z) + @y * (2 * x * y - 2 * w * z)         + @z * ( 2 * x * z + 2 * w * y),
+			@x * ( 2 * w * z + 2 * x * y)         + @y * (w * w - x * x + y * y - z * z) + @z * (-2 * w * x + 2 * y * z),
+			@x * (-2 * w * y + 2 * x * z)         + @y * (2 * w * x + 2 * y * z)         + @z * ( w * w - x * x - y * y + z * z)
+		)
+
+	lerp: (v, amount) => Vector3(
+		@x + amount * (v.x - @x),
+		@y + amount * (v.y - @y),
+		@z + amount * (v.z - @z)
+	)
+
+	reflect: (normal) =>
+		dot = @dotProduct(normal)
+		Vector3(
+			@x - (2 * normal.x) * dot,
+			@y - (2 * normal.y) * dot,
+			@z - (2 * normal.z) * dot
+		)
+
+	barycenter: (a, b, c) =>
+		v0, v1, v2 = b::subtract(a), c::subtract(a), @subtract(a)
+
+		d00 = v0::dotProduct(v0)
+		d01 = v0::dotProduct(v1)
+		d11 = v1::dotProduct(v1)
+		d20 = v2::dotProduct(v0)
+		d21 = v2::dotProduct(v1)
+
+		denom = d00 * d11 - d01 * d01
+		y = (d11 * d20 - d01 * d21) / denom
+		z = (d00 * d21 - d01 * d20) / denom
+
+		Vector3(1 - (z + y), y, z)
+
+	unproject: (proj, view) =>
+		vp = view::multiply(proj)::invert!
+		x = vp.m0 * @x + vp.m4 * @y +  vp.m8 * @z + vp.m12
+		y = vp.m1 * @x + vp.m5 * @y +  vp.m9 * @z + vp.m13
+		z = vp.m2 * @x + vp.m6 * @y + vp.m10 * @z + vp.m14
+		w = vp.m3 * @x + vp.m7 * @y + vp.m11 * @z + vp.m15
+
+		Vector3(x / w, y / w, z / w)
+
+	toFloatV: => ffi.new('float[3]', @x, @y, @z)
+}
+
+Vector3MT.__index = Vector3MT
+
+ffi.metatype(Vector3, Vector3MT)

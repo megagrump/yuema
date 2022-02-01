@@ -1,0 +1,134 @@
+import 'ffi'
+import RL from yuema
+
+-- Wave --
+
+Wave = ffi.typeof('Wave')
+
+WaveMT = {
+	load: (fileName) -> Wave(RL.LoadWave(fileName))
+
+	loadFromMemory: (fileType, fileData, dataSize) ->
+		dataSize or= #fileData
+		Wave(RL.LoadWaveFromMemory(fileType, fileData, dataSize))
+
+	-- member functions --
+
+	__gc: RL.UnloadWave
+
+	export: (fileName) => RL.ExportWave(@, fileName)
+	exportAsCode: (fileName) => RL.ExportWaveAsCode(@, fileName)
+	copy: => Wave(RL.WaveCopy(@))
+	crop: (initSample, finalSample) => Wave(RL.WaveCrop(@, initSample, finalSample))
+	format: (sampleRate, sampleSize, channels) => Wave(RL.WaveFormat(@, sampleRate, sampleSize, channels))
+	loadSamples: => ffi.gc(RL.LoadWaveSamples(@), RL.UnloadWaveSamples)
+}
+
+WaveMT.__index = WaveMT
+
+ffi.metatype(Wave, WaveMT)
+
+-- Sound --
+
+Sound = ffi.typeof('Sound')
+
+SoundMT = {
+	load: (fileName) -> Sound(RL.LoadSound(fileName))
+	loadFromWave: (wave) -> Sound(RL.LoadSoundFromWave(wave))
+
+	-- member functions --
+
+	__gc: RL.UnloadSound
+
+	update: (data, sampleCount) => RL.UpdateSound(@, data, sampleCount)
+
+	play: => RL.PlaySound(@)
+	stop: => RL.StopSound(@)
+	pause: => RL.PauseSound(@)
+	resume: => RL.ResumeSound(@)
+	playMulti: => RL.PlaySoundMulti(@)
+	isPlaying: => RL.IsSoundPlaying(@)
+	setVolume: (volume) => RL.SetSoundVolume(@, volume)
+	setPitch: (pitch) => RL.SetSoundPitch(@, pitch)
+	setPan: (pan) => RL.SetSoundPan(@, pan)
+}
+
+SoundMT.__index = SoundMT
+
+ffi.metatype(Sound, SoundMT)
+
+-- Music --
+
+Music = ffi.typeof('Music')
+
+MusicMT = {
+	load: (fileName) -> Music(RL.LoadMusicStream(fileName))
+	loadFromMemory: (fileType, data, dataSize) -> Music(RL.LoadMusicStreamFromMemory(fileType, data, dataSize or #data))
+
+	-- member functions --
+
+	__gc: RL.UnloadMusicStream
+
+	play: => RL.PlayMusicStream(@)
+	isPlaying: => RL.IsMusicStreamPlaying(@)
+	update: => RL.UpdateMusicStream(@)
+	stop: => RL.StopMusicStream(@)
+	pause: => RL.PauseMusicStream(@)
+	resume: => RL.ResumeMusicStream(@)
+	seek: (position) => RL.SeekMusicStream(@, position)
+	setVolume: (volume) => RL.SetMusicVolume(@, volume)
+	setPitch: (pitch) => RL.SetMusicPitch(@, pitch)
+	setPan: (pan) => RL.SetMusicPan(@, pan)
+	getTimeLength: => RL.GetMusicTimeLength(@)
+	getTimePlayed: => RL.GetMusicTimePlayed(@)
+}
+
+MusicMT.__index = MusicMT
+
+ffi.metatype(Music, MusicMT)
+
+-- AudioStream --
+
+Stream = ffi.typeof('AudioStream')
+
+StreamMT = {
+	load: (sampleRate, sampleSize, channels) -> Stream(RL.LoadAudioStream(sampleRate, sampleSize, channels))
+
+	setBufferSizeDefault: (size) -> RL.SetAudioStreamBufferSizeDefault(size)
+
+	-- member functions --
+
+	__gc: RL.UnloadAudioStream
+
+	update: (data, frameCount) => RL.UpdateAudioStream(@, data, frameCount)
+	isProcessed: => RL.IsAudioStreamProcessed(@)
+	play: => RL.PlayAudioStream(@)
+	pause: => RL.PauseAudioStream(@)
+	resume: => RL.ResumeAudioStream(@)
+	isPlaying: => RL.IsAudioStreamPlaying(@)
+	stop: => RL.StopAudioStream(@)
+	setVolume: (volume) => RL.SetAudioStreamVolume(@, volume)
+	setPitch: (pitch) => RL.SetAudioStreamPitch(@, pitch)
+	setPan: (pan) => RL.SetAudioStreamPan(@, pan)
+}
+
+StreamMT.__index = StreamMT
+
+ffi.metatype(Stream, StreamMT)
+
+-- audio --
+
+{
+	init: -> RL.InitAudioDevice!
+	close: -> RL.CloseAudioDevice!
+	isReady: -> RL.IsAudioDeviceReady!
+	setMasterVolume: (volume) -> RL.SetMasterVolume(volume)
+
+	stopSoundMulti: -> RL.StopSoundMulti!
+	getSoundsPlaying: -> RL.GetSoundsPlaying!
+
+	:Wave
+	:Sound
+	:Music
+	:Stream
+}

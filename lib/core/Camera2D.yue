@@ -1,0 +1,14 @@
+import 'ffi'
+import RL from yuema
+
+Camera2D = ffi.typeof('Camera2D')
+
+Camera2DMT = {
+	getMatrix: => RL.GetCameraMatrix2D(@)
+	getWorldToScreen: (position) => RL.GetWorldToScreen2D(position, @)
+	getScreenToWorld: (position) => RL.GetScreenToWorld2D(position, @)
+}
+
+Camera2DMT.__index = Camera2DMT
+
+ffi.metatype(Camera2D, Camera2DMT)

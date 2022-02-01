@@ -1,0 +1,18 @@
+import 'ffi'
+import RL from yuema
+
+{
+	ptr: => @ ~= nil and @ or nil -- NULL -> nil, because NULL is a truthy value in LuaJIT
+
+	setClipboardText: (text) ->	RL.SetClipboardText(text)
+	getClipboardText: -> ffi.string(RL.GetClipboardText!)
+
+	openURL: (url) -> RL.OpenURL(url)
+
+	takeScreenshot: (fileName) -> RL.TakeScreenshot(fileName)
+
+	getPixelDataSize: (width, height, format) -> RL.GetPixelDataSize(width, height, format)
+
+	getRandomValue: (min, max) -> RL.GetRandomValue(min, max)
+	setRandomSeed: (seed) -> RL.SetRandomSeed(seed)
+}

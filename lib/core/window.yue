@@ -1,0 +1,52 @@
+import RL from yuema
+
+{
+	init: (width, height, title) -> RL.InitWindow(width, height, title)
+	shouldClose: -> RL.WindowShouldClose!
+	close: -> RL.CloseWindow!
+	isReady: -> RL.IsWindowReady!
+	isFullscreen: -> RL.IsWindowFullscreen!
+	isHidden: -> RL.IsWindowHidden!
+	isMinimized: -> RL.IsWindowMinimized!
+	isMaximized: -> RL.IsWindowMaximized!
+	isFocused: -> RL.IsWindowFocused!
+	isResized: -> RL.IsWindowResized!
+
+	isState: (flag) -> RL.IsWindowState(flag)
+	setState: (flags) -> RL.SetWindowState(flags)
+	clearState: (flags) -> RL.ClearWindowState(flags)
+
+	toggleFullscreen: -> RL.ToggleFullscreen!
+	maximize: -> RL.MaximizeWindow!
+	minimize: -> RL.MinimizeWindow!
+	restore: -> RL.RestoreWindow!
+
+	getPosition: -> RL.GetWindowPosition!
+	getScaleDPI: -> RL.GetWindowScaleDPI!
+	getWidth: -> RL.GetScreenWidth!
+	getHeight: -> RL.GetScreenHeight!
+	getRenderWidth: -> RL.GetRenderWidth!
+	getRenderHeight: -> RL.GetRenderHeight!
+
+	setIcon: (image) -> RL.SetWindowIcon(image)
+	setTitle: (title) -> RL.SetWindowTitle(title)
+	setPosition: (x, y) -> RL.SetWindowPosition(x, y)
+	setMonitor: (monitor) -> RL.SetWindowMonitor(monitor)
+	setMinSize: (width, height) -> RL.SetWindowMinSize(width, height)
+	setSize: (width, height) -> RL.SetWindowSize(width, height)
+	setOpacity: (opacity) -> RL.SetWindowOpacity(opacity)
+
+	getHandle: -> RL.GetWindowHandle!
+	getCurrentMonitor: -> RL.GetCurrentMonitor!
+	getMonitorCount: -> RL.GetMonitorCount!
+	getMonitorPosition: (monitor) -> RL.GetMonitorPosition(monitor)
+	getMonitorWidth: (monitor) -> RL.GetMonitorWidth(monitor)
+	getMonitorHeight: (monitor) -> RL.GetMonitorHeight(monitor)
+	getMonitorPhysicalWidth: (monitor) -> RL.GetMonitorPhysicalWidth(monitor)
+	getMonitorPhysicalHeight: (monitor) -> RL.GetMonitorPhysicalHeight(monitor)
+	getMonitorRefreshRate: (monitor) -> RL.GetMonitorRefreshRate(monitor)
+	getMonitorName: (monitor) -> RL.GetMonitorName(monitor)
+
+	swapScreenBuffer: -> RL.SwapScreenBuffer!
+	pollInputEvents: -> RL.PollInputEvents!
+}

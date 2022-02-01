@@ -1,0 +1,74 @@
+---------------------------------------------------------------------------------------------
+--
+--   raylib [core] example - 3d camera first person
+--
+--   raylib is licensed under an unmodified zlib/libpng license (View raylib.h for details)
+--
+--   Copyright (c) 2015 Ramon Santamaria (@raysan5)
+--
+--   Adapted for Yuema by megagrump@pm.me
+--
+---------------------------------------------------------------------------------------------/
+import 'lib.core.all' as {
+	:window
+	:draw
+	:util
+	:time
+	:Camera3D
+	:Color
+}
+
+import 'lib.math'
+import getRandomValue from util
+import Vector2, Vector3 from math
+
+MAX_COLUMNS = 20
+
+window.init(800, 450, "raylib [core] example - 3d camera first person")
+time.setTargetFPS(60)
+
+camera = with Camera3D!
+	.position = Vector3(4, 2, 4)
+	.target = Vector3(0, 1.8, 0)
+	.up = Vector3(0, 1, 0)
+	.fovy = 60
+	.projection = Camera3D.PERSPECTIVE
+	::setMode(Camera3D.FIRST_PERSON)
+
+heights, positions, colors = {}, {}, {}
+
+for i = 1, MAX_COLUMNS
+	heights[i] = getRandomValue(1, 12)
+	positions[i] = Vector3(getRandomValue(-15, 15), heights[i]/2, getRandomValue(-15, 15))
+	colors[i] = Color(getRandomValue(20, 255), getRandomValue(10, 55), 30, 255)
+
+while not window.shouldClose!
+	camera::update!
+
+	with draw
+		.beginDrawing!
+		.clearBackground(Color.RAYWHITE)
+
+		.beginMode3D(camera)
+
+		.plane(Vector3(0, 0, 0), Vector2(32, 32), Color.LIGHTGRAY)
+		.cube(Vector3(-16, 2.5, 0), 1, 5, 32, Color.BLUE)
+		.cube(Vector3(16, 2.5, 0), 1, 5, 32, Color.LIME)
+		.cube(Vector3(0, 2.5, 16), 32, 5, 1, Color.GOLD)
+
+		for i = 1, MAX_COLUMNS
+			draw.cube(positions[i], 2, heights[i], 2, colors[i])
+			draw.cubeWires(positions[i], 2, heights[i], 2, Color.MAROON)
+
+		.endMode3D!
+
+		.rectangle(10, 10, 220, 70, Color.fade(Color.SKYBLUE, 0.5))
+		.rectangleLines(10, 10, 220, 70, Color.BLUE)
+
+		.text("First person camera default controls:", 20, 20, 10, Color.BLACK)
+		.text("- Move with keys: W, A, S, D", 40, 40, 10, Color.DARKGRAY)
+		.text("- Mouse move to look around", 40, 60, 10, Color.DARKGRAY)
+
+		.endDrawing!
+
+window.close!

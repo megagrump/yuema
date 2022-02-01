@@ -1,0 +1,14 @@
+import 'ffi'
+import C from ffi
+
+NPatchInfo = ffi.typeof('NPatchInfo')
+
+NPatchInfoMT = {
+	NINE_PATCH:             C.NPATCH_NINE_PATCH
+	THREE_PATCH_VERTICAL:   C.NPATCH_THREE_PATCH_VERTICAL
+	THREE_PATCH_HORIZONTAL: C.NPATCH_THREE_PATCH_HORIZONTAL
+}
+
+NPatchInfoMT.__index = NPatchInfoMT
+
+ffi.metatype(NPatchInfo, NPatchInfoMT)

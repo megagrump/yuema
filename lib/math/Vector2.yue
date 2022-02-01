@@ -1,0 +1,72 @@
+import 'ffi'
+import sqrt, atan2, sin, cos from math
+
+Vector2 = ffi.typeof('Vector2')
+
+Vector2MT = {
+	__tostring: => 'Vector2(%f, %f)'::format(@x, @y)
+
+	zero: -> Vector2!
+	one: -> Vector2(1, 1)
+
+	add: (rhs) => Vector2(@x + rhs.x, @y + rhs.y)
+	addValue: (val) => Vector2(@x + val, @y + val)
+	subtract: (rhs) => Vector2(@x - rhs.x, @y - rhs.y)
+	subtractValue: (val) => Vector2(@x - val, @y - val)
+	length: => sqrt(@x * @x + @y * @y)
+	lengthSqr: => @x * @x + @y * @y
+	dotProduct: (rhs) => @x * rhs.x + @y * rhs.y
+	angle: (rhs) => atan2(rhs.y, rhs.x) - atan2(@y, @x)
+	scale: (val) => Vector2(@x * val, @y * val)
+	multiply: (rhs) => Vector2(@x * rhs.x, @y * rhs.y)
+	negate: => Vector2(-@x, -@y)
+	divide: (rhs) => Vector2(@x / rhs.x, @y / rhs.y)
+
+	distance: (rhs) =>
+		dx, dy = @x - rhs.x, @y - rhs.y
+		sqrt(dx * dx + dy * dy)
+
+	normalize: =>
+		result = Vector2!
+		len = @length!
+		if len > 0
+			result.x, result.y = @x / len, @y / len
+		result
+
+	transform: (mat) => Vector2(
+		mat.m0 * @x + mat.m4 * @y + mat.m12,
+		mat.m1 * @x + mat.m5 * @y + mat.m13
+	)
+
+	lerp: (v, amount) => Vector2(
+		@x + amount * (v.x - @x),
+		@y + amount * (v.y - @y)
+	)
+
+	reflect: (normal) =>
+		dot = @dotProduct(normal)
+		Vector2(
+			@v.x - (2 * normal.x) * dot,
+			@v.y - (2 * normal.y) * dot
+		)
+
+	rotate: (angle) =>
+		sn, cs = sin(angle), cos(angle)
+		Vector2(
+			@x * cs - @y * sn,
+			@x * sn + @y * cs
+		)
+
+	moveTowards: (target, maxDistance) =>
+		dx, dy = target.x - @x, target.y - @y
+		value = dx * dx + dy * dy
+
+		result = Vector2(target)
+		return result if value == 0 or (maxDistance >= 0 and value <= maxDistance * maxDistance)
+
+		dist = sqrt(value)
+		result.x, result.y = @x + dx / dist * maxDistance, @y + dy / dist * maxDistance
+		result
+}
+
+ffi.metatype(Vector2, Vector2MT)

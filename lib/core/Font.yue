@@ -1,0 +1,47 @@
+import 'ffi'
+import RL from yuema
+import C from ffi
+import 'lib.core.util' as :ptr
+
+GlyphInfo = ffi.typeof('GlyphInfo')
+Font = ffi.typeof('Font')
+
+gc = => ffi.gc(@, RL.UnloadFont)
+
+FontMT = {
+	DEFAULT: C,FONT_DEFAULT
+	BITMAP: C,FONT_BITMAP
+	SDF: C,FONT_SDF
+
+	:GlyphInfo
+
+	load: (fileName) -> gc(RL.LoadFont(fileName))
+	loadEx: (fileName, fontSize, fontChars, glyphCount) -> gc(RL.LoadFontEx(fileName, fontSize, fontChars, glyphCount))
+	loadFromImage: (image, key, firstChar) -> gc(RL.LoadFontFromImage(image, key, firstChar))
+
+	loadFromMemory: (fileType, fileData, dataSize, fontSize, fontChars, glyphCount) ->
+		gc(RL.LoadFontFromMemory(fileType, fileData, dataSize, fontSize, fontChars, glyphCount))
+
+	loadFontData: (fileData, dataSize, fontSize, fontChars, glyphCount, type) ->
+		dataSize or= #fileData
+		if data = ptr(RL.LoadFontData(fileData, dataSize, fontSize, fontChars, glyphCount, type))
+			result = [ GlyphInfo(data[i]) for i = 0, glyphCount - 1 ]
+			RL.UnloadFontData(data, glyphCount)
+			return result
+		nil
+
+	getDefault: -> RL.GetFontDefault!
+	measureText: (text, fontSize) -> RL.MeasureText(text, fontSize)
+
+	-- member functions --
+
+	exportAsCode: (fileName) => RL.ExportFontAsCode(@, fileName)
+	measureTextEx: (text, fontSize, spacing) => RL.MeasureTextEx(@, text, fontSize, spacing)
+	getGlyphIndex: (codepoint) => RL.GetGlyphIndex(@, codepoint)
+	getGlyphInfo: (codepoint) => RL.GetGlyphInfo(@, codepoint)
+	getGlyphAtlasRec: (codepoint) => RL.GetGlyphAtlasRec(@, codepoint)
+}
+
+FontMT.__index = FontMT
+
+ffi.metatype(Font, FontMT)

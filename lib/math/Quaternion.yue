@@ -1,0 +1,185 @@
+import 'ffi'
+import 'lib.math.Matrix'
+import 'lib.math.Vector3'
+import sqrt, abs, acos, asin, sin, cos, atan2, min, max from math
+
+Quaternion = ffi.typeof('Quaternion')
+
+QuaternionMT = {
+	identity: -> Quaternion(0, 0, 0, 1)
+
+	fromVector3ToVector3: (v1, v2) ->
+		cos2Theta = v1::dotProduct(v2)
+		cross = v1:crossProduct(v2)
+		Quaternion(cross.x, cross.y, cross.z, 1 + cos2Theta)::normalize!
+
+	fromMatrix: (mat) ->
+		if mat.m0 > mat.m5 and mat.m0 > mat.m10
+			s = sqrt(1 + mat.m0 - mat.m5 - mat.m10) * 2
+			return Quaternion(
+				0.25 * s,
+				(mat.m4 + mat.m1) / s,
+				(mat.m2 + mat.m8) / s,
+				(mat.m9 - mat.m6) / s
+			)
+
+		if mat.m5 > mat.m10
+			s = sqrt(1 + mat.m5 - mat.m0 - mat.m10) * 2
+			return Quaternion(
+				(mat.m4 + mat.m1) / s,
+				0.25 * s,
+				(mat.m9 + mat.m6) / s,
+				(mat.m2 - mat.m8) / s
+			)
+
+		s = sqrt(1 + mat.m10 - mat.m0 - mat.m5) * 2
+		Quaternion(
+			(mat.m2 + mat.m8) / s,
+			(mat.m9 + mat.m6) / s,
+			0.25 * s,
+			(mat.m4 - mat.m1) / s
+		)
+
+	fromAxisAngle: (axis, angle) ->
+		return Quaternion.identity! if axis::lengthSqr! == 0
+		angle *= 0.5
+		axis = axis::normalize!
+		sn = sin(angle)
+		Quaternion(axis.x * sn, axis.y * sn, axis.z * sn, cos(angle))::normalize!
+
+	fromEuler: (pitch, yaw, roll) ->
+		x0, x1 = cos(pitch * 0.5), sin(pitch * 0.5)
+		y0, y1 = cos(yaw * 0.5), sin(yaw * 0.5)
+		z0, z1 = cos(roll * 0.5), sin(roll * 0.5)
+		Quaternion(
+			x1 * y0 * z0 - x0 * y1 * z1,
+			x0 * y1 * z0 + x1 * y0 * z1,
+			x0 * y0 * z1 - x1 * y1 * z0,
+			x0 * y0 * z0 + x1 * y1 * z1
+		)
+
+	add: (rhs) => Quaternion(@x + rhs.x, @y + rhs.y, @z + rhs.z, @w + rhs.w)
+	addValue: (val) => Quaternion(@x + val, @y + val, @z + val, @w + val)
+	subtract: (rhs) => Quaternion(@x - rhs.x, @y - rhs.y, @z - rhs.z, @w - rhs.w)
+	subtractValue: (val) => Quaternion(@x - val, @y - val, @z - val, @w - val)
+	length: => sqrt(@x * @x + @y * @y + @z * @z + @w * @w)
+	divide: (rhs) => Quaternion(@x / rhs.x, @y / rhs.y, @z / rhs.z, @w / rhs.w)
+
+	normalize: =>
+		len = @length!
+		len = 1 if len == 0
+		Quaternion(@x / len, @y / len, @z / len, @w / len)
+
+	invert: =>
+		x, y, z, w = @x, @y, @z, @w
+		lenSq = x * x + y * y + z * z + w * w
+		if lenSq ~= 0
+			i = 1 / lenSq
+			x, y, z, w = x * -i, y * -i, z * -i, w * i
+		Quaternion(x, y, z, w)
+
+	multiply: (rhs) => Quaternion(
+		@x * rhs.w + @w * rhs.x + @y * rhs.z - @z * rhs.y,
+		@y * rhs.w + @w * rhs.y + @z * rhs.x - @x * rhs.z,
+		@z * rhs.w + @w * rhs.z + @x * rhs.y - @y * rhs.x,
+		@w * rhs.w - @x * rhs.x - @y * rhs.y - @z * rhs.z
+	)
+
+	scale: (rhs) => Quaternion(
+		@x * rhs + @w * rhs + @y * rhs - @z * rhs,
+		@y * rhs + @w * rhs + @z * rhs - @x * rhs,
+		@z * rhs + @w * rhs + @x * rhs - @y * rhs,
+		@w * rhs - @x * rhs - @y * rhs - @z * rhs
+	)
+
+	lerp: (q, amount) => Quaternion(
+		@x + amount * (q.x - @x),
+		@y + amount * (q.y - @y),
+		@z + amount * (q.z - @z),
+		@w + amount * (q.w - @w)
+	)
+
+	nlerp: (q, amount) => @lerp(q, amount)::normalize!
+
+	slerp: (q, amount) =>
+		cosHalfTheta = @x * q.x + @y * q.y + @z * q.z + @w * q.w
+
+		if cosHalfTheta < 0
+			q.x, q.y, q.z, q.w = -q.x, -q.y, -q.z, -q.w
+			cosHalfTheta = -cosHalfTheta
+
+		if abs(cosHalfTheta) >= 1
+			return Quaternion(@x, @y, @z, @w)
+		elseif cosHalfTheta > 0.95
+			return @nlerp(q, amount)
+
+		halfTheta = acos(cosHalfTheta)
+		sinHalfTheta = sqrt(1 - cosHalfTheta * cosHalfTheta)
+		if abs(sinHalfTheta) < 0.001
+			return Quaternion(
+				@x * 0.5 + q.x * 0.5,
+				@y * 0.5 + q.y * 0.5,
+				@z * 0.5 + q.z * 0.5,
+				@w * 0.5 + q.w * 0.5
+			)
+
+		ratioA = sin((1 - amount) * halfTheta) / sinHalfTheta
+		ratioB = sin(amount * halfTheta) / sinHalfTheta
+		Quaternion(
+			@x * ratioA + q.x * ratioB,
+			@y * ratioA + q.y * ratioB,
+			@z * ratioA + q.z * ratioB,
+			@w * ratioA + q.w * ratioB
+		)
+
+	transform: (mat) => Quaternion(
+		mat.m0 * @x + mat.m4 * @y +  mat.m8 * @z + mat.m12 * @w,
+		mat.m1 * @x + mat.m5 * @y +  mat.m9 * @z + mat.m13 * @w,
+		mat.m2 * @x + mat.m6 * @y + mat.m10 * @z + mat.m14 * @w,
+		mat.m3 * @x + mat.m7 * @y + mat.m11 * @z + mat.m15 * @w
+	)
+
+	toMatrix: =>
+		a2, b2, c2 = @x * @x, @y * @y, @z * @z
+		ac, ab, bc = @x * @z, @x * @y, @y * @z
+		ad, bd, cd = @w * @x, @w * @y, @w * @z
+		Matrix(
+			1 - 2 * (b2 + c2),     2 * (ab + cd),     2 * (ac - bd), 0,
+				2 * (ab - cd), 1 - 2 * (a2 + c2),     2 * (bc + ad), 0,
+				2 * (ac + bd),     2 * (bc - ad), 1 - 2 * (a2 + b2), 0,
+							0,                 0,                 0, 1
+		)
+
+	toAxisAngle: =>
+		q = abs(@w) > 1 and @normalize! or @
+		angle = 2 * acos(q.w)
+		den = sqrt(1 - q.w * q.w)
+		if den > 0.0001
+			return Vector3(q.x / den, q.y / den, q.z / den), angle
+
+		Vector3(1, 0, 0), angle
+
+	toEuler: =>
+		x = do
+			x0 = 2 * (q.w * q.x + q.y * q.z)
+			x1 = 1 - 2 * (q.x * q.x + q.y * q.y)
+			atan2(x0, x1)
+
+		y = do
+			y0 = 2 * (q.w * q.y - q.z * q.x)
+			y0 = max(-1, min(y0, 1))
+			asin(y0)
+
+		z = do
+			z0 = 2 * (q.w * q.z + q.x * q.y)
+			z1 = 1 - 2 * (q.y * q.y + q.z * q.z)
+			atan2(z0, z1)
+
+		Vector3(x, y, z)
+
+	__tostring: => 'Quaternion(%f, %f, %f, %f)'\format(@x, @y, @z, @w)
+}
+
+ffi.metatype(Quaternion, QuaternionMT)
+
+Quaternion

@@ -1,0 +1,79 @@
+--*******************************************************************************************
+--
+--   Physac - Physics demo
+--
+--   Copyright (c) 2016-2020 Victor Fisac (github: @victorfisac)
+--
+--   Adapted for yuema by megagrump@pm.me
+--
+--*******************************************************************************************/
+
+import 'lib.core.all' as {
+	:config
+	:window
+	:draw
+	:time
+	:util
+	:input
+	:Font
+	:Color
+}
+
+import 'lib.physac'
+import 'lib.math.Vector2'
+import mouse from input
+
+config.setFlags(config.MSAA_4X_HINT)
+screenWidth, screenHeight = 800, 450
+window.init(screenWidth, screenHeight, "[physac] Basic demo")
+
+logoX = screenWidth - Font.measureText("Physac", 30) - 10
+logoY = 15
+
+physac.init!
+
+floor = physac.createBodyRectangle(Vector2(screenWidth/2, screenHeight), 500, 100, 10)
+floor.enabled = false
+
+circle = physac.createBodyCircle(Vector2(screenWidth/2, screenHeight/2), 45, 10)
+circle.enabled = false
+
+time.setTargetFPS(60)
+
+while not window.shouldClose!
+
+	if mouse.isPressed(mouse.BUTTON_LEFT)
+		physac.createBodyPolygon(mouse.getPosition!, util.getRandomValue(20, 80), util.getRandomValue(3, 8), 10)
+	elseif mouse.isPressed(mouse.BUTTON_RIGHT)
+		physac.createBodyCircle(mouse.getPosition!, util.getRandomValue(10, 45), 10)
+
+	for i = physac.getBodiesCount!, 1, -1
+		if body = physac.getBody(i - 1)
+			if body.position.y > screenHeight * 2
+				physac.destroyBody(body)
+
+	with draw
+		.beginDrawing!
+
+		.clearBackground(Color.BLACK)
+
+		.fps(screenWidth - 90, screenHeight - 30)
+
+		for i = 0, physac.getBodiesCount! - 1
+			if body = physac.getBody(i)
+				vertexCount = physac.getShapeVerticesCount(i)
+				for j = 0, vertexCount - 1
+					vertexA = body::getShapeVertex(j)
+					vertexB = body::getShapeVertex((j + 1) % vertexCount)
+					.lineV(vertexA, vertexB, Color.GREEN)
+
+		.text("Left mouse button to create a polygon", 10, 10, 10, Color.WHITE)
+		.text("Right mouse button to create a circle", 10, 25, 10, Color.WHITE)
+
+		.text("Physac", logoX, logoY, 30, Color.WHITE)
+		.text("Powered by", logoX + 50, logoY - 7, 10, Color.WHITE)
+
+		.endDrawing!
+
+physac.close!
+window.close!
