@@ -1,27 +1,17 @@
 import 'ffi'
+import floor from math
 import 'bit' as {
 	:lshift
 	:rshift
 	:bnot
 	:bxor
+	:bor
 }
-import 'math' as :floor
 
-RNGMT = {
-	random: (lo, hi) =>
-		@_state = bxor(@_state, rshift(@_state, 12))
-		@_state = bxor(@_state, lshift(@_state, 25))
-		@_state = bxor(@_state, rshift(@_state, 27))
-		r = tonumber(@_state * 2685821657736338717ULL) / 0xffffffffffffffff
-		if hi
-			return floor(lo + r * (hi - lo + 1))
-		if lo
-			return floor(1 + lo * r)
+RNG = ffi.typeof('struct { uint64_t _seed, _state; }')
 
-		r
-}
-RNGMT.__index = RNGMT
-
+-- Thomas Wang's 64-bit integer hashing function
+-- https://web.archive.org/web/20110807030012/http://www.cris.com/%7ETtwang/tech/inthash.htm
 wang = (key) ->
 	key = bnot(key) + lshift(key, 21)
 	key = bxor(key, rshift(key, 24))
@@ -31,11 +21,33 @@ wang = (key) ->
 	key = bxor(key, rshift(key, 28))
 	key + lshift(key, 31)
 
-RNG = (_seed = 0x178392ac8fe399b1ULL) ->
-	_state = wang(ffi.cast('uint64_t', _seed))
-	while _state == 0
-		_state = wang(_state)
+normalize = ffi.new('union { uint64_t i64; double d64; }')
 
-	setmetatable({ :_state, :_seed }, RNGMT)
+RNGMT = {
+	__new: (seed = 0x178392ac8fe399b1ULL) =>
+		state = wang(ffi.cast('uint64_t', seed))
+		state = wang(state) if state == 0
+		ffi.new(@, seed, state)
 
-RNG
+	random: (lo, hi) =>
+		state = @_state
+		state = bxor(state, rshift(state, 12))
+		state = bxor(state, lshift(state, 25))
+		state = bxor(state, rshift(state, 27))
+		@_state = state
+
+		normalize.i64 = bor(lshift(0x3ffULL, 52), rshift(state * 2685821657736338717ULL, 12))
+		r = normalize.d64 - 1
+		if hi
+			return floor(lo + r * (hi - lo + 1))
+		if lo
+			return floor(1 + lo * r)
+		r
+
+	getState: => @_state
+
+	setState: (@_state) =>
+}
+RNGMT.__index = RNGMT
+
+ffi.metatype(RNG, RNGMT)
