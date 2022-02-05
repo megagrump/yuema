@@ -1,0 +1,41 @@
+import 'ffi'
+import 'bit' as {
+	:lshift
+	:rshift
+	:bnot
+	:bxor
+}
+import 'math' as :floor
+
+RNGMT = {
+	random: (lo, hi) =>
+		@_state = bxor(@_state, rshift(@_state, 12))
+		@_state = bxor(@_state, lshift(@_state, 25))
+		@_state = bxor(@_state, rshift(@_state, 27))
+		r = tonumber(@_state * 2685821657736338717ULL) / 0xffffffffffffffff
+		if hi
+			return floor(lo + r * (hi - lo + 1))
+		if lo
+			return floor(1 + lo * r)
+
+		r
+}
+RNGMT.__index = RNGMT
+
+wang = (key) ->
+	key = bnot(key) + lshift(key, 21)
+	key = bxor(key, rshift(key, 24))
+	key += lshift(key, 3) + lshift(key, 8)
+	key = bxor(key, rshift(key, 14))
+	key += lshift(key, 2) + lshift(key, 4)
+	key = bxor(key, rshift(key, 28))
+	key + lshift(key, 31)
+
+RNG = (_seed = 0x178392ac8fe399b1ULL) ->
+	_state = wang(ffi.cast('uint64_t', _seed))
+	while _state == 0
+		_state = wang(_state)
+
+	setmetatable({ :_state, :_seed }, RNGMT)
+
+RNG
