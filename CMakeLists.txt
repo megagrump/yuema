@@ -12,13 +12,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED False)
 
 set(YUEMA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/yuema)
 
-set(LIB_PREFIX "lib")
-set(LIB_SUFFIX ".a")
 if(WIN32)
-	set(EXE_SUFFIX ".exe")
 	set(LINKER_OPTS "-Wl,-subsystem,windows -static")
 else()
-	set(EXE_SUFFIX "")
 	set(LINKER_OPTS "-ldl")
 endif()
 
@@ -32,13 +28,13 @@ add_custom_target(luajit-bin ALL
 )
 add_library(luajit STATIC IMPORTED)
 add_dependencies(luajit luajit-bin)
-set_property(TARGET luajit PROPERTY IMPORTED_LOCATION ${LUAJIT_SOURCE_DIR}/${LIB_PREFIX}luajit${LIB_SUFFIX})
+set_property(TARGET luajit PROPERTY IMPORTED_LOCATION ${LUAJIT_SOURCE_DIR}/libluajit.a)
 ###
 
 function(generate_ffi source target prefix defines)
 	add_custom_command(
 		OUTPUT ${target}
-		COMMAND ${LUAJIT_SOURCE_DIR}/luajit${EXE_SUFFIX} generate_ffi.lua ${source} ${target} ${prefix} ${defines}
+		COMMAND ${LUAJIT_SOURCE_DIR}/luajit generate_ffi.lua ${source} ${target} ${prefix} ${defines}
 		DEPENDS ${source}
 		DEPENDS luajit
 		DEPENDS ${YUEMA_SOURCE_DIR}/tools/generate_ffi.lua
@@ -49,11 +45,12 @@ endfunction()
 ### raylib
 set(RAYLIB_PROJECT_DIR ${PROJECT_SOURCE_DIR}/src/raylib)
 set(RAYLIB_SOURCE_DIR ${RAYLIB_PROJECT_DIR}/src)
-option(CUSTOMIZE_BUILD ON)
-option(SUPPORT_FILEFORMAT_JPG ON)
+set(CUSTOMIZE_BUILD ON CACHE BOOL "Customize raylib build")
+set(SUPPORT_FILEFORMAT_JPG ON CACHE BOOL "Enable JPG support")
+#set(GRAPHICS GRAPHICS_API_OPENGL_43 CACHE STRING "OpenGL version")
 add_subdirectory(${RAYLIB_PROJECT_DIR})
 generate_ffi(${RAYLIB_SOURCE_DIR}/raylib.h ${YUEMA_SOURCE_DIR}/raylib_ffi.h RAYLIB "")
-generate_ffi(${RAYLIB_SOURCE_DIR}/rlgl.h ${YUEMA_SOURCE_DIR}/rlgl_ffi.h RLGL "RL_MATRIX_TYPE GRAPHICS_API_OPENGL_43 RLGL_ENABLE_OPENGL_DEBUG_CONTEXT")
+generate_ffi(${RAYLIB_SOURCE_DIR}/rlgl.h ${YUEMA_SOURCE_DIR}/rlgl_ffi.h RLGL "RL_MATRIX_TYPE RLGL_ENABLE_OPENGL_DEBUG_CONTEXT")
 ###
 
 ### raygui

@@ -3,7 +3,6 @@
 #include <iostream>
 #include "LuaVM.h"
 
-#define GRAPHICS_API_OPENGL_43
 #define RLGL_ENABLE_OPENGL_DEBUG_CONTEXT
 #include "raylib.h"
 #include "rlgl.h"
