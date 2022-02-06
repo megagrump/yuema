@@ -45,8 +45,8 @@ make
 
 ### Windows
 
-The [MSYS](https://www.msys2.org/) MinGW compiler suite is used to create binaries for Windows. `mingw-w64-x86_64-cmake` is required.
-The `/mingw64/bin` directory is assumed to be in your `$PATH`.
+The [MSYS](https://www.msys2.org/) MinGW compiler suite is used to create binaries for Windows. Additionally, `mingw-w64-x86_64-cmake` is required to build the project.
+The `/mingw64/bin` directory is expected to be in your `$PATH`.
 
 ```
 mkdir build
@@ -54,12 +54,6 @@ cd build
 cmake -G "MSYS Makefiles" ..
 make
 ```
-
-The `yuema` runtime depends on these DLLs from mingw64:
-
-* `libstdc++-6.dll`
-* `libwinpthread-1.dll`
-* `libgcc_s_seh-1.dll`
 
 ### Other platforms/compilers
 
