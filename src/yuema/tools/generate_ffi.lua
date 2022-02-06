@@ -93,6 +93,15 @@ local function getDeclarations()
 			end
 		end
 	end
+
+	for i, t in ipairs(result.types) do
+		result.types[i] = t
+			:gsub(',', ',\n\t')
+			:gsub(';', ';\n\t')
+			:gsub('{', '{\n\t')
+			:gsub('}', '\n}')
+	end
+
 	return result
 end
 
