@@ -4,8 +4,6 @@ import C from ffi
 
 Shader = ffi.typeof('Shader')
 
-gc = => ffi.gc(@, RL.UnloadShader)
-
 ShaderMT = {
 	LOC_MAP_DIFFUSE:       C.SHADER_LOC_MAP_ALBEDO
 	LOC_MAP_SPECULAR:      C.SHADER_LOC_MAP_METALNESS
@@ -51,17 +49,19 @@ ShaderMT = {
 	ATTRIB_VEC3:  C.SHADER_ATTRIB_VEC3
 	ATTRIB_VEC4:  C.SHADER_ATTRIB_VEC4
 
-	load: (vsFileName, fsFileName) -> gc(RL.LoadShader(vsFileName, fsFileName))
-	loadFromMemory: (vsCode, fsCode) -> gc(RL.LoadShaderFromMemory(vsCode, fsCode))
+	load: (vsFileName, fsFileName) -> Shader(RL.LoadShader(vsFileName, fsFileName))
+	loadFromMemory: (vsCode, fsCode) -> Shader(RL.LoadShaderFromMemory(vsCode, fsCode))
 
 	-- member functions --
 
-	getLocation: (@, uniformName) => RL.GetShaderLocation(@, uniformName)
-	getLocationAttrib: (@, attribName) => RL.GetShaderLocationAttrib(@, attribName)
-	setValue: (@, locIndex, value, uniformType) => RL.SetShaderValue(@, locIndex, value, uniformType)
-	setValueV: (@, locIndex, value, uniformType, count) => RL.SetShaderValueV(@, locIndex, value, uniformType, count)
-	setValueMatrix: (@, locIndex, mat) => RL.SetShaderValueMatrix(@, locIndex, mat)
-	setValueTexture: (@, locIndex, texture) => RL.SetShaderValueTexture(@, locIndex, texture)
+	__gc: RL.UnloadShader
+
+	getLocation: RL.GetShaderLocation
+	getLocationAttrib: RL.GetShaderLocationAttrib
+	setValue: RL.SetShaderValue
+	setValueV: RL.SetShaderValueV
+	setValueMatrix: RL.SetShaderValueMatrix
+	setValueTexture: RL.SetShaderValueTexture
 }
 
 ShaderMT.__index = ShaderMT

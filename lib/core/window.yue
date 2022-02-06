@@ -1,52 +1,52 @@
 import RL from yuema
 
 {
-	init: (width, height, title) -> RL.InitWindow(width, height, title)
-	shouldClose: -> RL.WindowShouldClose!
-	close: -> RL.CloseWindow!
-	isReady: -> RL.IsWindowReady!
-	isFullscreen: -> RL.IsWindowFullscreen!
-	isHidden: -> RL.IsWindowHidden!
-	isMinimized: -> RL.IsWindowMinimized!
-	isMaximized: -> RL.IsWindowMaximized!
-	isFocused: -> RL.IsWindowFocused!
-	isResized: -> RL.IsWindowResized!
+	init: RL.InitWindow
+	shouldClose: RL.WindowShouldClose
+	close: RL.CloseWindow
+	isReady: RL.IsWindowReady
+	isFullscreen: RL.IsWindowFullscreen
+	isHidden: RL.IsWindowHidden
+	isMinimized: RL.IsWindowMinimized
+	isMaximized: RL.IsWindowMaximized
+	isFocused: RL.IsWindowFocused
+	isResized: RL.IsWindowResized
 
-	isState: (flag) -> RL.IsWindowState(flag)
-	setState: (flags) -> RL.SetWindowState(flags)
-	clearState: (flags) -> RL.ClearWindowState(flags)
+	isState: RL.IsWindowState
+	setState: RL.SetWindowState
+	clearState: RL.ClearWindowState
 
-	toggleFullscreen: -> RL.ToggleFullscreen!
-	maximize: -> RL.MaximizeWindow!
-	minimize: -> RL.MinimizeWindow!
-	restore: -> RL.RestoreWindow!
+	toggleFullscreen: RL.ToggleFullscreen
+	maximize: RL.MaximizeWindow
+	minimize: RL.MinimizeWindow
+	restore: RL.RestoreWindow
 
-	getPosition: -> RL.GetWindowPosition!
-	getScaleDPI: -> RL.GetWindowScaleDPI!
-	getWidth: -> RL.GetScreenWidth!
-	getHeight: -> RL.GetScreenHeight!
-	getRenderWidth: -> RL.GetRenderWidth!
-	getRenderHeight: -> RL.GetRenderHeight!
+	getPosition: RL.GetWindowPosition
+	getScaleDPI: RL.GetWindowScaleDPI
+	getWidth: RL.GetScreenWidth
+	getHeight: RL.GetScreenHeight
+	getRenderWidth: RL.GetRenderWidth
+	getRenderHeight: RL.GetRenderHeight
 
-	setIcon: (image) -> RL.SetWindowIcon(image)
-	setTitle: (title) -> RL.SetWindowTitle(title)
-	setPosition: (x, y) -> RL.SetWindowPosition(x, y)
-	setMonitor: (monitor) -> RL.SetWindowMonitor(monitor)
-	setMinSize: (width, height) -> RL.SetWindowMinSize(width, height)
-	setSize: (width, height) -> RL.SetWindowSize(width, height)
-	setOpacity: (opacity) -> RL.SetWindowOpacity(opacity)
+	setIcon: RL.SetWindowIcon
+	setTitle: RL.SetWindowTitle
+	setPosition: RL.SetWindowPosition
+	setMonitor: RL.SetWindowMonitor
+	setMinSize: RL.SetWindowMinSize
+	setSize: RL.SetWindowSize
+	setOpacity: RL.SetWindowOpacity
 
-	getHandle: -> RL.GetWindowHandle!
-	getCurrentMonitor: -> RL.GetCurrentMonitor!
-	getMonitorCount: -> RL.GetMonitorCount!
-	getMonitorPosition: (monitor) -> RL.GetMonitorPosition(monitor)
-	getMonitorWidth: (monitor) -> RL.GetMonitorWidth(monitor)
-	getMonitorHeight: (monitor) -> RL.GetMonitorHeight(monitor)
-	getMonitorPhysicalWidth: (monitor) -> RL.GetMonitorPhysicalWidth(monitor)
-	getMonitorPhysicalHeight: (monitor) -> RL.GetMonitorPhysicalHeight(monitor)
-	getMonitorRefreshRate: (monitor) -> RL.GetMonitorRefreshRate(monitor)
-	getMonitorName: (monitor) -> RL.GetMonitorName(monitor)
+	getHandle: RL.GetWindowHandle
+	getCurrentMonitor: RL.GetCurrentMonitor
+	getMonitorCount: RL.GetMonitorCount
+	getMonitorPosition: RL.GetMonitorPosition
+	getMonitorWidth: RL.GetMonitorWidth
+	getMonitorHeight: RL.GetMonitorHeight
+	getMonitorPhysicalWidth: RL.GetMonitorPhysicalWidth
+	getMonitorPhysicalHeight: RL.GetMonitorPhysicalHeight
+	getMonitorRefreshRate: RL.GetMonitorRefreshRate
+	getMonitorName: RL.GetMonitorName
 
-	swapScreenBuffer: -> RL.SwapScreenBuffer!
-	pollInputEvents: -> RL.PollInputEvents!
+	swapScreenBuffer: RL.SwapScreenBuffer
+	pollInputEvents: RL.PollInputEvents
 }

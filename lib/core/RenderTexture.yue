@@ -3,10 +3,10 @@ import 'ffi'
 
 RenderTexture = ffi.typeof('RenderTexture')
 
-gc = => ffi.gc(@, RL.UnloadRenderTexture)
-
 RenderTextureMT = {
-	load: (width, height) -> gc(RL.LoadRenderTexture(width, height))
+	load: (width, height) -> RenderTexture(RL.LoadRenderTexture(width, height))
+
+	__gc: RL.UnloadRenderTexture
 }
 
 RenderTextureMT.__index = RenderTextureMT

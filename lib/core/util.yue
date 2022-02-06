@@ -4,15 +4,15 @@ import RL from yuema
 {
 	ptr: => @ ~= nil and @ or nil -- NULL -> nil, because NULL is a truthy value in LuaJIT
 
-	setClipboardText: (text) ->	RL.SetClipboardText(text)
+	setClipboardText: RL.SetClipboardText
 	getClipboardText: -> ffi.string(RL.GetClipboardText!)
 
-	openURL: (url) -> RL.OpenURL(url)
+	openURL: RL.OpenURL
 
-	takeScreenshot: (fileName) -> RL.TakeScreenshot(fileName)
+	takeScreenshot: RL.TakeScreenshot
 
-	getPixelDataSize: (width, height, format) -> RL.GetPixelDataSize(width, height, format)
+	getPixelDataSize: RL.GetPixelDataSize
 
-	getRandomValue: (min, max) -> RL.GetRandomValue(min, max)
-	setRandomSeed: (seed) -> RL.SetRandomSeed(seed)
+	getRandomValue: RL.GetRandomValue
+	setRandomSeed: RL.SetRandomSeed
 }

@@ -19,21 +19,21 @@ import 'lib.core.util' as :ptr
 
 	saveData: (fileName, data, bytesToWrite) -> RL.SaveFileData(fileName, data, bytesToWrite or #data)
 
-	saveText: (fileName, text) -> RL.SaveFileText(fileName, text)
-	fileExists: (fileName) -> RL.FileExists(fileName)
-	directoryExists: (dirPath) -> RL.DirectoryExists(dirPath)
-	getFileLength: (fileName) -> RL.GetFileLength(fileName)
-	isFileExtension: (fileName, ext) -> RL.IsFileExtension(fileName, ext)
-	getFileExtension: (filename) -> RL.GetFileExtension(fileName)
-	getFileName: (filePath) -> RL.GetFileName(filePath)
-	getFileNameWithoutExt: (filePath) -> RL.GetFileNameWithoutExt(filePath)
-	getDirectoryPath: (filePath) -> RL.GetDirectoryPath(filePath)
-	getPrevDirectoryPath: (dirPath) -> RL.GetPrevDirectoryPath(dirPath)
-	getWorkingDirectory: -> RL.GetWorkingDirectory!
-	getApplicationDirectory: -> RL.GetApplicationDirectory
-	changeDirectory: (dir) -> RL.ChangeDirectory(dir)
-	getModTime: (fileName) -> RL.GetFileModTime(fileName)
-	isFileDropped: -> RL.IsFileDropped!
+	saveText: RL.SaveFileText
+	fileExists: RL.FileExists
+	directoryExists: RL.DirectoryExists
+	getFileLength: RL.GetFileLength
+	isFileExtension: RL.IsFileExtension
+	getFileExtension: RL.GetFileExtension
+	getFileName: RL.GetFileName
+	getFileNameWithoutExt: RL.GetFileNameWithoutExt
+	getDirectoryPath: RL.GetDirectoryPath
+	getPrevDirectoryPath: RL.GetPrevDirectoryPath
+	getWorkingDirectory: RL.GetWorkingDirectory
+	getApplicationDirectory: RL.GetApplicationDirectory
+	changeDirectory: RL.ChangeDirectory
+	getModTime: RL.GetFileModTime
+	isFileDropped: RL.IsFileDropped
 
 	getDirectoryFiles: (dirPath) ->
 		count = ffi.new('int[1]')

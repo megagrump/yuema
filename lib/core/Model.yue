@@ -3,13 +3,11 @@ import RL from yuema
 
 Animation = ffi.typeof('ModelAnimation')
 
-gc = => ffi.gc(@, RL.UnloadModelAnimation)
-
 AnimationMT = {
 	loadAnimations: (fileName) ->
 		count = ffi.new('unsigned int[1]')
 		if anims = RL.LoadModelAnimations(fileName, count)
-			result = [ gc(anims[i]) for i = 0, count[0] - 1 ]
+			result = [ Mesh(anims[i]) for i = 0, count[0] - 1 ]
 			RL.UnloadModelAnimations(anims, count[0])
 			return result
 		nil
@@ -29,10 +27,10 @@ ModelMT = {
 
 	-- member functions --
 
-	getBoundingBox: => RL.GetModelBoundingBox(@)
-	setMeshMaterial: (meshId, materialId) => RL.SetModelMeshMaterial(@, meshId, materialId)
-	updateAnimation: (anim, frame) => RL.UpdateModelAnimation(@, anim, frame)
-	isAnimationValid: (anim) => RL.IsModelAnimationValid(@, anim)
+	getBoundingBox: RL.GetModelBoundingBox
+	setMeshMaterial: RL.SetModelMeshMaterial
+	updateAnimation: RL.UpdateModelAnimation
+	isAnimationValid: RL.IsModelAnimationValid
 	unloadKeepMeshes: => RL.UnloadModelKeepMeshes(ffi.gc(@, nil))
 }
 

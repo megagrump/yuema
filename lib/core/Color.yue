@@ -31,24 +31,24 @@ ColorMT = {
 	MAGENTA:    Color(255,   0, 255, 255)
 	RAYWHITE:   Color(245, 245, 245, 255)
 
-	fromInt: (int) -> RL.GetColor(int)
-	fromNormalized: (n) -> RL.ColorFromNormalized(n)
-	fromHSV: (h, s, v) -> RL.ColorFromHSV(h, s, v)
+	fromInt: RL.GetColor
+	fromNormalized: RL.ColorFromNormalized
+	fromHSV: RL.ColorFromHSV
 
-	getPixelColor: (srcPtr, format) -> RL.GetPixelColor(srcPtr, format)
-	setPixelColor: (dstPtr, color, format) -> RL.SetPixelColor(dstPtr, color, format)
+	getPixelColor: RL.GetPixelColor
+	setPixelColor: RL.SetPixelColor
 
 	-- member functions --
 
 	__tostring: => 'Color(%d, %d, %d, %d)'\format(@r, @g, @b, @a)
 
 	set: (@r, @g, @b, @a) =>
-	fade: (a) => RL.Fade(@, a)
-	alpha: (a) => RL.ColorAlpha(@, a)
+	fade: RL.Fade
+	alpha: RL.ColorAlpha
 	alphaBlend: (dst, tint) => RL.ColorAlphaBlend(dst, @, tint)
-	normalize: => RL.ColorNormalize(@)
-	toInt: => RL.ColorToInt(@)
-	toHSV: => RL.ColorToHSV(@)
+	normalize: RL.ColorNormalize
+	toInt: RL.ColorToInt
+	toHSV: RL.ColorToHSV
 }
 
 ColorMT.__index = ColorMT

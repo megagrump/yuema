@@ -46,143 +46,143 @@ import 'ffi' as :C
 	VERTEX_SHADER: C.RL_VERTEX_SHADER
 	COMPUTE_SHADER: C.RL_COMPUTE_SHADER
 
-	matrixMode: (mode) -> RLGL.rlMatrixMode(mode)
-	pushMatrix: -> RLGL.rlPushMatrix!
-	popMatrix: RLGL.rlPopMatrix!
-	loadIdentity: -> RLGL.rlLoadIdentity!
-	rranslatef: (x, y, z) -> RLGL.rlTranslatef(x, y, z)
-	eotatef: (angle, x, y, z) -> RLGL.rlRotatef(angle, x, y, z)
-	scalef: (x, y, z) -> RLGL.rlScalef(x, y, z)
-	multMatrixf: (matf) -> RLGL.rlMultMatrixf(matf)
-	frustum: (left, right, bottom, top, znear, zfar) -> RLGL.rlFrustum(left, right, bottom, top, znear, zfar)
-	ortho: (left, right, bottom, top, znear, zfar) -> RLGL.rlOrtho(left, right, bottom, top, znear, zfar)
-	viewport: (x, y, width, height) -> RLGL.rlViewport(x, y, width, height)
-	begin: (mode) -> RLGL.rlBegin(mode)
-	end: -> rlEnd!
-	vertex2i: (x, y) -> RLGL.rlVertex2i(x, y)
-	vertex2f: (x, y) -> RLGL.rlVertex2f(x, y)
-	vertex3f: (x, y, z) -> RLGL.rlVertex3f(x, y, z)
-	texCoord2f: (x, y) -> RLGL.rlTexCoord2f(x, y)
-	normal3f: (x, y, z) -> RLGL.rlNormal3f(x, y, z)
-	color4ub: (r, g, b, a) -> RLGL.rlColor4ub(r, g, b, a)
-	color3f: (x, y, z) -> RLGL.rlColor3f(x, y, z)
-	color4f: (x, y, z, w) -> RLGL.rlColor4f(x, y, z, w)
-	enableVertexArray: (vaoId) -> RLGL.rlEnableVertexArray(vaoId)
-	disableVertexArray: -> RLGL.rlDisableVertexArray!
-	enableVertexBuffer: (id) -> RLGL.rlEnableVertexBuffer(id)
-	disableVertexBuffer: -> RLGL.rlDisableVertexBuffer!
-	enableVertexBufferElement: (id) -> RLGL.rlEnableVertexBufferElement(id)
-	disableVertexBufferElement: -> RLGL.rlDisableVertexBufferElement!
-	enableVertexAttribute: (index) -> RLGL.rlEnableVertexAttribute(index)
-	disableVertexAttribute: (index) -> RLGL.rlDisableVertexAttribute(index)
-	activeTextureSlot: (slot) -> RLGL.rlActiveTextureSlot(slot)
-	enableTexture: (id) -> RLGL.rlEnableTexture(id)
-	disableTexture: -> RLGL.rlDisableTexture!
-	enableTextureCubemap: (id) -> RLGL.rlEnableTextureCubemap(id)
-	disableTextureCubemap: -> RLGL.rlDisableTextureCubemap!
-	textureParameters: (id, param, value) -> RLGL.rlTextureParameters(id, param, value)
-	enableShader: (id) -> RLGL.rlEnableShader(id)
-	disableShader: -> RLGL.rlDisableShader!
-	enableFramebuffer: (id) -> RLGL.rlEnableFramebuffer(id)
-	disableFramebuffer: -> RLGL.rlDisableFramebuffer!
-	activeDrawBuffers: (count) -> RLGL.rlActiveDrawBuffers(count)
-	enableColorBlend: -> RLGL.rlEnableColorBlend!
-	disableColorBlend: -> RLGL.rlDisableColorBlend!
-	enableDepthTest: -> RLGL.rlEnableDepthTest!
-	disableDepthTest: -> RLGL.rlDisableDepthTest!
-	enableDepthMask: -> RLGL.rlEnableDepthMask!
-	disableDepthMask: -> RLGL.rlDisableDepthMask!
-	enableBackfaceCulling: -> RLGL.rlEnableBackfaceCulling!
-	disableBackfaceCulling: -> RLGL.rlDisableBackfaceCulling!
-	enableScissorTest: -> RLGL.rlEnableScissorTest!
-	disableScissorTest: -> RLGL.rlDisableScissorTest!
-	scissor: (x, y, width, height) -> RLGL.rlScissor(x, y, width, height)
-	enableWireMode: -> RLGL.rlEnableWireMode!
-	disableWireMode: -> RLGL.rlDisableWireMode!
-	setLineWidth: (width) -> RLGL.rlSetLineWidth(width)
-	getLineWidth: -> RLGL.rlGetLineWidth!
-	enableSmoothLines: -> RLGL.rlEnableSmoothLines!
-	disableSmoothLines: -> RLGL.rlDisableSmoothLines!
-	enableStereoRender: -> RLGL.rlEnableStereoRender!
-	disableStereoRender: -> RLGL.rlDisableStereoRender!
-	isStereoRenderEnabled: -> RLGL.rlIsStereoRenderEnabled!
-	clearColor: (r, g, b, a) -> RLGL.rlClearColor(r, g, b, a)
-	clearScreenBuffers: -> RLGL.rlClearScreenBuffers!
-	checkErrors: -> RLGL.rlCheckErrors!
-	setBlendMode: (mode) -> RLGL.rlSetBlendMode(mode)
-	setBlendFactors: (glSrcFactor, glDstFactor, glEquation) -> RLGL.rlSetBlendFactors(glSrcFactor, glDstFactor, glEquation)
-	init: (width, height) -> RLGL.rlglInit(width, height)
-	close: -> RLGL.rlglClose!
-	loadExtensions: (loader) -> RLGL.rlLoadExtensions(loader)
-	getVersion: -> RLGL.rlGetVersion!
-	getFramebufferWidth: -> RLGL.rlGetFramebufferWidth!
-	getFramebufferHeight: -> RLGL.rlGetFramebufferHeight!
-	getTextureIdDefault: -> RLGL.rlGetTextureIdDefault!
-	getShaderIdDefault: -> RLGL.rlGetShaderIdDefault!
-	getShaderLocsDefault: -> RLGL.rlGetShaderLocsDefault!
-	loadRenderBatch: (numBuffers, bufferElements) -> RLGL.rlLoadRenderBatch(numBuffers, bufferElements)
-	unloadRenderBatch: (batch) -> RLGL.rlUnloadRenderBatch(rlRenderBatch batch)
-	drawRenderBatch: (batch) -> RLGL.rlDrawRenderBatch(batch)
-	setRenderBatchActive: (batch) -> RLGL.rlSetRenderBatchActive(batch)
-	drawRenderBatchActive: -> RLGL.rlDrawRenderBatchActive!
-	checkRenderBatchLimit: (vCount) -> RLGL.rlCheckRenderBatchLimit(vCount)
-	setTexture: (id) -> RLGL.rlSetTexture(id)
-	loadVertexArray: -> RLGL.rlLoadVertexArray!
-	loadVertexBuffer: (buffer, size, dynamic) -> RLGL.rlLoadVertexBuffer(buffer, size, dynamic)
-	loadVertexBufferElement: (buffer, size, dynamic) -> RLGL.rlLoadVertexBufferElement(buffer, size, dynamic)
-	updateVertexBuffer: (bufferId, data, dataSize, offset) -> RLGL.rlUpdateVertexBuffer(bufferId, data, dataSize, offset)
-	unloadVertexArray: (vaoId) -> RLGL.rlUnloadVertexArray(vaoId)
-	unloadVertexBuffer: (vboId) -> RLGL.rlUnloadVertexBuffer(vboId)
-	setVertexAttribute: (index, compSize, type, normalized, stride, pointer) -> RLGL.rlSetVertexAttribute(index, compSize, type, normalized, stride, pointer)
-	setVertexAttributeDivisor: (index, divisor) -> RLGL.rlSetVertexAttributeDivisor(index, divisor)
-	setVertexAttributeDefault: (locIndex, value, attribType, count) -> RLGL.rlSetVertexAttributeDefault(locIndex, value, attribType, count)
-	drawVertexArray: (offset, count) -> RLGL.rlDrawVertexArray(offset, count)
-	drawVertexArrayElements: (offset, count, buffer) -> RLGL.rlDrawVertexArrayElements(offset, count, buffer)
-	drawVertexArrayInstanced: (offset, count, instances) -> RLGL.rlDrawVertexArrayInstanced(offset, count, instances)
-	drawVertexArrayElementsInstanced: (offset, count, buffer, instances) -> RLGL.rlDrawVertexArrayElementsInstanced(offset, count, buffer, instances)
-	loadTexture: (data, width, height, format, mipmapCount) -> RLGL.rlLoadTexture(data, width, height, format, mipmapCount)
-	loadTextureDepth: (width, height, useRenderBuffer) -> RLGL.rlLoadTextureDepth(width, height, useRenderBuffer)
-	loadTextureCubemap: (data, size, format) -> RLGL.rlLoadTextureCubemap(data, size, format)
-	updateTexture: (id, offsetX, offsetY, width, height, format, data) -> RLGL.rlUpdateTexture(id, offsetX, offsetY, width, height, format, data)
-	getGlTextureFormats: (format, glInternalFormat, glFormat, glType) -> RLGL.rlGetGlTextureFormats(format, glInternalFormat, glFormat, glType)
-	getPixelFormatName: (format) -> RLGL.rlGetPixelFormatName(format)
-	unloadTexture: (id) -> RLGL.rlUnloadTexture(id)
-	genTextureMipmaps: (id, width, height, format, mipmaps) -> RLGL.rlGenTextureMipmaps(id, width, height, format, mipmaps)
-	readTexturePixels: (id, width, height, format) -> RLGL.rlReadTexturePixels(id, width, height, format)
-	readScreenPixels: (width, height) -> RLGL.rlReadScreenPixels(width, height)
-	loadFramebuffer: (width, height) -> RLGL.rlLoadFramebuffer(width, height)
-	framebufferAttach: (fboId, texId, attachType, texType, mipLevel) -> RLGL.rlFramebufferAttach(fboId, texId, attachType, texType, mipLevel)
-	framebufferComplete: (id) -> RLGL.rlFramebufferComplete(id)
-	unloadFramebuffer: (id) -> RLGL.rlUnloadFramebuffer(id)
-	loadShaderCode: (vsCode, fsCode) -> RLGL.rlLoadShaderCode(vsCode, fsCode)
-	compileShader: (shaderCode, type) -> RLGL.rlCompileShader(shaderCode, type)
-	loadShaderProgram: (vShaderId, fShaderId) -> RLGL.rlLoadShaderProgram(vShaderId, fShaderId)
-	unloadShaderProgram: (id) -> RLGL.rlUnloadShaderProgram(id)
-	getLocationUniform: (shaderId, uniformName) -> RLGL.rlGetLocationUniform(shaderId, uniformName)
-	getLocationAttrib: (shaderId, attribName) -> RLGL.rlGetLocationAttrib(shaderId, attribName)
-	setUniform: (locIndex, value, uniformType, count) -> RLGL.rlSetUniform(locIndex, value, uniformType, count)
-	setUniformMatrix: (locIndex, mat) -> RLGL.rlSetUniformMatrix(locIndex, mat)
-	setUniformSampler: (locIndex, textureId) -> RLGL.rlSetUniformSampler(locIndex, textureId)
-	setShader: (id, locs) -> RLGL.rlSetShader(id, locs)
-	loadComputeShaderProgram: (shaderId) -> RLGL.rlLoadComputeShaderProgram(shaderId)
-	computeShaderDispatch: (groupX, groupY, groupZ) -> RLGL.rlComputeShaderDispatch(groupX, groupY, groupZ)
-	loadShaderBuffer: (size, data, usageHint) -> RLGL.rlLoadShaderBuffer(size, data, usageHint)
-	unloadShaderBuffer: (ssboId) -> RLGL.rlUnloadShaderBuffer(ssboId)
-	updateShaderBufferElements: (id, data, dataSize, offset) -> RLGL.rlUpdateShaderBufferElements(id, data, dataSize, offset)
-	getShaderBufferSize: (id) -> RLGL.rlGetShaderBufferSize(id)
-	readShaderBufferElements: (id, dest, count, offset) -> RLGL.rlReadShaderBufferElements(id, dest, count, offset)
-	bindShaderBuffer: (id, index) -> RLGL.rlBindShaderBuffer(id, index)
-	copyBuffersElements: (destId, srcId, destOffset, srcOffset, count) -> RLGL.rlCopyBuffersElements(destId, srcId, destOffset, srcOffset, count)
-	bindImageTexture: (id, index, format, readonly) -> RLGL.rlBindImageTexture(id, index, format, readonly)
-	getMatrixModelview: -> RLGL.rlGetMatrixModelview!
-	getMatrixProjection: -> RLGL.rlGetMatrixProjection!
-	getMatrixTransform: -> RLGL.rlGetMatrixTransform!
-	getMatrixProjectionStereo: (eye) -> RLGL.rlGetMatrixProjectionStereo(eye)
-	getMatrixViewOffsetStereo: (eye) -> RLGL.rlGetMatrixViewOffsetStereo(eye)
-	setMatrixProjection: (proj) -> RLGL.rlSetMatrixProjection(proj)
-	setMatrixModelview: (view) -> RLGL.rlSetMatrixModelview(view)
-	setMatrixProjectionStereo: (right, left) -> RLGL.rlSetMatrixProjectionStereo(right, left)
-	setMatrixViewOffsetStereo: (right, left) -> RLGL.rlSetMatrixViewOffsetStereo(right, left)
-	loadDrawCube: -> RLGL.rlLoadDrawCube!
-	loadDrawQuad: -> RLGL.rlLoadDrawQuad!
+	matrixMode: RLGL.rlMatrixMode
+	pushMatrix: RLGL.rlPushMatrix
+	popMatrix: RLGL.rlPopMatrix
+	loadIdentity: RLGL.rlLoadIdentity
+	rranslatef: RLGL.rlTranslatef
+	eotatef: RLGL.rlRotatef
+	scalef: RLGL.rlScalef
+	multMatrixf: RLGL.rlMultMatrixf
+	frustum: RLGL.rlFrustum
+	ortho: RLGL.rlOrtho
+	viewport: RLGL.rlViewport
+	begin: RLGL.rlBegin
+	end: rlEnd
+	vertex2i: RLGL.rlVertex2i
+	vertex2f: RLGL.rlVertex2f
+	vertex3f: RLGL.rlVertex3f
+	texCoord2f: RLGL.rlTexCoord2f
+	normal3f: RLGL.rlNormal3f
+	color4ub: RLGL.rlColor4ub
+	color3f: RLGL.rlColor3f
+	color4f: RLGL.rlColor4f
+	enableVertexArray: RLGL.rlEnableVertexArray
+	disableVertexArray: RLGL.rlDisableVertexArray
+	enableVertexBuffer: RLGL.rlEnableVertexBuffer
+	disableVertexBuffer: RLGL.rlDisableVertexBuffer
+	enableVertexBufferElement: RLGL.rlEnableVertexBufferElement
+	disableVertexBufferElement: RLGL.rlDisableVertexBufferElement
+	enableVertexAttribute: RLGL.rlEnableVertexAttribute
+	disableVertexAttribute: RLGL.rlDisableVertexAttribute
+	activeTextureSlot: RLGL.rlActiveTextureSlot
+	enableTexture: RLGL.rlEnableTexture
+	disableTexture: RLGL.rlDisableTexture
+	enableTextureCubemap: RLGL.rlEnableTextureCubemap
+	disableTextureCubemap: RLGL.rlDisableTextureCubemap
+	textureParameters: RLGL.rlTextureParameters
+	enableShader: RLGL.rlEnableShader
+	disableShader: RLGL.rlDisableShader
+	enableFramebuffer: RLGL.rlEnableFramebuffer
+	disableFramebuffer: RLGL.rlDisableFramebuffer
+	activeDrawBuffers: RLGL.rlActiveDrawBuffers
+	enableColorBlend: RLGL.rlEnableColorBlend
+	disableColorBlend: RLGL.rlDisableColorBlend
+	enableDepthTest: RLGL.rlEnableDepthTest
+	disableDepthTest: RLGL.rlDisableDepthTest
+	enableDepthMask: RLGL.rlEnableDepthMask
+	disableDepthMask: RLGL.rlDisableDepthMask
+	enableBackfaceCulling: RLGL.rlEnableBackfaceCulling
+	disableBackfaceCulling: RLGL.rlDisableBackfaceCulling
+	enableScissorTest: RLGL.rlEnableScissorTest
+	disableScissorTest: RLGL.rlDisableScissorTest
+	scissor: RLGL.rlScissor
+	enableWireMode: RLGL.rlEnableWireMode
+	disableWireMode: RLGL.rlDisableWireMode
+	setLineWidth: RLGL.rlSetLineWidth
+	getLineWidth: RLGL.rlGetLineWidth
+	enableSmoothLines: RLGL.rlEnableSmoothLines
+	disableSmoothLines: RLGL.rlDisableSmoothLines
+	enableStereoRender: RLGL.rlEnableStereoRender
+	disableStereoRender: RLGL.rlDisableStereoRender
+	isStereoRenderEnabled: RLGL.rlIsStereoRenderEnabled
+	clearColor: RLGL.rlClearColor
+	clearScreenBuffers: RLGL.rlClearScreenBuffers
+	checkErrors: RLGL.rlCheckErrors
+	setBlendMode: RLGL.rlSetBlendMode
+	setBlendFactors: RLGL.rlSetBlendFactors
+	init: RLGL.rlglInit
+	close: RLGL.rlglClose
+	loadExtensions: RLGL.rlLoadExtensions
+	getVersion: RLGL.rlGetVersion
+	getFramebufferWidth: RLGL.rlGetFramebufferWidth
+	getFramebufferHeight: RLGL.rlGetFramebufferHeight
+	getTextureIdDefault: RLGL.rlGetTextureIdDefault
+	getShaderIdDefault: RLGL.rlGetShaderIdDefault
+	getShaderLocsDefault: RLGL.rlGetShaderLocsDefault
+	loadRenderBatch: RLGL.rlLoadRenderBatch
+	unloadRenderBatch: RLGL.rlUnloadRenderBatch
+	drawRenderBatch: RLGL.rlDrawRenderBatch
+	setRenderBatchActive: RLGL.rlSetRenderBatchActive
+	drawRenderBatchActive: RLGL.rlDrawRenderBatchActive
+	checkRenderBatchLimit: RLGL.rlCheckRenderBatchLimit
+	setTexture: RLGL.rlSetTexture
+	loadVertexArray: RLGL.rlLoadVertexArray
+	loadVertexBuffer: RLGL.rlLoadVertexBuffer
+	loadVertexBufferElement: RLGL.rlLoadVertexBufferElement
+	updateVertexBuffer: RLGL.rlUpdateVertexBuffer
+	unloadVertexArray: RLGL.rlUnloadVertexArray
+	unloadVertexBuffer: RLGL.rlUnloadVertexBuffer
+	setVertexAttribute: RLGL.rlSetVertexAttribute
+	setVertexAttributeDivisor: RLGL.rlSetVertexAttributeDivisor
+	setVertexAttributeDefault: RLGL.rlSetVertexAttributeDefault
+	drawVertexArray: RLGL.rlDrawVertexArray
+	drawVertexArrayElements: RLGL.rlDrawVertexArrayElements
+	drawVertexArrayInstanced: RLGL.rlDrawVertexArrayInstanced
+	drawVertexArrayElementsInstanced: RLGL.rlDrawVertexArrayElementsInstanced
+	loadTexture: RLGL.rlLoadTexture
+	loadTextureDepth: RLGL.rlLoadTextureDepth
+	loadTextureCubemap: RLGL.rlLoadTextureCubemap
+	updateTexture: RLGL.rlUpdateTexture
+	getGlTextureFormats: RLGL.rlGetGlTextureFormats
+	getPixelFormatName: RLGL.rlGetPixelFormatName
+	unloadTexture: RLGL.rlUnloadTexture
+	genTextureMipmaps: RLGL.rlGenTextureMipmaps
+	readTexturePixels: RLGL.rlReadTexturePixels
+	readScreenPixels: RLGL.rlReadScreenPixels
+	loadFramebuffer: RLGL.rlLoadFramebuffer
+	framebufferAttach: RLGL.rlFramebufferAttach
+	framebufferComplete: RLGL.rlFramebufferComplete
+	unloadFramebuffer: RLGL.rlUnloadFramebuffer
+	loadShaderCode: RLGL.rlLoadShaderCode
+	compileShader: RLGL.rlCompileShader
+	loadShaderProgram: RLGL.rlLoadShaderProgram
+	unloadShaderProgram: RLGL.rlUnloadShaderProgram
+	getLocationUniform: RLGL.rlGetLocationUniform
+	getLocationAttrib: RLGL.rlGetLocationAttrib
+	setUniform: RLGL.rlSetUniform
+	setUniformMatrix: RLGL.rlSetUniformMatrix
+	setUniformSampler: RLGL.rlSetUniformSampler
+	setShader: RLGL.rlSetShader
+	loadComputeShaderProgram: RLGL.rlLoadComputeShaderProgram
+	computeShaderDispatch: RLGL.rlComputeShaderDispatch
+	loadShaderBuffer: RLGL.rlLoadShaderBuffer
+	unloadShaderBuffer: RLGL.rlUnloadShaderBuffer
+	updateShaderBufferElements: RLGL.rlUpdateShaderBufferElements
+	getShaderBufferSize: RLGL.rlGetShaderBufferSize
+	readShaderBufferElements: RLGL.rlReadShaderBufferElements
+	bindShaderBuffer: RLGL.rlBindShaderBuffer
+	copyBuffersElements: RLGL.rlCopyBuffersElements
+	bindImageTexture: RLGL.rlBindImageTexture
+	getMatrixModelview: RLGL.rlGetMatrixModelview
+	getMatrixProjection: RLGL.rlGetMatrixProjection
+	getMatrixTransform: RLGL.rlGetMatrixTransform
+	getMatrixProjectionStereo: RLGL.rlGetMatrixProjectionStereo
+	getMatrixViewOffsetStereo: RLGL.rlGetMatrixViewOffsetStereo
+	setMatrixProjection: RLGL.rlSetMatrixProjection
+	setMatrixModelview: RLGL.rlSetMatrixModelview
+	setMatrixProjectionStereo: RLGL.rlSetMatrixProjectionStereo
+	setMatrixViewOffsetStereo: RLGL.rlSetMatrixViewOffsetStereo
+	loadDrawCube: RLGL.rlLoadDrawCube
+	loadDrawQuad: RLGL.rlLoadDrawQuad
 }

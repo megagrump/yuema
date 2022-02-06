@@ -15,12 +15,14 @@ FontMT = {
 
 	:GlyphInfo
 
-	load: (fileName) -> gc(RL.LoadFont(fileName))
-	loadEx: (fileName, fontSize, fontChars, glyphCount) -> gc(RL.LoadFontEx(fileName, fontSize, fontChars, glyphCount))
-	loadFromImage: (image, key, firstChar) -> gc(RL.LoadFontFromImage(image, key, firstChar))
+	__gc: RL.UnloadFont
+
+	load: (fileName) -> Font(RL.LoadFont(fileName))
+	loadEx: (fileName, fontSize, fontChars, glyphCount) -> Font(RL.LoadFontEx(fileName, fontSize, fontChars, glyphCount))
+	loadFromImage: (image, key, firstChar) -> Font(RL.LoadFontFromImage(image, key, firstChar))
 
 	loadFromMemory: (fileType, fileData, dataSize, fontSize, fontChars, glyphCount) ->
-		gc(RL.LoadFontFromMemory(fileType, fileData, dataSize, fontSize, fontChars, glyphCount))
+		Font(RL.LoadFontFromMemory(fileType, fileData, dataSize, fontSize, fontChars, glyphCount))
 
 	loadFontData: (fileData, dataSize, fontSize, fontChars, glyphCount, type) ->
 		dataSize or= #fileData
@@ -30,16 +32,16 @@ FontMT = {
 			return result
 		nil
 
-	getDefault: -> RL.GetFontDefault!
-	measureText: (text, fontSize) -> RL.MeasureText(text, fontSize)
+	getDefault: RL.GetFontDefault
+	measureText: RL.MeasureText
 
 	-- member functions --
 
-	exportAsCode: (fileName) => RL.ExportFontAsCode(@, fileName)
-	measureTextEx: (text, fontSize, spacing) => RL.MeasureTextEx(@, text, fontSize, spacing)
-	getGlyphIndex: (codepoint) => RL.GetGlyphIndex(@, codepoint)
-	getGlyphInfo: (codepoint) => RL.GetGlyphInfo(@, codepoint)
-	getGlyphAtlasRec: (codepoint) => RL.GetGlyphAtlasRec(@, codepoint)
+	exportAsCode: RL.ExportFontAsCode
+	measureTextEx: RL.MeasureTextEx
+	getGlyphIndex: RL.GetGlyphIndex
+	getGlyphInfo: RL.GetGlyphInfo
+	getGlyphAtlasRec: RL.GetGlyphAtlasRec
 }
 
 FontMT.__index = FontMT

@@ -4,8 +4,6 @@ import C from ffi
 
 Material = ffi.typeof('Material')
 
-gc = => ffi.gc(@, RL.UnloadMaterial)
-
 MaterialMT = {
 	MAP_DIFFUSE:    C.MATERIAL_MAP_ALBEDO
 	MAP_SPECULAR:   C.MATERIAL_MAP_METALNESS
@@ -24,13 +22,15 @@ MaterialMT = {
 	load: (fileName) ->
 		count = ffi.new('int[1]')
 		materials = RL.LoadMaterials(fileName, count)
-		[ gc(materials[i]) for i = 0, count[0] - 1 ]
+		[ Material(materials[i]) for i = 0, count[0] - 1 ]
 
-	loadDefault: -> gc(RL.LoadMaterialDefault!)
+	loadDefault: -> Material(RL.LoadMaterialDefault!)
 
 	-- member functions --
 
-	setTexture: (mapType, texture) => RL.SetMaterialTexture(@, mapType, texture)
+	__gc: RL.UnloadMaterial
+
+	setTexture: RL.SetMaterialTexture
 }
 
 MaterialMT.__index = MaterialMT

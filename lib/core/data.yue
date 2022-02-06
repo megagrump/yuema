@@ -2,12 +2,12 @@ import 'ffi'
 import RL from yuema
 
 {
-	memAlloc: (size) -> RL.MemAlloc(size)
-	memRealloc: (ptr, size) -> RL.MemRealloc(ptr, size)
-	memFree: (ptr) -> RL.MemFree(ptr)
+	memAlloc: RL.MemAlloc
+	memRealloc: RL.MemRealloc
+	memFree: RL.MemFree
 
-	saveStorageValue: (position, value) -> RL.SaveStorageValue(position, value)
-	loadStorageValue: (position) -> RL.LoadStorageValue(position)
+	saveStorageValue: RL.SaveStorageValue
+	loadStorageValue: RL.LoadStorageValue
 
 	compress: (data, dataLength) ->
 		dataLength or= #data

@@ -14,14 +14,14 @@ gestures = {
 	PINCH_IN:    C.GESTURE_PINCH_IN
 	PINCH_OUT:   C.GESTURE_PINCH_OUT
 
-	setEnabled: (flags) -> RL.SetGesturesEnabled(flags)
-	isGestureDetected: (gesture) -> RL.IsGestureDetected(gesture)
-	getGestureDetected: -> RL.GetGestureDetected!
-	getHoldDuration: -> RL.GetGestureHoldDuration!
-	getDragVector: -> RL.GetGestureDragVector!
-	getDragAngle: -> RL.GetGestureDragAngle!
-	getPinchVector: -> RL.GetGesturePinchVector!
-	getPinchAngle: -> RL.GetGesturePinchAngle!
+	setEnabled: RL.SetGesturesEnabled
+	isGestureDetected: RL.IsGestureDetected
+	getGestureDetected: RL.GetGestureDetected
+	getHoldDuration: RL.GetGestureHoldDuration
+	getDragVector: RL.GetGestureDragVector
+	getDragAngle: RL.GetGestureDragAngle
+	getPinchVector: RL.GetGesturePinchVector
+	getPinchAngle: RL.GetGesturePinchAngle
 }
 
 gamepad = {
@@ -51,16 +51,16 @@ gamepad = {
 	AXIS_LEFT_TRIGGER: C.GAMEPAD_AXIS_LEFT_TRIGGER
 	AXIS_RIGHT_TRIGGER: C.GAMEPAD_AXIS_RIGHT_TRIGGER
 
-	isAvailable: (gamepad) -> RL.IsGamepadAvailable(gamepad)
-	getName: (gamepad) -> RL.GetGamepadName(gamepad)
-	isPressed: (gamepad, button) -> RL.IsGamepadButtonPressed(gamepad, button)
-	isDown: (gamepad, button) -> RL.IsGamepadButtonDown(gamepad, button)
-	isReleased: (gamepad, button) -> RL.IsGamepadButtonReleased(gamepad, button)
-	isUp: (gamepad, button) -> RL.IsGamepadButtonUp(gamepad, button)
-	getPressed: -> RL.GetGamepadButtonPressed!
-	getAxisCount: (gamepad) -> RL.GetGamepadAxisCount(gamepad)
-	getAxisMovement: (gamepad, axis) -> RL.GetGamepadAxisMovement(gamepad, axis)
-	getMappings: (mappings) -> RL.SetGamepadMappings(mappings)
+	isAvailable: RL.IsGamepadAvailable
+	getName: RL.GetGamepadName
+	isPressed: RL.IsGamepadButtonPressed
+	isDown: RL.IsGamepadButtonDown
+	isReleased: RL.IsGamepadButtonReleased
+	isUp: RL.IsGamepadButtonUp
+	getPressed: RL.GetGamepadButtonPressed
+	getAxisCount: RL.GetGamepadAxisCount
+	getAxisMovement: RL.GetGamepadAxisMovement
+	getMappings: RL.SetGamepadMappings
 }
 
 keyboard = {
@@ -175,13 +175,13 @@ keyboard = {
 	VOLUME_UP:     C.KEY_VOLUME_UP
 	VOLUME_DOWN:   C.KEY_VOLUME_DOWN
 
-	isPressed: (key) -> RL.IsKeyPressed(key)
-	isDown: (key) -> RL.IsKeyDown(key)
-	isReleased: (key) -> RL.IsKeyReleased(key)
-	isUp: (key) -> RL.IsKeyUp(key)
-	setExitKey: (key) -> RL.SetExitKey(key)
-	getPressed: -> RL.GetKeyPressed!
-	getCharPressed: -> RL.GetCharPressed!
+	isPressed: RL.IsKeyPressed
+	isDown: RL.IsKeyDown
+	isReleased: RL.IsKeyReleased
+	isUp: RL.IsKeyUp
+	setExitKey: RL.SetExitKey
+	getPressed: RL.GetKeyPressed
+	getCharPressed: RL.GetCharPressed
 }
 
 mouse = {
@@ -205,36 +205,36 @@ mouse = {
 	CURSOR_RESIZE_ALL:    C.MOUSE_CURSOR_RESIZE_ALL
 	CURSOR_NOT_ALLOWED:   C.MOUSE_CURSOR_NOT_ALLOWED
 
-	isPressed: (button) -> RL.IsMouseButtonPressed(button)
-	isDown: (button) -> RL.IsMouseButtonDown(button)
-	isReleased: (button) -> RL.IsMouseButtonReleased(button)
-	isUp: (button) -> RL.IsMouseButtonUp(button)
+	isPressed: RL.IsMouseButtonPressed
+	isDown: RL.IsMouseButtonDown
+	isReleased: RL.IsMouseButtonReleased
+	isUp: RL.IsMouseButtonUp
 
-	getX: -> RL.GetMouseX!
-	getY: -> RL.GetMouseY!
-	getPosition: -> RL.GetMousePosition!
-	getDelta: -> RL.GetMouseDelta!
-	getWheelMove: -> RL.GetMouseWheelMove!
+	getX: RL.GetMouseX
+	getY: RL.GetMouseY
+	getPosition: RL.GetMousePosition
+	getDelta: RL.GetMouseDelta
+	getWheelMove: RL.GetMouseWheelMove
 
-	setPosition: (x, y) -> RL.SetMousePosition(x, y)
-	setOffset: (x, y) -> RL.SetMouseOffset(x, y)
-	setScale: (x, y) -> RL.SetMouseScale(x, y)
-	setCursor: (cursor) -> RL.SetMouseCursor(cursor)
+	setPosition: RL.SetMousePosition
+	setOffset: RL.SetMouseOffset
+	setScale: RL.SetMouseScale
+	setCursor: RL.SetMouseCursor
 
-	show: -> RL.ShowCursor!
-	hide: -> RL.HideCursor!
-	isHidden: -> RL.IsCursorHidden!
-	enable: -> RL.EnableCursor!
-	disable: -> RL.DisableCursor!
-	isOnScreen: -> RL.IsCursorOnScreen!
+	show: RL.ShowCursor
+	hide: RL.HideCursor
+	isHidden: RL.IsCursorHidden
+	enable: RL.EnableCursor
+	disable: RL.DisableCursor
+	isOnScreen: RL.IsCursorOnScreen
 }
 
 touch = {
-	getX: -> RL.GetTouchX!
-	getY: -> RL.GetTouchY!
-	getPosition: (index) -> RL.GetTouchPosition(index)
-	getPointId: (index) -> RL.GetTouchPointId(index)
-	getPointCount: -> RL.GetTouchPointCount!
+	getX: RL.GetTouchX
+	getY: RL.GetTouchY
+	getPosition: RL.GetTouchPosition
+	getPointId: RL.GetTouchPointId
+	getPointCount: RL.GetTouchPointCount
 }
 
 {

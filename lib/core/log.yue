@@ -11,6 +11,6 @@ import RL from yuema
 	FATAL:   C.LOG_FATAL
 	NONE:    C.LOG_NONE
 
-	trace: (logLevel, text, ...) -> RL.TraceLog(logLevel, text, ...)
-	setLevel: (logLevel) -> RL.SetTraceLogLevel(logLevel)
+	trace: RL.TraceLog
+	setLevel: RL.SetTraceLogLevel
 }

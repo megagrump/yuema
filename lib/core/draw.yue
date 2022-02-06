@@ -9,177 +9,123 @@ import 'ffi' as :C
 	BLEND_SUBTRACT_COLORS: C.BLEND_SUBTRACT_COLORS
 	BLEND_CUSTOM: C.BLEND_CUSTOM
 
-	clearBackground: (color) -> RL.ClearBackground(color)
-	beginDrawing: -> RL.BeginDrawing!
-	endDrawing: -> RL.EndDrawing!
-	beginMode2D: (camera) -> RL.BeginMode2D(camera)
-	endMode2D: -> RL.EndMode2D!
-	beginMode3D: (camera) -> RL.BeginMode3D(camera)
-	endMode3D: -> RL.EndMode3D!
-	beginTextureMode: (target) -> RL.BeginTextureMode(target)
-	endTextureMode: -> RL.EndTextureMode!
-	beginShaderMode: (shader) -> RL.BeginShaderMode(shader)
-	endShaderMode: -> RL.EndShaderMode!
-	beginBlendMode: (mode) -> RL.BeginBlendMode(mode)
-	endBlendMode: -> RL.EndBlendMode!
-	beginScissorMode: (x, y, w, h) -> RL.BeginScissorMode(x, y, w, h)
-	endScissorMode: -> RL.EndScissorMode!
-	beginVrStereoMode: (config) -> RL.BeginVrStereoMode(config)
-	endVrStereoMode: -> RL.EndVrStereoMode!
-	pixel: (posX, posY, color) -> RL.DrawPixel(posX, posY, color)
-	pixelV: (position, color) -> RL.DrawPixelV(position, color)
+	clearBackground: RL.ClearBackground
+	beginDrawing: RL.BeginDrawing
+	endDrawing: RL.EndDrawing
+	beginMode2D: RL.BeginMode2D
+	endMode2D: RL.EndMode2D
+	beginMode3D: RL.BeginMode3D
+	endMode3D: RL.EndMode3D
+	beginTextureMode: RL.BeginTextureMode
+	endTextureMode: RL.EndTextureMode
+	beginShaderMode: RL.BeginShaderMode
+	endShaderMode: RL.EndShaderMode
+	beginBlendMode: RL.BeginBlendMode
+	endBlendMode: RL.EndBlendMode
+	beginScissorMode: RL.BeginScissorMode
+	endScissorMode: RL.EndScissorMode
+	beginVrStereoMode: RL.BeginVrStereoMode
+	endVrStereoMode: RL.EndVrStereoMode
+	pixel: RL.DrawPixel
+	pixelV: RL.DrawPixelV
 
-	line: (startX, startY, endX, endY, color) ->RL.DrawLine(startX, startY, endX, endY, color)
-	lineV: (startPos, endPos, color) -> RL.DrawLineV(startPos, endPos, color)
-	lineEx: (startPos, endPos, thick, color) -> RL.DrawLineEx(startPos, endPos, thick, color)
-	lineBezier: (startPos, endPos, thick, color) -> RL.DrawLineBezier(startPos, endPos, thick, color)
-	lineBezierQuad: (startPos, endPos, controlPos, thick, color) ->
-		RL.DrawLineBezierQuad(startPos, endPos, controlPos, thick, color)
+	line: RL.DrawLine
+	lineV: RL.DrawLineV
+	lineEx: RL.DrawLineEx
+	lineBezier: RL.DrawLineBezier
+	lineBezierQuad: RL.DrawLineBezierQuad
+	lineBezierCubic: RL.DrawLineBezierCubic
+	lineStrip: RL.DrawLineStrip
 
-	lineBezierCubic: (startPos, endPos, startControlPos, endControlPos, thick, color) ->
-		RL.DrawLineBezierCubic(startPos, endPos, startControlPos, endControlPos, thick, color)
+	circle: RL.DrawCircle
+	circleSector: RL.DrawCircleSector
+	circleSectorLines: RL.DrawCircleSectorLines
+	circleGradient: RL.DrawCircleGradient
 
-	lineStrip: (points, pointCount, color) -> RL.DrawLineStrip(points, pointCount, color)
-	circle: (centerX, centerY, radius, color) -> RL.DrawCircle(centerX, centerY, radius, color)
-	circleSector: (center, radius, startAngle, endAngle, segments, color) ->
-		RL.DrawCircleSector(center, radius, startAngle, endAngle, segments, color)
+	circleV: RL.DrawCircleV
+	circleLines: RL.DrawCircleLines
+	ellipse: RL.DrawEllipse
+	ellipseLines: RL.DrawEllipseLines
 
-	circleSectorLines: (center, radius, startAngle, endAngle, segments, color) ->
-		RL.DrawCircleSectorLines(center, radius, startAngle, endAngle, segments, color)
+	ring: RL.DrawRing
+	ringLines: RL.DrawRingLines
 
-	circleGradient: (centerX, centerY, radius, color1, color2) ->
-		RL.DrawCircleGradient(centerX, centerY, radius, color1, color2)
+	rectangle: RL.DrawRectangle
+	rectangleV: RL.DrawRectangleV
+	rectangleRec: RL.DrawRectangleRec
+	rectanglePro: RL.DrawRectanglePro
+	rectangleGradientV: RL.DrawRectangleGradientV
+	rectangleGradientH: RL.DrawRectangleGradientH
+	rectangleGradientEx: RL.DrawRectangleGradientEx
+	rectangleLines: RL.DrawRectangleLines
+	rectangleLinesEx: RL.DrawRectangleLinesEx
+	rectangleRounded: RL.DrawRectangleRounded
+	rectangleRoundedLines: RL.DrawRectangleRoundedLines
 
-	circleV: (center, radius, color) -> RL.DrawCircleV(center, radius, color)
-	circleLines: (centerX, centerY, radius, color) -> RL.DrawCircleLines(centerX, centerY, radius, color)
-	ellipse: (centerX, centerY, radiusH, radiusV, color) -> RL.DrawEllipse(centerX, centerY, radiusH, radiusV, color)
-	ellipseLines: (centerX, centerY, radiusH, radiusV, color) ->
-		RL.DrawEllipseLines(centerX, centerY, radiusH, radiusV, color)
+	triangle: RL.DrawTriangle
+	triangleLines: RL.DrawTriangleLines
+	triangleFan: RL.DrawTriangleFan
+	triangleStrip: RL.DrawTriangleStrip
+	triangle3D: RL.DrawTriangle3D
+	triangleStrip3D: RL.DrawTriangleStrip3D
 
-	ring: (center, innerRadius, outerRadius, startAngle, endAngle, segments, color) ->
-		RL.DrawRing(center, innerRadius, outerRadius, startAngle, endAngle, segments, color)
+	poly: RL.DrawPoly
+	polyLines: RL.DrawPolyLines
+	polyLinesEx: RL.DrawPolyLinesEx
 
-	ringLines: (center, innerRadius, outerRadius, startAngle, endAngle, segments, color) ->
-		RL.DrawRingLines(center, innerRadius, outerRadius, startAngle, endAngle, segments, color)
+	line3D: RL.DrawLine3D
+	point3D: RL.DrawPoint3D
+	circle3D: RL.DrawCircle3D
 
-	rectangle: (posX, posY, width, height, color) -> RL.DrawRectangle(posX, posY, width, height, color)
-	rectangleV: (position, size, color) -> RL.DrawRectangleV(position, size, color)
-	rectangleRec: (rec, color) -> RL.DrawRectangleRec(rec, color)
-	rectanglePro: (rec, origin, rotation, color) -> RL.DrawRectanglePro(rec, origin, rotation, color)
-	rectangleGradientV: (posX, posY, width, height, color1, color2) ->
-		RL.DrawRectangleGradientV(posX, posY, width, height, color1, color2)
+	cube: RL.DrawCube
+	cubeV: RL.DrawCubeV
+	cubeWires: RL.DrawCubeWires
+	cubeWiresV: RL.DrawCubeWiresV
+	cubeTexture: RL.DrawCubeTexture
+	cubeTextureRec: RL.DrawCubeTextureRec
 
-	rectangleGradientH: (posX, posY, width, height, color1, color2) ->
-		RL.DrawRectangleGradientH(posX, posY, width, height, color1, color2)
+	sphere: RL.DrawSphere
+	sphereEx: RL.DrawSphereEx
+	sphereWires: RL.DrawSphereWires
 
-	rectangleGradientEx: (rec, col1, col2, col3, col4) ->
-		RL.DrawRectangleGradientEx(rec, col1, col2, col3, col4)
+	cylinder: RL.DrawCylinder
+	cylinderEx: RL.DrawCylinderEx
+	cylinderWires: RL.DrawCylinderWires
+	cylinderWiresEx: RL.DrawCylinderWiresEx
 
-	rectangleLines: (posX, posY, width, height, color) ->
-		RL.DrawRectangleLines(posX, posY, width, height, color)
+	plane: RL.DrawPlane
+	ray: RL.DrawRay
+	grid: RL.DrawGrid
 
-	rectangleLinesEx: (rec, lineThick, color) ->
-		RL.DrawRectangleLinesEx(rec, lineThick, color)
+	texture: RL.DrawTexture
+	textureV: RL.DrawTextureV
+	textureEx: RL.DrawTextureEx
+	textureRec: RL.DrawTextureRec
+	textureQuad: RL.DrawTextureQuad
+	textureTiled: RL.DrawTextureTiled
+	texturePro: RL.DrawTexturePro
+	textureNPatch: RL.DrawTextureNPatch
+	texturePoly: RL.DrawTexturePoly
 
-	rectangleRounded: (rec, roundness, segments, color) ->
-		RL.DrawRectangleRounded(rec, roundness, segments, color)
+	fps: RL.DrawFPS
+	text: RL.DrawText
+	textEx: RL.DrawTextEx
+	textPro: RL.DrawTextPro
+	textCodepoint: RL.DrawTextCodepoint
+	textCodepoints: RL.DrawTextCodepoints
 
-	rectangleRoundedLines: (rec, roundness, segments, lineThick, color) ->
-		RL.DrawRectangleRoundedLines(rec, roundness, segments, lineThick, color)
+	model: RL.DrawModel
+	modelEx: RL.DrawModelEx
+	modelWires: RL.DrawModelWires
+	modelWiresEx: RL.DrawModelWiresEx
 
-	triangle: (v1, v2, v3, color) -> RL.DrawTriangle(v1, v2, v3, color)
-	triangleLines: (v1, v2, v3, color) -> RL.DrawTriangleLines(v1, v2, v3, color)
-	triangleFan: (points, pointCount, color) -> RL.DrawTriangleFan(points, pointCount, color)
-	triangleStrip: (points, pointCount, color) -> RL.DrawTriangleStrip(points, pointCount, color)
-	poly: (center, sides, radius, rotation, color) -> RL.DrawPoly(center, sides, radius, rotation, color)
-	polyLines: (center, sides, radius, rotation, color) -> RL.DrawPolyLines(center, sides, radius, rotation, color)
-	polyLinesEx: (center, sides, radius, rotation, lineThick, color) ->
-		RL.DrawPolyLinesEx(center, sides, radius, rotation, lineThick, color)
+	boundingBox: RL.DrawBoundingBox
+	billboard: RL.DrawBillboard
+	billboardRec: RL.DrawBillboardRec
+	billboardPro: RL.DrawBillboardPro
 
-	line3D: (startPos, endPos, color) -> RL.DrawLine3D(startPos, endPos, color)
-	point3D: (position, color) -> RL.DrawPoint3D(position, color)
-	circle3D: -> RL.DrawCircle3D(center, radius, rotationAxis, rotationAngle, color)
-	triangle3D: (v1, v2, v3, color) -> RL.DrawTriangle3D(v1, v2, v3, color)
-	triangleStrip3D: (points, pointCount, color) -> RL.DrawTriangleStrip3D(points, pointCount, color)
-	cube: (position, width, height, length, color) -> RL.DrawCube(position, width, height, length, color)
-	cubeV: (position, size, color) -> RL.DrawCubeV(position, size, color)
-	cubeWires: (position, width, height, length, color) -> RL.DrawCubeWires(position, width, height, length, color)
-	cubeWiresV: (position, size, color) -> RL.DrawCubeWiresV(position, size, color)
-	cubeTexture: (texture, position, width, height, length, color) ->
-		RL.DrawCubeTexture(texture, position, width, height, length, color)
+	mesh: RL.DrawMesh
+	meshInstanced: RL.DrawMeshInstanced
 
-	cubeTextureRec: (texture, source, position, width, height, length, color) ->
-		RL.DrawCubeTextureRec(texture, source, position, width, height, length, color)
-
-	sphere: (centerPos, radius, color) -> RL.DrawSphere(centerPos, radius, color)
-	sphereEx: (centerPos, radius, rings, slices, color) -> RL.DrawSphereEx(centerPos, radius, rings, slices, color)
-	sphereWires: (centerPos, radius, rings, slices, color) -> RL.DrawSphereWires(centerPos, radius, rings, slices, color)
-	cylinder: (position, radiusTop, radiusBottom, height, slices, color) ->
-		RL.DrawCylinder(position, radiusTop, radiusBottom, height, slices, color)
-
-	cylinderEx: (startPos, endPos, startRadius, endRadius, sides, color) ->
-		RL.DrawCylinderEx(startPos, endPos, startRadius, endRadius, sides, color)
-
-	cylinderWires: (position, radiusTop, radiusBottom, height, slices, color) ->
-		RL.DrawCylinderWires(position, radiusTop, radiusBottom, height, slices, color)
-
-	cylinderWiresEx: (startPos, endPos, startRadius, endRadius, sides, color) ->
-		RL.DrawCylinderWiresEx(startPos, endPos, startRadius, endRadius, sides, color)
-
-	plane: (centerPos, size, color) -> RL.DrawPlane(centerPos, size, color)
-	ray: (ray, color) -> RL.DrawRay(ray, color)
-	grid: (slices, spacing) -> RL.DrawGrid(slices, spacing)
-	texture: (texture, posX, posY, tint) -> RL.DrawTexture(texture, posX, posY, tint)
-	textureV: (texture, position, tint) -> RL.DrawTextureV(texture, position, tint)
-	textureEx: (texture, position, rotation, scale, tint) -> RL.DrawTextureEx(texture, position, rotation, scale, tint)
-	textureRec: (texture, source, position, tint) -> RL.DrawTextureRec(texture, source, position, tint)
-	textureQuad: (texture, tiling, offset, quad, tint) -> RL.DrawTextureQuad(texture, tiling, offset, quad, tint)
-	textureTiled: (texture, source, dest, origin, rotation, scale, tint) ->
-		RL.DrawTextureTiled(texture, source, dest, origin, rotation, scale, tint)
-
-	texturePro: (texture, source, dest, origin, rotation, tint) ->
-		RL.DrawTexturePro(texture, source, dest, origin, rotation, tint)
-
-	textureNPatch: (texture, nPatchInfo, dest, origin, rotation, tint) ->
-		RL.DrawTextureNPatch(texture, nPatchInfo, dest, origin, rotation, tint)
-
-	texturePoly: (texture, center, points, texcoords, pointCount, tint) ->
-		RL.DrawTexturePoly(texture, center, points, texcoords, pointCount, tint)
-
-	fps: (posX, posY) -> RL.DrawFPS(posX, posY)
-	text: (text, posX, posY, fontSize, color) -> RL.DrawText(text, posX, posY, fontSize, color)
-	textEx: (font, text, position, fontSize, spacing, tint) ->
-		RL.DrawTextEx(font, text, position, fontSize, spacing, tint)
-
-	textPro: (font, text, position, origin, rotation, fontSize, spacing, tint) ->
-		RL.DrawTextPro(font, text, position, origin, rotation, fontSize, spacing, tint)
-
-	textCodepoint: (font, codepoint, position, fontSize, tint) ->
-		RL.DrawTextCodepoint(font, codepoint, position, fontSize, tint)
-
-	textCodepoints: (font, codepoints, count, position, fontSize, spacing, tint) ->
-		RL.DrawTextCodepoints(font, codepoints, count, position, fontSize, spacing, tint)
-
-	model: (model, position, scale, tint) -> RL.DrawModel(model, position, scale, tint)
-	modelEx: (model, position, rotationAxis, rotationAngle, scale, tint) ->
-		RL.DrawModelEx(model, position, rotationAxis, rotationAngle, scale, tint)
-
-	modelWires: (model, position, scale, tint) -> RL.DrawModelWires(model, position, scale, tint)
-	modelWiresEx: (model, position, rotationAxis, rotationAngle, scale, tint) ->
-		RL.DrawModelWiresEx(model, position, rotationAxis, rotationAngle, scale, tint)
-
-	boundingBox: (box, color) -> RL.DrawBoundingBox(box, color)
-	billboard: (camera, texture, position, size, tint) ->
-		RL.DrawBillboard(camera, texture, position, size, tint)
-
-	billboardRec: (camera, texture, source, position, size, tint) ->
-		RL.DrawBillboardRec(camera, texture, source, position, size, tint)
-
-	billboardPro: (camera, texture, source, position, up, size, origin, rotation, tint) ->
-		RL.DrawBillboardPro(camera, texture, source, position, up, size, origin, rotation, tint)
-
-	mesh: (mesh, material, transform) -> RL.DrawMesh(mesh, material, transform)
-	meshInstanced: (mesh, material, transforms, instances) -> RL.DrawMeshInstanced(mesh, material, transforms, instances)
-
-	setShapesTexture: (texture, source) -> RL.SetShapesTexture(texture, source)
+	setShapesTexture: RL.SetShapesTexture
 }

@@ -14,18 +14,17 @@ Camera3DMT = {
 	PERSPECTIVE:  C.CAMERA_PERSPECTIVE
 	ORTHOGRAPHIC: C.CAMERA_ORTHOGRAPHIC
 
-	update: => RL.UpdateCamera(@)
+	update: RL.UpdateCamera
 	getMouseRay: (mousePosition) => RL.GetMouseRay(mousePosition, @)
-	getMatrix: => RL.GetCameraMatrix(@)
+	getMatrix: RL.GetCameraMatrix
 	getWorldToScreen: (position) => RL.GetWorldToScreen(position, @)
 	getWorldToScreenEx: (position, width, height) => RL.GetWorldToScreenEx(position, @, width, height)
 
-	setMode: (mode) => RL.SetCameraMode(@, mode)
-	setPanControl: (keyPan) -> RL.SetCameraPanControl(keyPan)
-	setAltControl: (keyAlt) -> RL.SetCameraAltControl(keyAlt)
-	setSmoothZoomControl: (keySmoothZoom) -> RL.SetCameraSmoothZoomControl(keySmoothZoom)
-	setMoveControls: (keyFront, keyBack, keyRight, keyLeft, keyUp, keyDown) ->
-		RL.SetCameraMoveControls(keyFront, keyBack, keyRight, keyLeft, keyUp, keyDown)
+	setMode: RL.SetCameraMode
+	setPanControl: RL.SetCameraPanControl
+	setAltControl: RL.SetCameraAltControl
+	setSmoothZoomControl: RL.SetCameraSmoothZoomControl
+	setMoveControls: RL.SetCameraMoveControls
 }
 
 Camera3DMT.__index = Camera3DMT

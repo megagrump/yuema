@@ -3,29 +3,27 @@ import RL from yuema
 
 Mesh = ffi.typeof('Mesh')
 
-gc = => ffi.gc(@, RL.UnloadMesh)
-
 MeshMT = {
-	genPoly: (sides, radius) -> gc(RL.GenMeshPoly(sides, radius))
-	genPlane: (width, length, resX, resZ) -> gc(RL.GenMeshPlane(width, length, resX, resZ))
-	genCube: (width, height, length) -> gc(RL.GenMeshCube(width, height, length))
-	genSphere: (radius, rings, slices) -> gc(RL.GenMeshSphere(radius, rings, slices))
-	genHemiSphere: (radius, rings, slices) -> gc(RL.GenMeshHemiSphere(radius, rings, slices))
-	genCylinder: (radius, height, slices) -> gc(RL.GenMeshCylinder(radius, height, slices))
-	genCone: (radius, height, slices) -> gc(RL.GenMeshCone(radius, height, slices))
-	genTorus: (radius, size, radSeg, sides) -> gc(RL.GenMeshTorus(radius, size, radSeg, sides))
-	genKnot: (radius, size, radSeg, sides) -> gc(RL.GenMeshKnot(radius, size, radSeg, sides))
-	genHeightmap: (heightmap, size) -> gc(RL.GenMeshHeightmap(heightmap, size))
-	genCubicmap: (cubicmap, cubeSize) -> gc(RL.GenMeshCubicmap(cubicmap, cubeSize))
+	genPoly: (sides, radius) -> Mesh(RL.GenMeshPoly(sides, radius))
+	genPlane: (width, length, resX, resZ) -> Mesh(RL.GenMeshPlane(width, length, resX, resZ))
+	genCube: (width, height, length) -> Mesh(RL.GenMeshCube(width, height, length))
+	genSphere: (radius, rings, slices) -> Mesh(RL.GenMeshSphere(radius, rings, slices))
+	genHemiSphere: (radius, rings, slices) -> Mesh(RL.GenMeshHemiSphere(radius, rings, slices))
+	genCylinder: (radius, height, slices) -> Mesh(RL.GenMeshCylinder(radius, height, slices))
+	genCone: (radius, height, slices) -> Mesh(RL.GenMeshCone(radius, height, slices))
+	genTorus: (radius, size, radSeg, sides) -> Mesh(RL.GenMeshTorus(radius, size, radSeg, sides))
+	genKnot: (radius, size, radSeg, sides) -> Mesh(RL.GenMeshKnot(radius, size, radSeg, sides))
+	genHeightmap: (heightmap, size) -> Mesh(RL.GenMeshHeightmap(heightmap, size))
+	genCubicmap: (cubicmap, cubeSize) -> Mesh(RL.GenMeshCubicmap(cubicmap, cubeSize))
 
 	-- member functions --
 
-	upload: (dynamic) => RL.UploadMesh(@, dynamic)
-	updateBuffer: (index, data, dataSize, offset) => RL.UpdateMeshBuffer(@, index, data, dataSize, offset)
-	export: (fileName) => RL.ExportMesh(@, fileName)
-	getBoundingBox: => RL.GetMeshBoundingBox(@)
-	genTangents: => RL.GenMeshTangents(@)
-	genBinormals: => RL.GenMeshBinormals(@)
+	upload: RL.UploadMesh
+	updateBuffer: RL.UpdateMeshBuffer
+	export: RL.ExportMesh
+	getBoundingBox: RL.GetMeshBoundingBox
+	genTangents: RL.GenMeshTangents
+	genBinormals: RL.GenMeshBinormals
 }
 
 MeshMT.__index = MeshMT

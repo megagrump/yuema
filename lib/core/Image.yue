@@ -6,8 +6,6 @@ import RL from yuema
 
 Image = ffi.typeof('Image')
 
-gc = => ffi.gc(@, RL.UnloadImage)
-
 ImageMT = {
 	UNCOMPRESSED_GRAYSCALE:    C.PIXELFORMAT_UNCOMPRESSED_GRAYSCALE
 	UNCOMPRESSED_GRAY_ALPHA:   C.PIXELFORMAT_UNCOMPRESSED_GRAY_ALPHA
@@ -31,69 +29,70 @@ ImageMT = {
 	COMPRESSED_ASTC_4x4_RGBA:  C.PIXELFORMAT_COMPRESSED_ASTC_4x4_RGBA
 	COMPRESSED_ASTC_8x8_RGBA:  C.PIXELFORMAT_COMPRESSED_ASTC_8x8_RGBA
 
-	load: (fileName) -> gc(RL.LoadImage(fileName))
-	loadRaw: (fileName, width, height, format, headerSize) -> gc(RL.LoadImageRaw(fileName, width, height, format, headerSize))
+	__gc: RL.UnloadImage
+
+	load: (fileName) -> Image(RL.LoadImage(fileName))
+	loadRaw: (fileName, width, height, format, headerSize) -> Image(RL.LoadImageRaw(fileName, width, height, format, headerSize))
 
 	loadAnim: (fileName) ->
 		frames = ffi.new('int[1]')
-		result = gc(RL.LoadImageAnim(fileName, frames))
+		result = Image(RL.LoadImageAnim(fileName, frames))
 		result, tonumber(frames[0])
 
-	loadFromMemory: (fileType, fileData, dataSize) -> gc(RL.LoadImageFromMemory(fileType, fileData, dataSize))
-	loadFromTexture: (texture) -> gc(RL.LoadImageFromTexture!)
-	loadFromScreen: -> gc(RL.LoadImageFromScreen!)
-	genColor: (width, height, color) -> gc(RL.GenImageColor(width, height, color))
-	genGradientV: (width, height, top, bottom) -> gc(RL.GenImageGradientV(width, height, top, bottom))
-	genGradientH: (width, height, left, right) -> gc(RL.GenImageGradientH(width, height, left, right))
+	loadFromMemory: (fileType, fileData, dataSize) -> Image(RL.LoadImageFromMemory(fileType, fileData, dataSize))
+	loadFromTexture: (texture) -> Image(RL.LoadImageFromTexture!)
+	loadFromScreen: -> Image(RL.LoadImageFromScreen!)
+	genColor: (width, height, color) -> Image(RL.GenImageColor(width, height, color))
+	genGradientV: (width, height, top, bottom) -> Image(RL.GenImageGradientV(width, height, top, bottom))
+	genGradientH: (width, height, left, right) -> Image(RL.GenImageGradientH(width, height, left, right))
 
 	genGradientRadial: (width, height, density, inner, outer) ->
-		gc(RL.GenImageGradientRadial(width, height, density, inner, outer))
+		Image(RL.GenImageGradientRadial(width, height, density, inner, outer))
 
 	genChecked: (width, height, checksX, checksY, col1, col2) ->
-		gc(RL.GenImageChecked(width, height, checksX, checksY, col1, col2))
+		Image(RL.GenImageChecked(width, height, checksX, checksY, col1, col2))
 
-	genWhiteNoise: (width, height, factor) -> gc(RL.GenImageWhiteNoise(width, height, factor))
-	genCellular: (width, height, tileSize) -> gc(RL.GenImageCellular(width, height, tileSize))
+	genWhiteNoise: (width, height, factor) -> Image(RL.GenImageWhiteNoise(width, height, factor))
+	genCellular: (width, height, tileSize) -> Image(RL.GenImageCellular(width, height, tileSize))
 
 	genFontAtlas: (chars, glyphCount, fontSize, padding, packMethod) ->
 		recs = ffi.new('Rectangle[?]', glyphCount)
-		result = gc(RL.GenImageFontAtlas(chars, recs, glyphCount, fontSize, padding, packMethod))
+		result = Image(RL.GenImageFontAtlas(chars, recs, glyphCount, fontSize, padding, packMethod))
 		result, recs
 
-	fromImage: (image, rec) -> gc(RL.ImageFromImage(image, rec))
-	text: (text, fontSize, color) -> gc(RL.ImageText(text, fontSize, color))
-	textEx: (font, text, fontSize, spacing, tint) -> gc(RL.ImageTextEx(font, text, fontSize, spacing, tint))
+	fromImage: (image, rec) -> Image(RL.ImageFromImage(image, rec))
+	text: (text, fontSize, color) -> Image(RL.ImageText(text, fontSize, color))
+	textEx: (font, text, fontSize, spacing, tint) -> Image(RL.ImageTextEx(font, text, fontSize, spacing, tint))
 
 	-- member functions --
 
-	copy: => gc(RL.ImageCopy(@))
-	export: (fileName) => RL.ExportImage(@, fileName)
-	exportAsCode: (fileName) => RL.ExportImageAsCode(@, fileName)
-	format: (newFormat) => RL.ImageFormat(@, newFormat)
-	toPOT: (fill) => RL.ImageToPOT(@, fill)
-	crop: (crop) => RL.ImageCrop(@, crop)
-	alphaCrop: (threshold) => RL.ImageAlphaCrop(@, threshold)
-	alphaClear: (color, threshold) => RL.ImageAlphaClear(@, color, threshold)
-	alphaMask: (alphaMask) => RL.ImageAlphaMask(@, alphaMask)
-	alphaPremultiply: => RL.ImageAlphaPremultiply(@)
-	resize: (newWidth, newHeight) => RL.ImageResize(@, newWidth, newHeight)
-	resizeNN: (newWidth,newHeight) => RL.ImageResizeNN(@, newWidth,newHeight)
+	copy: => Image(RL.ImageCopy(@))
+	export: RL.ExportImage
+	exportAsCode: RL.ExportImageAsCode
+	format: RL.ImageFormat
+	toPOT: RL.ImageToPOT
+	crop: RL.ImageCrop
+	alphaCrop: RL.ImageAlphaCrop
+	alphaClear: RL.ImageAlphaClear
+	alphaMask: RL.ImageAlphaMask
+	alphaPremultiply: RL.ImageAlphaPremultiply
+	resize: RL.ImageResize
+	resizeNN: RL.ImageResizeNN
 
-	resizeCanvas: (newWidth, newHeight, offsetX, offsetY, fill) =>
-		RL.ImageResizeCanvas(@, newWidth, newHeight, offsetX, offsetY, fill)
+	resizeCanvas: RL.ImageResizeCanvas
 
-	mipmaps: => RL.ImageMipmaps(@)
-	dither: (rBpp, gBpp, bBpp, aBpp) => RL.ImageDither(@, rBpp, gBpp, bBpp, aBpp)
-	flipVertical: => RL.ImageFlipVertical(@)
-	flipHorizontal: => RL.ImageFlipHorizontal(@)
-	rotateCW: => RL.ImageRotateCW(@)
-	rotateCCW: => RL.ImageRotateCCW(@)
-	colorTint: (color) => RL.ImageColorTint(@, color)
-	colorInvert: => RL.ImageColorInvert(@)
-	colorGrayscale: => RL.ImageColorGrayscale(@)
-	colorContrast: (contrast) => RL.ImageColorContrast(@, contrast)
-	colorBrightness: (brightness) => RL.ImageColorBrightness(@, brightness)
-	colorReplace: (color, replace) => RL.ImageColorReplace(@, color, replace)
+	mipmaps: RL.ImageMipmaps
+	dither: RL.ImageDither
+	flipVertical: RL.ImageFlipVertical
+	flipHorizontal: RL.ImageFlipHorizontal
+	rotateCW: RL.ImageRotateCW
+	rotateCCW: RL.ImageRotateCCW
+	colorTint: RL.ImageColorTint
+	colorInvert: RL.ImageColorInvert
+	colorGrayscale: RL.ImageColorGrayscale
+	colorContrast: RL.ImageColorContrast
+	colorBrightness: RL.ImageColorBrightness
+	colorReplace: RL.ImageColorReplace
 
 	loadColors: =>
 		if colors = ptr(RL.LoadImageColors(@))
@@ -110,25 +109,22 @@ ImageMT = {
 			return result, tonumber(colorCount[0])
 		nil, 0
 
-	getAlphaBorder: (threshold) => RL.GetImageAlphaBorder(@, threshold)
-	getColor: (x, y) => RL.GetImageColor(@, x, y)
-	clearBackground: (color) => RL.ImageClearBackground(@, color)
-	drawPixel: (posX, posY, color) => RL.ImageDrawPixel(@, posX, posY, color)
-	drawPixelV: (position, color) => RL.ImageDrawPixelV(@, position, color)
-	drawLine: (startPosX, startPosY, endPosX, endPosY, color) =>
-		RL.ImageDrawLine(@, startPosX, startPosY, endPosX, endPosY, color)
-
-	drawLineV: (start, endp, color) => RL.ImageDrawLineV(@, start, endp, color)
-	drawCircle: (centerX, centerY, radius, color) => RL.ImageDrawCircle(@, centerX, centerY, radius, color)
-	drawCircleV: (center, radius, color) => RL.ImageDrawCircleV(@, center, radius, color)
-	drawRectangle: (posX, posY, width, height, color) => RL.ImageDrawRectangle(@, posX, posY, width, height, color)
-	drawRectangleV: (position, size, color) => RL.ImageDrawRectangleV(@, position, size, color)
-	drawRectangleRec: (rec, color) => RL.ImageDrawRectangleRec(@, rec, color)
-	drawRectangleLines: (rec, thick, color) => RL.ImageDrawRectangleLines(@, rec, thick, color)
-	draw: (src, srcRec, dstRec, tint) => RL.ImageDraw(@, src, srcRec, dstRec, tint)
-	drawText: (text, posX, posY, fontSize, color) => RL.ImageDrawText(@, text, posX, posY, fontSize, color)
-	drawTextEx: (font, text, position, fontSize, spacing, tint) =>
-		RL.ImageDrawTextEx(@, font, text, position, fontSize, spacing, tint)
+	getAlphaBorder: RL.GetImageAlphaBorder
+	getColor: RL.GetImageColor
+	clearBackground: RL.ImageClearBackground
+	drawPixel: RL.ImageDrawPixel
+	drawPixelV: RL.ImageDrawPixelV
+	drawLine: RL.ImageDrawLine
+	drawLineV: RL.ImageDrawLineV
+	drawCircle: RL.ImageDrawCircle
+	drawCircleV: RL.ImageDrawCircleV
+	drawRectangle: RL.ImageDrawRectangle
+	drawRectangleV: RL.ImageDrawRectangleV
+	drawRectangleRec: RL.ImageDrawRectangleRec
+	drawRectangleLines: RL.ImageDrawRectangleLines
+	draw: RL.ImageDraw
+	drawText: RL.ImageDrawText
+	drawTextEx: RL.ImageDrawTextEx
 }
 
 ImageMT.__index = ImageMT

@@ -8,7 +8,7 @@ import 'lib.core.data' as :memFree
 		cp = RL.LoadCodepoints(text, count)
 		cp, tonumber(count[0])
 
-	getCodepointCount: (text) -> RL.GetCodepointCount(text)
+	getCodepointCount: RL.GetCodepointCount
 
 	getCodepoint: (text) ->
 		bytesProcessed = ffi.new('int[1]')

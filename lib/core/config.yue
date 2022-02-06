@@ -17,8 +17,8 @@ import 'ffi' as :C
 	MSAA_4X_HINT: C.FLAG_MSAA_4X_HINT
 	INTERLACED_HINT: C.FLAG_INTERLACED_HINT
 
-	setFlags: (flags) -> RL.SetConfigFlags(flags)
+	setFlags: RL.SetConfigFlags
 
-	loadVrStereoConfig: (device) -> RL.LoadVrStereoConfig(device)
-	unloadVrStereoConfig: (config) -> RL.UnloadVrStereoConfig(config)
+	loadVrStereoConfig: RL.LoadVrStereoConfig
+	unloadVrStereoConfig: RL.UnloadVrStereoConfig
 }

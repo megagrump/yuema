@@ -1,9 +1,9 @@
 import RL from yuema
 
 {
-	setTargetFPS: (fps) -> RL.SetTargetFPS(fps)
-	getFPS: -> RL.GetFPS!
-	getFrameTime: -> RL.GetFrameTime!
-	getTime: -> RL.GetTime!
-	wait: (ms) -> RL.WaitTime(ms)
+	setTargetFPS: RL.SetTargetFPS
+	getFPS: RL.GetFPS
+	getFrameTime: RL.GetFrameTime
+	getTime: RL.GetTime
+	wait: RL.WaitTime
 }

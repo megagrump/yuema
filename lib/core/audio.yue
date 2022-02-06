@@ -16,8 +16,8 @@ WaveMT = {
 
 	__gc: RL.UnloadWave
 
-	export: (fileName) => RL.ExportWave(@, fileName)
-	exportAsCode: (fileName) => RL.ExportWaveAsCode(@, fileName)
+	export: RL.ExportWave
+	exportAsCode: RL.ExportWaveAsCode
 	copy: => Wave(RL.WaveCopy(@))
 	crop: (initSample, finalSample) => Wave(RL.WaveCrop(@, initSample, finalSample))
 	format: (sampleRate, sampleSize, channels) => Wave(RL.WaveFormat(@, sampleRate, sampleSize, channels))
@@ -40,17 +40,16 @@ SoundMT = {
 
 	__gc: RL.UnloadSound
 
-	update: (data, sampleCount) => RL.UpdateSound(@, data, sampleCount)
-
-	play: => RL.PlaySound(@)
-	stop: => RL.StopSound(@)
-	pause: => RL.PauseSound(@)
-	resume: => RL.ResumeSound(@)
-	playMulti: => RL.PlaySoundMulti(@)
-	isPlaying: => RL.IsSoundPlaying(@)
-	setVolume: (volume) => RL.SetSoundVolume(@, volume)
-	setPitch: (pitch) => RL.SetSoundPitch(@, pitch)
-	setPan: (pan) => RL.SetSoundPan(@, pan)
+	update: RL.UpdateSound
+	play: RL.PlaySound
+	stop: RL.StopSound
+	pause: RL.PauseSound
+	resume: RL.ResumeSound
+	playMulti: RL.PlaySoundMulti
+	isPlaying: RL.IsSoundPlaying
+	setVolume: RL.SetSoundVolume
+	setPitch: RL.SetSoundPitch
+	setPan: RL.SetSoundPan
 }
 
 SoundMT.__index = SoundMT
@@ -69,18 +68,18 @@ MusicMT = {
 
 	__gc: RL.UnloadMusicStream
 
-	play: => RL.PlayMusicStream(@)
-	isPlaying: => RL.IsMusicStreamPlaying(@)
-	update: => RL.UpdateMusicStream(@)
-	stop: => RL.StopMusicStream(@)
-	pause: => RL.PauseMusicStream(@)
-	resume: => RL.ResumeMusicStream(@)
-	seek: (position) => RL.SeekMusicStream(@, position)
-	setVolume: (volume) => RL.SetMusicVolume(@, volume)
-	setPitch: (pitch) => RL.SetMusicPitch(@, pitch)
-	setPan: (pan) => RL.SetMusicPan(@, pan)
-	getTimeLength: => RL.GetMusicTimeLength(@)
-	getTimePlayed: => RL.GetMusicTimePlayed(@)
+	play: RL.PlayMusicStream
+	isPlaying: RL.IsMusicStreamPlaying
+	update: RL.UpdateMusicStream
+	stop: RL.StopMusicStream
+	pause: RL.PauseMusicStream
+	resume: RL.ResumeMusicStream
+	seek: RL.SeekMusicStream
+	setVolume: RL.SetMusicVolume
+	setPitch: RL.SetMusicPitch
+	setPan: RL.SetMusicPan
+	getTimeLength: RL.GetMusicTimeLength
+	getTimePlayed: RL.GetMusicTimePlayed
 }
 
 MusicMT.__index = MusicMT
@@ -94,22 +93,22 @@ Stream = ffi.typeof('AudioStream')
 StreamMT = {
 	load: (sampleRate, sampleSize, channels) -> Stream(RL.LoadAudioStream(sampleRate, sampleSize, channels))
 
-	setBufferSizeDefault: (size) -> RL.SetAudioStreamBufferSizeDefault(size)
+	setBufferSizeDefault: RL.SetAudioStreamBufferSizeDefault
 
 	-- member functions --
 
 	__gc: RL.UnloadAudioStream
 
-	update: (data, frameCount) => RL.UpdateAudioStream(@, data, frameCount)
-	isProcessed: => RL.IsAudioStreamProcessed(@)
-	play: => RL.PlayAudioStream(@)
-	pause: => RL.PauseAudioStream(@)
-	resume: => RL.ResumeAudioStream(@)
-	isPlaying: => RL.IsAudioStreamPlaying(@)
-	stop: => RL.StopAudioStream(@)
-	setVolume: (volume) => RL.SetAudioStreamVolume(@, volume)
-	setPitch: (pitch) => RL.SetAudioStreamPitch(@, pitch)
-	setPan: (pan) => RL.SetAudioStreamPan(@, pan)
+	update: RL.UpdateAudioStream
+	isProcessed: RL.IsAudioStreamProcessed
+	play: RL.PlayAudioStream
+	pause: RL.PauseAudioStream
+	resume: RL.ResumeAudioStream
+	isPlaying: RL.IsAudioStreamPlaying
+	stop: RL.StopAudioStream
+	setVolume: RL.SetAudioStreamVolume
+	setPitch: RL.SetAudioStreamPitch
+	setPan: RL.SetAudioStreamPan
 }
 
 StreamMT.__index = StreamMT
@@ -119,13 +118,13 @@ ffi.metatype(Stream, StreamMT)
 -- audio --
 
 {
-	init: -> RL.InitAudioDevice!
-	close: -> RL.CloseAudioDevice!
-	isReady: -> RL.IsAudioDeviceReady!
-	setMasterVolume: (volume) -> RL.SetMasterVolume(volume)
+	init: RL.InitAudioDevice
+	close: RL.CloseAudioDevice
+	isReady: RL.IsAudioDeviceReady
+	setMasterVolume: RL.SetMasterVolume
 
-	stopSoundMulti: -> RL.StopSoundMulti!
-	getSoundsPlaying: -> RL.GetSoundsPlaying!
+	stopSoundMulti: RL.StopSoundMulti
+	getSoundsPlaying: RL.GetSoundsPlaying
 
 	:Wave
 	:Sound
