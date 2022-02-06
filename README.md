@@ -2,9 +2,9 @@
 
 Yuema is a Lua-based programming framework combining [raylib](https://github.com/raysan5/raylib) (and some of its accompanying libraries), [Box2D](https://github.com/erincatto/box2d)\*, [LuaJIT](https://github.com/LuaJIT/LuaJIT) and [Yuescript](https://github.com/pigpigyyy/Yuescript) into a stand-alone executable with minimal external dependencies.
 
-You can use it to write 2D and 3D games in Lua or Yuescript (a MoonScript derivative that compiles to Lua). Yuescript integration is seamless with no extra compilation step required.
+You can use it to write 2D and 3D games in [Lua](https://www.lua.org/) or [Yuescript](http://yuescript.org), a [MoonScript](https://moonscript.org/) derivative that compiles to Lua. Yuescript integration is seamless with no extra compilation step required.
 
-\* Box2D support is WIP.
+\* Box2D support is currently WIP.
 
 ![yuema1](https://user-images.githubusercontent.com/31128870/152654645-fc42539f-b09d-4257-a525-11d3f9058327.png)
 
@@ -14,13 +14,27 @@ You can use it to write 2D and 3D games in Lua or Yuescript (a MoonScript deriva
 
 ![yuema4](https://user-images.githubusercontent.com/31128870/152654651-f92a1afc-0b2a-4512-86fd-39dfc8372603.png)
 
-## Build
+## How to build
 
 Make sure you clone with submodules:
 
     git clone --recurse-submodules git@github.com:megagrump/yuema.git
 
 ### Linux
+
+#### 1. Install dependencies 
+
+Debian based (Ubuntu, etc.)
+
+    sudo apt install libasound2-dev mesa-common-dev libx11-dev libxrandr-dev libxi-dev xorg-dev libgl1-mesa-dev libglu1-mesa-dev
+
+RedHat based (Fedora, etc.)
+
+    sudo dnf install alsa-lib-devel mesa-libGL-devel libX11-devel libXrandr-devel libXi-devel libXcursor-devel libXinerama-devel
+
+CMake is required also.
+
+#### 2. Build
 
 ```
 mkdir build
@@ -29,9 +43,27 @@ cmake ..
 make
 ```
 
-### Other platforms
+### Windows
 
-No one has tried yet. Let me know if you managed to build it on Windows/MacOS/anything!
+The [MSYS](https://www.msys2.org/) MinGW compiler suite is used to create binaries for Windows. `mingw-w64-x86_64-cmake` is required.
+The `/mingw64/bin` directory is assumed to be in your `$PATH`.
+
+```
+mkdir build
+cd build
+cmake -G "MSYS Makefiles" ..
+make
+```
+
+The `yuema` runtime depends on these DLLs from mingw64:
+
+* `libstdc++-6.dll`
+* `libwinpthread-1.dll`
+* `libgcc_s_seh-1.dll`
+
+### Other platforms/compilers
+
+No one has tried yet.
 
 ## Examples
 

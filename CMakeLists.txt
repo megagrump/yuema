@@ -1,19 +1,26 @@
-cmake_minimum_required(VERSION 3.10)
+if(DEFINED CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Build type")
+else()
+	set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type")
+endif()
 
 project(yuema)
 
-if(WIN32)
-	set(LIB_PREFIX "")
-	set(LIB_SUFFIX ".lib")
-else()
-	set(LIB_PREFIX "lib")
-	set(LIB_SUFFIX ".a")
-endif()
-
+cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED False)
 
 set(YUEMA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/yuema)
+
+set(LIB_PREFIX "lib")
+set(LIB_SUFFIX ".a")
+if(WIN32)
+	set(EXE_SUFFIX ".exe")
+	set(LINKER_OPTS "-Wl,-subsystem,windows")
+else()
+	set(EXE_SUFFIX "")
+	set(LINKER_OPTS "-ldl")
+endif()
 
 ### LuaJIT
 set(LUAJIT_PROJECT_DIR ${PROJECT_SOURCE_DIR}/src/LuaJIT)
@@ -21,7 +28,7 @@ set(LUAJIT_SOURCE_DIR ${LUAJIT_PROJECT_DIR}/src)
 
 add_custom_target(luajit-bin ALL
 	WORKING_DIRECTORY ${LUAJIT_PROJECT_DIR}
-	COMMAND make CFLAGS=-DLUAJIT_ENABLE_LUA52COMPAT=1 -j
+	COMMAND make BUILDMODE=static CFLAGS=-DLUAJIT_ENABLE_LUA52COMPAT=1 -j
 )
 add_library(luajit STATIC IMPORTED)
 add_dependencies(luajit luajit-bin)
@@ -31,7 +38,7 @@ set_property(TARGET luajit PROPERTY IMPORTED_LOCATION ${LUAJIT_SOURCE_DIR}/${LIB
 function(generate_ffi source target prefix defines)
 	add_custom_command(
 		OUTPUT ${target}
-		COMMAND ${LUAJIT_SOURCE_DIR}/luajit generate_ffi.lua ${source} ${target} ${prefix} ${defines}
+		COMMAND ${LUAJIT_SOURCE_DIR}/luajit${EXE_SUFFIX} generate_ffi.lua ${source} ${target} ${prefix} ${defines}
 		DEPENDS ${source}
 		DEPENDS luajit
 		DEPENDS ${YUEMA_SOURCE_DIR}/tools/generate_ffi.lua
@@ -71,8 +78,7 @@ add_library(yue STATIC
 	${YUE_SOURCE_DIR}/yuescript/yue_compiler.cpp
 	${YUE_SOURCE_DIR}/yuescript/yuescript.cpp
 )
-#add_dependencies(yue luajit)
-
+add_dependencies(yue luajit)
 target_include_directories(yue PRIVATE ${YUE_SOURCE_DIR} ${LUAJIT_SOURCE_DIR})
 ###
 
@@ -88,5 +94,5 @@ add_executable(yuema
 )
 
 target_include_directories(yuema PRIVATE ${RAYLIB_SOURCE_DIR} ${RAYGUI_SOURCE_DIR} ${PHYSAC_SOURCE_DIR} ${LUAJIT_SOURCE_DIR})
-target_link_libraries(yuema -ldl -lpthread raylib luajit yue)
 set_target_properties(yuema PROPERTIES LINK_FLAGS_RELEASE -s)
+target_link_libraries(yuema ${LINKER_OPTS} -lpthread raylib luajit yue)
