@@ -1,10 +1,8 @@
 # Yuema
 
-Yuema is a Lua-based programming framework combining [raylib](https://github.com/raysan5/raylib) (and some of its accompanying libraries), [Box2D](https://github.com/erincatto/box2d)\*, [LuaJIT](https://github.com/LuaJIT/LuaJIT) and [Yuescript](https://github.com/pigpigyyy/Yuescript) into a stand-alone executable with minimal external dependencies.
+Yuema is a Lua-based programming framework combining [raylib](https://github.com/raysan5/raylib) (and some of its accompanying libraries), [Box2D](https://github.com/erincatto/box2d), [LuaJIT](https://github.com/LuaJIT/LuaJIT) and [Yuescript](https://github.com/pigpigyyy/Yuescript) into a stand-alone executable with minimal external dependencies.
 
 You can use it to write 2D and 3D games in [Lua](https://www.lua.org/) or [Yuescript](http://yuescript.org), a [MoonScript](https://moonscript.org/) derivative that compiles to Lua. Yuescript integration is seamless with no extra compilation step required.
-
-\* Box2D support is currently WIP.
 
 ![yuema1](https://user-images.githubusercontent.com/31128870/152654645-fc42539f-b09d-4257-a525-11d3f9058327.png)
 

@@ -1,0 +1,31 @@
+import 'lib.box2d.World'
+import 'lib.box2d.Body'
+import 'lib.box2d.Fixture'
+import 'lib.box2d.Contact'
+import 'lib.box2d.shapes'
+import 'lib.box2d.joints'
+import 'lib.box2d._scale'
+
+{
+	setScale: (s) -> _scale.set(s)
+	getScale: -> _scale.get!
+
+	CircleShape: shapes.CircleShape
+	ChainShape: shapes.ChainShape
+	PolygonShape: shapes.PolygonShape
+	EdgeShape: shapes.EdgeShape
+
+	RevoluteJoint: joints.RevoluteJoint
+	PrismaticJoint: joints.PrismaticJoint
+	DistanceJoint: joints.DistanceJoint
+	PulleyJoint: joints.PulleyJoint
+	MouseJoint: joints.MouseJoint
+	GearJoint: joints.GearJoint
+	WheelJoint: joints.WheelJoint
+	WeldJoint: joints.WeldJoint
+	FrictionJoint: joints.FrictionJoint
+	MotorJoint: joints.MotorJoint
+
+	:World
+	:Body
+}

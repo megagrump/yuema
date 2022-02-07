@@ -104,6 +104,10 @@ add_executable(yuema
 	${YUEMA_SOURCE_DIR}/rlgl_ffi.h
 	${YUEMA_SOURCE_DIR}/LuaVM.cpp
 	${BOX2DC_SOURCE_DIR}/box2dc.cpp
+	${BOX2DC_SOURCE_DIR}/world.cpp
+	${BOX2DC_SOURCE_DIR}/shapes.cpp
+	${BOX2DC_SOURCE_DIR}/joints.cpp
+	${BOX2DC_SOURCE_DIR}/contact.cpp
 	${YUEMA_SOURCE_DIR}/main.cpp
 )
 

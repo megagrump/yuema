@@ -1,0 +1,20 @@
+CIRCLE = 0
+EDGE = 1
+POLYGON = 2
+CHAIN = 3
+
+TypeNames = {
+	[CIRCLE]:  'circle'
+	[EDGE]:    'edge'
+	[POLYGON]: 'polygon'
+	[CHAIN]:   'chain'
+}
+
+{
+	:CIRCLE
+	:EDGE
+	:POLYGON
+	:CHAIN
+
+	:TypeNames
+}

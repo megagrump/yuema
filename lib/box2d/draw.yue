@@ -1,0 +1,62 @@
+import B2D from yuema
+import 'ffi'
+import 'lib.core.draw'
+import 'lib.core.Color'
+import 'lib.box2d._scale'
+
+scaleUp = _scale.up
+tempVerts = ffi.new('Vector2[8]')
+proxy = ffi.new('b2cDraw')
+
+colorCache = {}
+makeColor = (r, g, b, a) ->
+	hash = r * 64 + g * 16 + b * 4 + a
+	if color = colorCache[hash]
+		return color
+
+	color = Color.fromNormalized(r, g, b, a)
+	colorCache[hash] = color
+	color
+
+proxy.DrawPolygon =(vertices, count, r, g, b, a) ->
+	color = makeColor(r, g, b, a)
+	for i = 0, count - 1
+		n = (i + 1) % count
+		x1, y1 = scaleUp(vertices[i].x, vertices[i].y)
+		x2, y2 = scaleUp(vertices[n].x, vertices[n].y)
+		draw.line(x1, y1, x2, y2, color)
+
+proxy.DrawSolidPolygon = (vertices, count, r, g, b, a) ->
+	color = makeColor(r, g, b, a)
+	for i = 0, count - 1
+		tempVerts[i].x, tempVerts[i].y = scaleUp(vertices[i].x, vertices[i].y)
+	draw.triangleFan(tempVerts, count, color)
+
+proxy.DrawCircle = (x, y, radius, r, g, b, a) ->
+	x, y = scaleUp(x, y)
+	radius = scaleUp(radius)
+	draw.circleLines(x, y, radius, makeColor(r, g, b, a))
+
+proxy.DrawSolidCircle = (x, y, radius, ax, ay, r, g, b, a) ->
+	x, y = scaleUp(x, y)
+	radius = scaleUp(radius)
+	color = makeColor(r, g, b, a)
+	draw.circle(x, y, radius, color)
+	--draw.line(x, y, x + ax * radius, y + ay * radius, color)
+
+proxy.DrawSegment = (x1, y1, x2, y2, r, g, b, a) ->
+	x1, y1 = scaleUp(x1, y1)
+	x2, y2 = scaleUp(x2, y2)
+	draw.line(x1, y1, x2, y2, makeColor(r, g, b, a))
+
+proxy.DrawTransform = (x, y, angle) ->
+	x, y = scaleUp(x, y)
+
+proxy.DrawPoint = (x, y, size, r, g, b, a) ->
+	x, y = scaleUp(x, y)
+	draw.circle(x, y, size, makeColor(r, g, b, a))
+
+debugDraw = (world) ->
+	B2D.b2Draw_Draw(world, proxy)
+
+debugDraw

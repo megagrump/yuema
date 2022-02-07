@@ -1,0 +1,557 @@
+import 'ffi'
+import 'lib.math.Vector2'
+import 'lib.box2d.JointType' as :TypeNames
+import 'lib.box2d._scale'
+import 'lib.core.util' as :ptr
+import B2D from yuema
+
+tempVector = Vector2!
+scaleUp, scaleDown = _scale.up, _scale.down
+
+Joint = ffi.typeof('b2Joint')
+JointPtr = ffi.typeof('b2Joint*')
+RevoluteJoint = ffi.typeof('b2RevoluteJoint')
+RevoluteJointPtr = ffi.typeof('b2RevoluteJoint*')
+PrismaticJoint = ffi.typeof('b2PrismaticJoint')
+PrismaticJointPtr = ffi.typeof('b2PrismaticJoint*')
+DistanceJoint = ffi.typeof('b2DistanceJoint')
+DistanceJointPtr = ffi.typeof('b2DistanceJoint*')
+PulleyJoint = ffi.typeof('b2PulleyJoint')
+PulleyJointPtr = ffi.typeof('b2PulleyJoint*')
+MouseJoint = ffi.typeof('b2MouseJoint')
+MouseJointPtr = ffi.typeof('b2MouseJoint*')
+GearJoint = ffi.typeof('b2GearJoint')
+GearJointPtr = ffi.typeof('b2GearJoint*')
+WheelJoint = ffi.typeof('b2WheelJoint')
+WheelJointPtr = ffi.typeof('b2WheelJoint*')
+WeldJoint = ffi.typeof('b2WeldJoint')
+WeldJointPtr = ffi.typeof('b2WeldJoint*')
+FrictionJoint = ffi.typeof('b2FrictionJoint')
+FrictionJointPtr = ffi.typeof('b2FrictionJoint*')
+MotorJoint = ffi.typeof('b2MotorJoint')
+MotorJointPtr = ffi.typeof('b2MotorJoint*')
+
+jointCast = ffi.new([[
+	union {
+		b2Joint *joint;
+		b2RevoluteJoint *revolute;
+		b2PrismaticJoint *prismatic;
+		b2DistanceJoint *distance;
+		b2PulleyJoint *pulley;
+		b2MouseJoint *mouse;
+		b2GearJoint *gear;
+		b2WheelJoint *wheel;
+		b2WeldJoint *weld;
+		b2FrictionJoint *friction;
+		b2MotorJoint *motor;
+	}
+]])
+
+--- Joint ---
+
+JointMT = {
+	getType: => TypeNames[B2D.b2Joint_GetType(@)]
+	getBodyA: => B2D.b2Joint_GetBodyA(@_downCast!)
+	getBodyB: => B2D.b2Joint_GetBodyB(@_downCast!)
+	getAnchorA: =>
+		{ :x, :y } = B2D.b2Joint_GetAnchorA(@_downCast!, tempVector)
+		scaleUp(x, y)
+
+	getAnchorB: =>
+		{ :x, :y } = B2D.b2Joint_GetAnchorB(@_downCast!, tempVector)
+		scaleUp(x, y)
+
+	getReactionForce: (inv_dt) =>
+		{ :x, :y } = B2D.b2Joint_GetReactionForce(@_downCast!, inv_dt, tempVector)
+		scaleUp(x, y)
+
+	getReactionTorque: (inv_dt) => scaleUp(scaleUp(B2D.b2Joint_GetReactionTorque(@_downCast!, inv_dt)))
+	isEnabled: => B2D.b2Joint_IsEnabled(@_downCast!)
+	getCollideConnected: => B2D.b2Joint_GetCollideConnected(@_downCast!)
+	getNext: => ptr(B2D.b2Joint_GetNext(@_downCast!))?::_upCast!
+	shiftOrigin: (x, y) => B2D.b2Joint_ShiftOrigin(@, scaleDown(x, y))
+	getUserData: => yuema.getRef(tonumber(B2D.b2Joint_GetUserData(@_downCast!)))
+	setUserData: (data) =>
+		base = @_downCast!
+		ref = yuema.pushRef(data, tonumber(B2D.b2Joint_GetUserData(base)))
+		B2D.b2Joint_SetUserData(base, ref)
+
+	dump: B2D.b2Joint_Dump
+	_deinit: =>
+		@setUserData(nil)
+		@
+
+	_upCast: =>
+		jointCast.joint = @
+		jointCast[@getType!]
+}
+
+JointMT.__index = JointMT
+ffi.metatype(Joint, JointMT)
+
+-- RevoluteJoint --
+
+RevoluteJointMT = {
+	__new: (bodyA, bodyB, x, y, angle = 0, collide = false) =>
+		x, y = scaleDown(x, y)
+		B2D.b2RevoluteJoint_New(bodyA, bodyB, x, y, angle, collide)
+
+	getLocalAnchorA: =>
+		{ :x, :y } = B2D.b2RevoluteJoint_GetLocalAnchorA(@, tempVector)
+		scaleUp(x, y)
+
+	getLocalAnchorB: =>
+		{ :x, :y } = B2D.b2RevoluteJoint_GetLocalAnchorB(@, tempVector)
+		scaleUp(x, y)
+
+	getReferenceAngle: B2D.b2RevoluteJoint_GetReferenceAngle
+	getJointAngle: B2D.b2RevoluteJoint_GetJointAngle
+	getJointSpeed: B2D.b2RevoluteJoint_GetJointSpeed
+	isLimitEnabled: B2D.b2RevoluteJoint_IsLimitEnabled
+	enableLimit: B2D.b2RevoluteJoint_EnableLimit
+	getLowerLimit: B2D.b2RevoluteJoint_GetLowerLimit
+	getUpperLimit: B2D.b2RevoluteJoint_GetUpperLimit
+	setLimits: B2D.b2RevoluteJoint_SetLimits
+	isMotorEnabled: B2D.b2RevoluteJoint_IsMotorEnabled
+	enableMotor: B2D.b2RevoluteJoint_EnableMotor
+	setMotorSpeed: B2D.b2RevoluteJoint_SetMotorSpeed
+	getMotorSpeed: B2D.b2RevoluteJoint_GetMotorSpeed
+	setMaxMotorTorque: (torque) => B2D.b2RevoluteJoint_SetMaxMotorTorque(@, scaleDown(scaleDown(torque)))
+	getMaxMotorTorque: => scaleUp(scaleUp(B2D.b2RevoluteJoint_GetMaxMotorTorque(@)))
+	getMotorTorque: (inv_dt) => scaleUp(scaleUp(B2D.b2RevoluteJoint_GetMotorTorque(@, inv_dt)))
+
+	getType: => 'revolute'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.revolute = @
+		jointCast.joint
+}
+
+RevoluteJointMT.__index = RevoluteJointMT
+ffi.metatype(RevoluteJoint, RevoluteJointMT)
+
+-- PrismaticJoint --
+
+PrismaticJointMT = {
+	__new: (bodyA, bodyB, x, y, ax, ay, angle = 0, collide = false) =>
+		x, y = scaleDown(x, y)
+		B2D.b2PrismaticJoint_New(bodyA, bodyB, x, y, ax, ay, angle, collide)
+
+	getLocalAnchorA: =>
+		{ :x, :y } = B2D.b2PrismaticJoint_GetLocalAnchorA(@, tempVector)
+		scaleUp(x, y)
+
+	getLocalAnchorB: =>
+		{ :x, :y } = B2D.b2PrismaticJoint_GetLocalAnchorB(@, tempVector)
+		scaleUp(x, y)
+
+	getReferenceAngle: B2D.b2PrismaticJoint_GetReferenceAngle
+	getJointTranslation: B2D.b2PrismaticJoint_GetJointTranslation
+	getJointSpeed: B2D.b2PrismaticJoint_GetJointSpeed
+	isLimitEnabled: B2D.b2PrismaticJoint_IsLimitEnabled
+	enableLimit: B2D.b2PrismaticJoint_EnableLimit
+	getLowerLimit: => scaleUp(B2D.b2PrismaticJoint_GetLowerLimit(@))
+	getUpperLimit: => scaleUp(B2D.b2PrismaticJoint_GetUpperLimit(@))
+	setLimits: (lower, upper) => B2D.b2PrismaticJoint_SetLimits(@, scaleDown(lower, upper))
+	isMotorEnabled: B2D.b2PrismaticJoint_IsMotorEnabled
+	enableMotor: B2D.b2PrismaticJoint_EnableMotor
+	setMotorSpeed: B2D.b2PrismaticJoint_SetMotorSpeed
+	getMotorSpeed: B2D.b2PrismaticJoint_GetMotorSpeed
+	setMaxMotorForce: (force) => B2D.b2PrismaticJoint_SetMaxMotorForce(@, scaleDown(force))
+	getMaxMotorForce: => scaleUp(B2D.b2PrismaticJoint_GetMaxMotorForce(@))
+	getMotorForce: (inv_dt) => scaleUp(B2D.b2PrismaticJoint_GetMotorForce(@, inv_dt))
+
+	getType: => 'prismatic'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.prismatic = @
+		jointCast.joint
+}
+
+PrismaticJointMT.__index = PrismaticJointMT
+ffi.metatype(PrismaticJoint, PrismaticJointMT)
+
+-- DistanceJoint --
+
+DistanceJointMT = {
+	__new: (bodyA, bodyB, x1, y1, x2, y2,  collide = false) =>
+		x1, y1 = scaleDown(x1, y1)
+		x2, y2 = scaleDown(x2, y2)
+		B2D.b2DistanceJoint_New(bodyA, bodyB, x1, y1, x2, y2, collide)
+
+	getLocalAnchorA: =>
+		{ :x, :y } = B2D.b2DistanceJoint_GetLocalAnchorA(@, tempVector)
+		scaleUp(x, y)
+
+	getLocalAnchorB: =>
+		{ :x, :y } = B2D.b2DistanceJoint_GetLocalAnchorB(@, tempVector)
+		scaleUp(x, y)
+
+	getLength: => scaleUp(B2D.b2DistanceJoint_GetLength(@))
+	setLength: (length) => scaleUp(B2D.b2DistanceJoint_SetLength(@, scaleDown(length)))
+	getMinLength: => scaleUp(B2D.b2DistanceJoint_GetMinLength(@))
+	setMinLength: (minLength) => scaleUp(B2D.b2DistanceJoint_SetMinLength(@, scaleDown(minLength)))
+	getMaxLength: => scaleUp(B2D.b2DistanceJoint_GetMaxLength(@))
+	setMaxLength: (maxLength) => scaleUp(B2D.b2DistanceJoint_SetMaxLength(@, scaleDown(maxLength)))
+	getCurrentLength: => scaleUp(B2D.b2DistanceJoint_GetCurrentLength(@))
+	setStiffness: (stiffness) => B2D.b2DistanceJoint_SetStiffness(@, scaleDown(stiffness))
+	getStiffness: => scaleUp(B2D.b2DistanceJoint_GetStiffness(@))
+	setDamping: (damping) => B2D.b2DistanceJoint_SetDamping(@, scaleDown(damping))
+	getDamping: => scaleUp(B2D.b2DistanceJoint_GetDamping(@))
+
+	getType: => 'distance'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.distance = @
+		jointCast.joint
+}
+
+DistanceJointMT.__index = DistanceJointMT
+ffi.metatype(DistanceJoint, DistanceJointMT)
+
+-- PulleyJoint --
+
+PulleyJointMT = {
+	__new: (bodyA, bodyB, gx1, gy1, gx2, gy2, x1, y1, x2, y2, ratio = 1, collide = false) =>
+		gx1, gy1 = scaleDown(gx1, gy1)
+		gx2, gy2 = scaleDown(gx2, gy2)
+		x1, y1 = scaleDown(x1, y1)
+		x2, y2 = scaleDown(x2, y2)
+		B2D.b2PulleyJoint_New(bodyA, bodyB, gx1, gy1, gx2, gy2, x1, y1, x2, y2, ratio, collide)
+
+	getGroundAnchorA: =>
+		{ :x, :y } = B2D.b2PulleyJoint_GetGroundAnchorA(@, tempVector)
+		scaleUp(x, y)
+
+	getGroundAnchorB: =>
+		{ :x, :y } = B2D.b2PulleyJoint_GetGroundAnchorB(@, tempVector)
+		scaleUp(x, y)
+
+	getLengthA: => scaleUp(B2D.b2PulleyJoint_GetLengthA(@))
+	getLengthB: => scaleUp(B2D.b2PulleyJoint_GetLengthB(@))
+	getRatio: B2D.b2PulleyJoint_GetRatio
+	getCurrentLengthA: => scaleUp(B2D.b2PulleyJoint_GetCurrentLengthA(@))
+	getCurrentLengthB: => scaleUp(B2D.b2PulleyJoint_GetCurrentLengthB(@))
+
+	getType: => 'pulley'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.pulley = @
+		jointCast.joint
+}
+
+PulleyJointMT.__index = PulleyJointMT
+ffi.metatype(PulleyJoint, PulleyJointMT)
+
+-- MouseJoint --
+
+MouseJointMT = {
+	__new: (body, x, y) =>
+		B2D.b2MouseJoint_New(body::getWorld!::getGroundBody!, body, scaleDown(x, y))
+
+	setTarget: (x, y) =>
+		B2D.b2MouseJoint_SetTarget(@, scaleDown(x, y))
+
+	getTarget: =>
+		{ :x, :y } = B2D.b2MouseJoint_GetTarget(@, tempVector)
+		scaleUp(x, y)
+
+	setMaxForce: (force) => B2D.b2MouseJoint_SetMaxForce(@, scaleDown(force))
+	getMaxForce: => scaleUp(B2D.b2MouseJoint_GetMaxForce(@))
+	setStiffness: (stiffness) => B2D.b2MouseJoint_SetStiffness(@, scaleDown(stiffness))
+	getStiffness: => scaleUp(B2D.b2MouseJoint_GetStiffness(@))
+	setDamping: => B2D.b2MouseJoint_SetDamping(@, scaleDown(damping))
+	getDamping: => scaleUp(B2D.b2MouseJoint_GetDamping(@))
+
+	getType: => 'mouse'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.mouse = @
+		jointCast.joint
+}
+
+MouseJointMT.__index = MouseJointMT
+ffi.metatype(MouseJoint, MouseJointMT)
+
+-- GearJoint --
+
+GearJointMT = {
+	__new: (joint1, joint2, ratio = 1, collide = false) =>
+		B2D.b2GearJoint_New(joint1::_downCast!, joint2::_downCast!, ratio, collide)
+
+	getJoint1: => B2D.b2GearJoint_GetJoint1(@)::_upCast!
+	getJoint2: => B2D.b2GearJoint_GetJoint2(@)::_upCast!
+	setRatio: B2D.b2GearJoint_SetRatio
+	getRatio: B2D.b2GearJoint_GetRatio
+
+	getType: => 'gear'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.gear = @
+		jointCast.joint
+}
+
+GearJointMT.__index = GearJointMT
+ffi.metatype(GearJoint, GearJointMT)
+
+-- WheelJoint --
+
+WheelJointMT = {
+	__new: (bodyA, bodyB, x, y, ax, ay, collide = false) =>
+		x, y = scaleDown(x, y)
+		B2D.b2WheelJoint_New(bodyA, bodyB, x, y, ax, ay, collide)
+
+	getLocalAnchorA: =>
+		{ :x, :y } = B2D.b2WheelJoint_GetLocalAnchorA(@, tempVector)
+		scaleUp(x, y)
+
+	getLocalAnchorB: =>
+		{ :x, :y } = B2D.b2WheelJoint_GetLocalAnchorB(@, tempVector)
+		scaleUp(x, y)
+
+	getLocalAxisA: =>
+		{ :x, :y } = B2D.b2WheelJoint_GetLocalAxisA(@, tempVector)
+		x, y
+
+	getJointTranslation: => scaleUp(B2D.b2WheelJoint_GetJointTranslation(@))
+	getJointLinearSpeed: => scaleUp(B2D.b2WheelJoint_GetJointLinearSpeed(@))
+	getJointAngle: B2D.b2WheelJoint_GetJointAngle
+	getJointAngularSpeed: B2D.b2WheelJoint_GetJointAngularSpeed
+	isLimitEnabled: B2D.b2WheelJoint_IsLimitEnabled
+	enableLimit: B2D.b2WheelJoint_EnableLimit
+	getLowerLimit: => scaleUp(B2D.b2WheelJoint_GetLowerLimit(@))
+	getUpperLimit: => scaleUp(B2D.b2WheelJoint_GetUpperLimit(@))
+	setLimits: (lower, upper) => B2D.b2WheelJoint_SetLimits(@, scaleDown(lower, upper))
+	isMotorEnabled: B2D.b2WheelJoint_IsMotorEnabled
+	enableMotor: B2D.b2WheelJoint_EnableMotor
+	setMotorSpeed: B2D.b2WheelJoint_SetMotorSpeed
+	getMotorSpeed: B2D.b2WheelJoint_GetMotorSpeed
+	setMaxMotorTorque: (torque) => B2D.b2WheelJoint_SetMaxMotorTorque(@, scaleDown(scaleDown(torque)))
+	getMaxMotorTorque: => scaleUp(scaleUp(B2D.b2WheelJoint_GetMaxMotorTorque(@)))
+	getMotorTorque: => scaleUp(scaleUp(B2D.b2WheelJoint_GetMotorTorque(@, inv_dt)))
+	setStiffness: (stiffness) => B2D.b2WheelJoint_SetStiffness(@, scaleDown(stiffness))
+	getStiffness: => scaleUp(B2D.b2WheelJoint_GetStiffness(@))
+	setDamping: (damping) => B2D.b2WheelJoint_SetDamping(@, scaleDown(damping))
+	getDamping: => scaleUp(B2D.b2WheelJoint_GetDamping(@))
+
+	getType: => 'wheel'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.wheel = @
+		jointCast.joint
+}
+
+WheelJointMT.__index = WheelJointMT
+ffi.metatype(WheelJoint, WheelJointMT)
+
+-- WeldJoint --
+
+WeldJointMT = {
+	__new: (bodyA, bodyB, x, y, angle = 0, collide = false) =>
+		x, y = scaleDown(x, y)
+		B2D.b2WeldJoint_New(bodyA, bodyB, x, y, angle, collide)
+
+	getLocalAnchorA: =>
+		{ :x, :y } = B2D.b2WeldJoint_GetLocalAnchorA(@, tempVector)
+		scaleUp(x, y)
+
+	getLocalAnchorB: =>
+		{ :x, :y } = B2D.b2WeldJoint_GetLocalAnchorB(@, tempVector)
+		scaleUp(x, y)
+
+	getReferenceAngle: B2D.b2WeldJoint_GetReferenceAngle
+	setStiffness: (stiffness) => B2D.b2WeldJoint_SetStiffness(@, scaleDown(stiffness))
+	getStiffness: => scaleUp(B2D.b2WeldJoint_GetStiffness(@))
+	setDamping: (damping) => B2D.b2WeldJoint_SetDamping(@, scaleDown(damping))
+	getDamping: => scaleUp(B2D.b2WeldJoint_GetDamping(@))
+
+	getType: => 'weld'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.weld = @
+		jointCast.joint
+}
+
+WeldJointMT.__index = WeldJointMT
+ffi.metatype(WeldJoint, WeldJointMT)
+
+-- FrictionJoint --
+
+FrictionJointMT = {
+	__new: (bodyA, bodyB, x, y, collide = false) =>
+		x, y = scaleDown(x, y)
+		B2D.b2FrictionJoint_New(bodyA, bodyB, x, y, collide)
+
+	getLocalAnchorA: =>
+		{ :x, :y } = B2D.b2FrictionJoint_GetLocalAnchorA(@, tempVector)
+		scaleUp(x, y)
+
+	getLocalAnchorB: =>
+		{ :x, :y } = B2D.b2FrictionJoint_GetLocalAnchorB(@, tempVector)
+		scaleUp(x, y)
+
+	setMaxForce: (force) => B2D.b2FrictionJoint_SetMaxForce(@, scaleDown(force))
+	getMaxForce: => scaleUp(B2D.b2FrictionJoint_GetMaxForce(@))
+	setMaxTorque: (torque) => B2D.b2FrictionJoint_SetMaxTorque(@, scaleDown(scaleDown(torque)))
+	getMaxTorque: => scaleUp(B2D.b2FrictionJoint_GetMaxTorque(@))
+
+	getType: => 'friction'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.friction = @
+		jointCast.joint
+}
+
+FrictionJointMT.__index = FrictionJointMT
+ffi.metatype(FrictionJoint, FrictionJointMT)
+
+-- MotorJoint --
+
+MotorJointMT = {
+	__new: (bodyA, bodyB, collide = false) => B2D.b2MotorJoint_New(bodyA, bodyB, collide)
+	setLinearOffset: => B2D.b2MotorJoint_SetLinearOffset(@, scaleDown(x, y))
+	getLinearOffset: =>
+		{ :x, :y } = B2D.b2MotorJoint_GetLinearOffset(@, tempVector)
+		scaleUp(x, y)
+
+	setAngularOffset: B2D.b2MotorJoint_SetAngularOffset
+	getAngularOffset: B2D.b2MotorJoint_GetAngularOffset
+	setMaxForce: (force) => B2D.b2MotorJoint_SetMaxForce(@, scaleDown(force))
+	getMaxForce: => scaleUp(B2D.b2MotorJoint_GetMaxForce(@))
+	setMaxTorque: (torque) => B2D.b2MotorJoint_SetMaxTorque(@, scaleDown(scaleDown(torque)))
+	getMaxTorque: => B2D.b2MotorJoint_GetMaxTorque(@)
+	setCorrectionFactor: B2D.b2MotorJoint_SetCorrectionFactor
+	getCorrectionFactor: B2D.b2MotorJoint_GetCorrectionFactor
+
+	getType: => 'motor'
+	getBodyA: JointMT.getBodyA
+	getBodyB: JointMT.getBodyB
+	getAnchorA: JointMT.getAnchorA
+	getAnchorB: JointMT.getAnchorB
+	getReactionForce: JointMT.getReactionForce
+	getReactionTorque: JointMT.getReactionTorque
+	getNext: JointMT.getNext
+	shiftOrigin: JointMT.shiftOrigin
+	getUserData: JointMT.getUserData
+	setUserData: JointMT.setUserData
+	dump: JointMT.dump
+	_deinit: JointMT._deinit
+	_downCast: =>
+		jointCast.motor = @
+		jointCast.joint
+}
+
+MotorJointMT.__index = MotorJointMT
+ffi.metatype(MotorJoint, MotorJointMT)
+
+{
+	:RevoluteJoint
+	:PrismaticJoint
+	:DistanceJoint
+	:PulleyJoint
+	:MouseJoint
+	:GearJoint
+	:WheelJoint
+	:WeldJoint
+	:FrictionJoint
+	:MotorJoint
+}

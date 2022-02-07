@@ -1,0 +1,15 @@
+scale = 64
+iscale = 1 / scale
+
+{
+	set: (s) -> scale, iscale = s, 1 / s
+	get: -> scale
+
+	up: (x, y) ->
+		return x * scale, y * scale if y
+		x * scale
+
+	down: (x, y) ->
+		return x * iscale, y * iscale if y
+		x * iscale
+}

@@ -1,0 +1,183 @@
+import 'ffi'
+import 'lib.core.util' as :ptr
+import 'lib.math.Vector2'
+import 'lib.box2d._scale'
+import B2D from yuema
+
+tempVector = Vector2!
+tempMassData = ffi.new('b2cMassData')
+
+scaleUp, scaleDown = _scale.up, _scale.down
+
+Body = ffi.typeof('b2Body')
+
+BodyTypes = {
+	[0]: 'static'
+	[1]: 'kinematic'
+	[2]: 'dynamic'
+
+	static: 0
+	kinematic: 1
+	dynamic: 2
+}
+
+BodyMT = {
+	__new: (world, x, y, angle = 0, type = 'static') =>
+		t = BodyTypes[type]
+		error("Invalid body type #{type}") if not t
+		x, y = scaleDown(x, y)
+		B2D.b2World_CreateBody(world, x, y, angle, t)
+
+	destroy: => B2D.b2World_DestroyBody(@getWorld!, @_deinit!)
+	createFixture: (shape, density = 1) => B2D.b2Body_CreateFixture(@, shape::_downCast!, density)
+	destroyFixture: (fixture) => B2D.b2Body_DestroyFixture(@, fixture::_deinit!)
+	setTransform: (x, y, angle) =>
+		x, y = scaleDown(x, y)
+		B2D.b2Body_SetTransform(@, x, y, angle)
+
+	setPosition: (x, y) => @setTransform(x, y, @getAngle)
+
+	getPosition: =>
+		{ :x, :y } = B2D.b2Body_GetPosition(@, tempVector)
+		scaleUp(x, y)
+
+	setAngle: (angle) =>
+		{ :x, :y } = B2D.b2Body_GetPosition(@, tempVector)
+		B2D.b2Body_SetTransform(@, x, y, angle)
+
+	getAngle: B2D.b2Body_GetAngle
+	getWorldCenter: =>
+		{ :x, :y } = B2D.b2Body_GetWorldCenter(@, tempVector)
+		scaleUp(x, y)
+
+	getLocalCenter: =>
+		{ :x, :y } = B2D.b2Body_GetLocalCenter(@, tempVector)
+		scaleUp(x, y)
+
+	setLinearVelocity: (x, y) => B2D.b2Body_SetLinearVelocity(@, scaleDown(x, y))
+	getLinearVelocity: =>
+		{ :x, :y } = B2D.b2Body_GetLinearVelocity(@, tempVector)
+		scaleUp(x, y)
+
+	setAngularVelocity: B2D.b2Body_SetAngularVelocity
+	getAngularVelocity: B2D.b2Body_GetAngularVelocity
+	applyForce: (forceX, forceY, x, y, wake = true) =>
+		forceX, forceY = scaleDown(forceX, forceY)
+		x, y = scaleDown(x, y)
+		B2D.b2Body_ApplyForce(@, forceX, forceY, x, y, wake)
+
+	applyForceToCenter: (forceX, forceY, wake = true) =>
+		forceX, forceY = scaleDown(forceX, forceY)
+		B2D.b2Body_ApplyForceToCenter(@, forceX, forceY, wake)
+
+	applyTorque: (torque, wake = true) =>
+		torque = scaleDown(scaleDown(torque))
+		B2D.b2Body_ApplyTorque(@, torque, wake)
+
+	applyLinearImpulse: (impulseX, impulseY, x, y, wake = true) =>
+		impulseX, impulseY = scaleDown(impulseX, impulseY)
+		x, y = scaleDown(x, y)
+		B2D.b2Body_ApplyLinearImpulse(@, impulseX, impulseY, x, y, wake)
+
+	applyLinearImpulseToCenter: (impulseX, impulseY, wake = true) =>
+		impulseX, impulseY = scaleDown(impulseX, impulseY)
+		B2D.b2Body_ApplyLinearImpulseToCenter(@, impulseX, impulseY, wake)
+
+	applyAngularImpulse: (impulse, wake = true) => B2D.b2Body_ApplyAngularImpulse(@, impulse, wake)
+
+	getMass: B2D.b2Body_GetMass
+	getInertia: => scaleUp(scaleUp(B2D.b2Body_GetInertia(@)))
+
+	getMassData: =>
+		data = B2D.b2Body_GetMassData(@, tempMassData)
+		x, y = scaleUp(data.x, data.y)
+		inertia = scaleUp(scaleUp(data.inertia))
+		x, y, data.mass, inertia
+
+	setMassData: (x, y, mass, inertia) =>
+		x, y = scaleDown(x, y)
+		inertia = scaleDown(scaleDown(inertia))
+		B2D.b2Body_SetMassData(@, x, y, mass, inertia)
+
+	resetMassData: B2D.b2Body_ResetMassData
+	getWorldPoint: (localX, localY) =>
+		localX, localY = scaleDown(localX, localY)
+		{ :x, :y } = B2D.b2Body_GetWorldPoint(@, localX, localY, tempVector)
+		scaleUp(x, y)
+
+	getWorldPoints: (points, output = points) =>
+		for i = 1, #points, 2
+			x, y = scaleDown(points[i], points[i + 1])
+			B2D.b2Body_GetWorldPoint(@, x, y, tempVector)
+			output[i], output[i + 1] = scaleUp(tempVector.x, tempVector.y)
+		output
+
+	getWorldVector: (localX, localY) =>
+		localX, localY = scaleDown(localX, localY)
+		{ :x, :y } = B2D.b2Body_GetWorldVector(@, localX, localY, tempVector)
+		scaleUp(x, y)
+
+	getLocalPoint: (worldX, worldY) =>
+		worldX, worldY = scaleDown(worldX, worldY)
+		{ :x, :y } = B2D.b2Body_GetLocalPoint(@, worldX, worldY, tempVector)
+		scaleUp(x, y)
+
+	getLocalPoints: (points, output = points) =>
+		for i = 1, #points, 2
+			x, y = scaleDown(points[i], points[i + 1])
+			B2D.b2Body_GetLocalPoint(@, x, y, tempVector)
+			output[i], output[i + 1] = scaleUp(tempVector.x, tempVector.y)
+		output
+
+	getLocalVector: (worldX, worldY) =>
+		worldX, worldY = scaleDown(worldX, worldY)
+		{ :x, :y } = B2D.b2Body_GetLocalVector(@, worldX, worldY, tempVector)
+		scaleUp(x, y)
+
+	getLinearVelocityFromWorldPoint: (worldX, worldY) =>
+		worldX, worldY = scaleDown(worldX, worldY)
+		{ :x, :y } = B2D.b2Body_GetLinearVelocityFromWorldPoint(@, worldX, worldY, tempVector)
+		scaleUp(x, y)
+
+	getLinearVelocityFromLocalPoint: (localX, localY) =>
+		localX, localY = scaleDown(localX, localY)
+		{ :x, :y } = B2D.b2Body_GetLinearVelocityFromLocalPoint(@, localX, localY, tempVector)
+		scaleUp(x, y)
+
+	getLinearDamping: B2D.b2Body_GetLinearDamping
+	setLinearDamping: B2D.b2Body_SetLinearDamping
+	getAngularDamping: B2D.b2Body_GetAngularDamping
+	setAngularDamping: B2D.b2Body_SetAngularDamping
+	getGravityScale: B2D.b2Body_GetGravityScale
+	setGravityScale: B2D.b2Body_SetGravityScale
+	setType: (type) => B2D.b2Body_SetType(@, BodyTypes[type])
+	getType: => BodyTypes[B2D.b2Body_GetType(@)]
+	setBullet: B2D.b2Body_SetBullet
+	isBullet: B2D.b2Body_IsBullet
+	setSleepingAllowed: B2D.b2Body_SetSleepingAllowed
+	isSleepingAllowed: B2D.b2Body_IsSleepingAllowed
+	setAwake: B2D.b2Body_SetAwake
+	isAwake: B2D.b2Body_IsAwake
+	setEnabled: B2D.b2Body_SetEnabled
+	isEnabled: B2D.b2Body_IsEnabled
+	setFixedRotation: B2D.b2Body_SetFixedRotation
+	isFixedRotation: B2D.b2Body_IsFixedRotation
+	getFixtureList: => ptr(B2D.b2Body_GetFixtureList(@))
+	getNext: => ptr(B2D.b2Body_GetNext(@))
+	getUserData: => yuema.getRef(tonumber(B2D.b2Body_GetUserData(@)))
+	setUserData: (data) => B2D.b2Body_SetUserData(@, yuema.pushRef(data, tonumber(B2D.b2Body_GetUserData(@))))
+	getWorld: B2D.b2Body_GetWorld
+	dump: B2D.b2Body_Dump
+
+	_deinit: =>
+		@setUserData(nil)
+		fixture = @getFixtureList!
+		while fixture
+			fixture::_deinit!
+			fixture = fixture::getNext!
+		@
+}
+
+BodyMT.__index = BodyMT
+
+ffi.metatype(Body, BodyMT)

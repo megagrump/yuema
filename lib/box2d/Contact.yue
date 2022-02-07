@@ -1,0 +1,50 @@
+import 'ffi'
+import 'lib.box2d._scale'
+import 'lib.math.Vector2'
+import B2D from yuema
+
+scaleUp, scaleDown = _scale.up, _scale.down
+
+Contact = ffi.typeof('b2Contact')
+
+contactPoints = ffi.new('Vector2[2]')
+tempVector = ffi.new('Vector2')
+
+ContactMT = {
+	isTouching: B2D.b2Contact_IsTouching
+	setEnabled: B2D.b2Contact_SetEnabled
+	isEnabled: B2D.b2Contact_IsEnabled
+	getNext: B2D.b2Contact_GetNext
+	getFixtureA: B2D.b2Contact_GetFixtureA
+	getChildIndexA: B2D.b2Contact_GetChildIndexA
+	getFixtureB: B2D.b2Contact_GetFixtureB
+	getChildIndexB: B2D.b2Contact_GetChildIndexB
+	setFriction: B2D.b2Contact_SetFriction
+	getFriction: B2D.b2Contact_GetFriction
+	resetFriction: B2D.b2Contact_ResetFriction
+	setRestitution: B2D.b2Contact_SetRestitution
+	getRestitution: B2D.b2Contact_GetRestitution
+	resetRestitution: B2D.b2Contact_ResetRestitution
+	setRestitutionThreshold: B2D.b2Contact_SetRestitutionThreshold
+	getRestitutionThreshold: B2D.b2Contact_GetRestitutionThreshold
+	resetRestitutionThreshold: B2D.b2Contact_ResetRestitutionThreshold
+	setTangentSpeed: (speed) => B2D.b2Contact_SetTangentSpeed(@, scaleDown(speed))
+	getTangentSpeed: => scaleUp(b2Contact_GetTangentSpeed(@))
+	getNormal: =>
+		{ :x, :y } = B2D.b2Contact_GetNormal(@, tempVector)
+		x, y
+
+	getPoints: =>
+		n = B2D.b2Contact_GetPoints(@, contactPoints)
+		return if n == 0
+		{ :x1, :y1 } = contactPoints[0]
+		scaleUp(x1, y1)
+		return x1, y1 if n == 1
+		{ :x2, :y2 } = contactPoints[1]
+		scaleUp(x1, y1)
+		x1, y1, x2, y2
+}
+
+ContactMT.__index = ContactMT
+
+ffi.metatype(Contact, ContactMT)

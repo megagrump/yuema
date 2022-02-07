@@ -1,0 +1,310 @@
+import 'ffi'
+import 'lib.box2d'
+import 'lib.core.all' as {
+	:window
+	:draw
+	:util
+	:time
+	:input
+	:Color
+}
+import min from math
+import mouse from input
+
+world = box2d.World(0, 300)
+text = {}
+
+do -- revolute
+	x, y = 10, 20
+	text.revolute = { x + 80, y + 5 }
+	walls = with box2d.Body(world, x, y)
+		::createFixture(box2d.ChainShape({ 0, 0, 0, 320, 200, 320, 200, 0 }))
+
+	spinner = with box2d.Body(world, x + 100, y + 210, 0, 'dynamic')
+		::createFixture(box2d.PolygonShape.createBox(180, 10))
+
+	BALLCOLORS = { Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW }
+
+	for i = 0, 20
+		bx = i % 7 + 1
+		by = 30 + (i / 7) * 26
+		with box2d.Body(world, x + bx * 26, y + by, 0, 'dynamic')
+			::createFixture(box2d.CircleShape(12), .1)
+				::setRestitution(.5)
+			::setUserData(BALLCOLORS[math.random(#BALLCOLORS)])
+
+	with box2d.RevoluteJoint(walls, spinner, spinner::getPosition!)
+		::setMotorSpeed(3)
+		::setMaxMotorTorque(100000)
+		::enableMotor(true)
+
+do -- distance joint
+	x, y = 220, 20
+	text.distance = { x + 30, y + 5 }
+
+	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+
+	ball1 = with box2d.Body(world, x + 20, y + 20, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(10), .1)
+			::setRestitution(.5)
+
+	ball2 = with box2d.Body(world, x + 50, y + 20, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(10))
+			::setRestitution(1)
+
+	x1, y1 = ball1::getPosition!
+	x2, y2 = ball2::getPosition!
+	joint = with box2d.DistanceJoint(ball1, ball2, x1, y1, x2, y2, true)
+		::setStiffness(1000)
+
+prismatic = nil
+do -- prismatic joint
+	x, y = 330, 20
+	text.prismatic = { x + 28, y + 5 }
+
+	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+
+	ball1 = with box2d.Body(world, x + 20, y + 20, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(10))
+			::setRestitution(.5)
+		::setUserData(Color.BLUE)
+
+	ball2 = with box2d.Body(world, x + 20, y + 20, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(10))
+		::setUserData(Color.YELLOW)
+
+	prismatic = with box2d.PrismaticJoint(ball1, ball2, x + 20, y + 20, 1, 0)
+		::setLimits(20, 70)
+		::enableLimit(true)
+		::setMaxMotorForce(10)
+		::enableMotor(true)
+
+pulley = nil
+do -- pulley joint
+	x, y = 440, 20
+	text.pulley = { x + 35, y + 5 }
+	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+
+	bodyA = with box2d.Body(world, x + 20, y + 50, 0, 'dynamic')
+		::createFixture(box2d.PolygonShape.createBox(20, 20))
+		::setSleepingAllowed(false)
+
+	bodyB = with box2d.Body(world, x + 80, y + 50, 0, 'dynamic')
+		::createFixture(box2d.PolygonShape.createBox(20, 20))
+		::setSleepingAllowed(false)
+
+	ox1, oy1 = bodyA::getPosition!
+	ox2, oy2 = bodyB::getPosition!
+	pulley = box2d.PulleyJoint(bodyA, bodyB, x + 20, y - 10, x + 80, y - 10, ox1, oy1, ox2, oy2)
+
+mouseJoint = nil
+do -- mouse joint
+	x, y = 220, 130
+	text.mouse = { x + 35, y + 5 }
+
+	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+
+	bodyA = with box2d.Body(world, x + 20, y + 50, 0, 'dynamic')
+		::createFixture(box2d.PolygonShape.createBox(20, 20))
+			::setRestitution(.7)
+
+	bodyB = with box2d.Body(world, x + 80, y + 50, 0, 'dynamic')
+		::createFixture(box2d.PolygonShape.createBox(20, 20))
+		::setSleepingAllowed(false)
+
+	mouseJoint = with box2d.MouseJoint(bodyB, bodyB::getPosition!)
+		::setStiffness(1000)
+		::setMaxForce(1000)
+
+do -- gear joint
+	x, y = 330, 130
+	text.gear = { x + 40, y + 5 }
+
+	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+
+	bodyA = with box2d.Body(world, x + 20, y + 50, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(20))
+
+	joint1 = with box2d.RevoluteJoint(world::getGroundBody!, bodyA, bodyA::getPosition!)
+		::setMotorSpeed(3)
+		::setMaxMotorTorque(100)
+		::enableMotor(true)
+
+	bodyB = with box2d.Body(world, x + 70, y + 50, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(30))
+
+	joint2 = box2d.RevoluteJoint(world::getGroundBody!, bodyB, bodyB::getPosition!)
+
+	box2d.GearJoint(joint1, joint2, 30 / 20)
+
+wheel = do -- wheel joint
+	x, y = 440, 130
+	text.wheel = { x + 35, y + 5 }
+
+	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+
+	box = with box2d.Body(world, x + 50, y + 50, 0, 'static')
+		::createFixture(box2d.PolygonShape.createBox(10, 50))
+
+	wheel = with box2d.Body(world, x + 50, y + 50, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(20))
+
+	with box2d.WheelJoint(box, wheel, x + 50, y + 50, 0, 1)
+		::setStiffness(10)
+		::setLimits(-20, 20)
+		::enableLimit(true)
+		::setMotorSpeed(3)
+		::setMaxMotorTorque(1000)
+		::enableMotor(true)
+
+	wheel
+
+weld = do -- weld joint
+	x, y = 220, 240
+	text.weld = { x + 40, y + 5 }
+
+	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+
+	bodyA = with box2d.Body(world, x + 20, y + 20, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(10))
+			::setRestitution(.5)
+		::setUserData(Color.RED)
+
+	bodyB = with box2d.Body(world, x + 50, y + 20, 0, 'dynamic')
+		::createFixture(box2d.CircleShape(20))
+			::setRestitution(.5)
+		::setUserData(Color.GREEN)
+
+	box2d.WeldJoint(bodyA, bodyB, bodyB::getPosition!)
+	bodyB
+
+motor = do -- motor joint
+	x, y = 330, 240
+	text.motor = { x + 35, y + 5 }
+
+	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+
+	bodyA = with box2d.Body(world, x + 50, y + 50)
+		::createFixture(box2d.CircleShape(5))
+
+	bodyB = with box2d.Body(world, x + 50, y + 50, 0, 'dynamic')
+		::createFixture(box2d.PolygonShape.createBox(85, 10))
+
+	box2d.MotorJoint(bodyA, bodyB)
+		::setMaxForce(200)
+	bodyB
+
+drawFixture = do
+	vertices = {}
+	(body, fixture, color) ->
+		shape = fixture::getShape!
+		switch shape::getType!
+			when 'circle'
+				x, y = body::getWorldPoint(shape::getPosition!)
+				draw.circle(x, y, shape::getRadius!, body::getUserData! or Color.GRAY)
+				vx, vy = body::getWorldVector(1, 0)
+				r = shape::getRadius!
+				draw.line(x, y, x + vx * r, y + vy * r, Color.BLACK)
+
+			when 'polygon'
+				verts = body::getWorldPoints(shape::getVertices(vertices))
+				count = shape::getVertexCount! * 2
+				for i = 1, count, 2
+					n = (i + 1) % count + 1
+					x1, y1 = verts[i], verts[i + 1]
+					x2, y2 = verts[n], verts[n + 1]
+					draw.line(x1, y1, x2, y2, color)
+
+			when 'edge'
+				verts = body::getWorldPoints(shape::getVertices(vertices))
+				x1, y1 = verts[1], verts[2]
+				x2, y2 = verts[3], verts[4]
+				draw.line(x1, y1, x2, y2, color)
+
+			when 'chain'
+				verts = body::getWorldPoints(shape::getVertices(vertices))
+				x1, y1 = body::getWorldPoint(shape::getPrevVertex!)
+				x2, y2 = verts[1], verts[2]
+				draw.line(x1, y1, x2, y2, color)
+
+				n = shape::getVertexCount! * 2
+				for i = 1, n - 2, 2
+					x1, y1, x2, y2 = verts[i], verts[i + 1], verts[i + 2], verts[i + 3]
+					draw.line(x1, y1, x2, y2, color)
+
+				x1, y1 = verts[n - 1], verts[n]
+				x2, y2 = body::getWorldPoint(shape::getNextVertex!)
+				draw.line(x1, y1, x2, y2, color)
+
+drawJoint = (joint, colorA, colorB) ->
+	x1, y1 = joint::getAnchorA!
+	x2, y2 = joint::getAnchorB!
+	draw.circle(x1, y1, 2, colorA)
+	draw.circle(x2, y2, 2, colorB)
+
+	switch joint::getType!
+		when 'pulley'
+			gx1, gy1 = joint::getGroundAnchorA!
+			gx2, gy2 = joint::getGroundAnchorB!
+			draw.line(gx1, gy1, x1, y1, colorA)
+			draw.line(gx2, gy2, x2, y2, colorB)
+		when 'gear'
+			nil
+		else
+			draw.line(x1, y1, x2, y2, colorA)
+
+drawWorld = ->
+	body = world::getBodyList!
+	while body
+		fixture = body::getFixtureList!
+		while fixture
+			drawFixture(body, fixture, Color.BLACK)
+			fixture = fixture::getNext!
+		body = body::getNext!
+
+	joint = world::getJointList!
+	while joint
+		drawJoint(joint, Color.RED, Color.GREEN)
+		joint = joint::getNext!
+
+accum = 1 / 60
+stepWorld = ->
+	dt = min(1 / 30, time.getFrameTime!)
+	accum += dt
+	while accum >= 1 / 60
+		world::step(1 / 60)
+		accum -= 1 / 60
+
+window.init(550, 360, "Yuema example: Box2D joints")
+time.setTargetFPS(60)
+
+while not window.shouldClose!
+	stepWorld!
+	do
+		prismatic::setMotorSpeed(math.sin(time.getTime! * 4) * 20)
+		pullDensity = .5 + math.floor(time.getTime!) % 2
+		with pulley::getBodyA!
+			::getFixtureList!::setDensity(pullDensity)
+			::resetMassData!
+		with pulley::getBodyB!
+			::getFixtureList!::setDensity(2 - pullDensity)
+			::resetMassData!
+
+		wheel::applyForceToCenter(0, -150) if (time.getTime! % 1) > .5
+		motor::applyLinearImpulseToCenter(0, -70) unless motor::isAwake!
+		weld::applyLinearImpulseToCenter(0, -50) unless weld::isAwake!
+
+		mx, my = mouse.getX!, mouse.getY!
+		if mx >= 220 and my >= 130 and mx < 320 and my < 230
+			mouseJoint::setTarget(mx, my)
+
+	with draw
+		.beginDrawing!
+		.clearBackground(Color.RAYWHITE)
+		.fps(455, 280)
+		drawWorld!
+		.text(k, v[1], v[2], 10, Color.BLACK) for k, v in pairs(text)
+		.endDrawing!
+
+world::destroy!
+window.close!

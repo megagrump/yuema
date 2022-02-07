@@ -1,0 +1,38 @@
+REVOLUTE = 1
+PRISMATIC = 2
+DISTANCE = 3
+PULLEY = 4
+MOUSE = 5
+GEAR = 6
+WHEEL = 7
+WELD = 8
+FRICTION = 9
+MOTOR = 10
+
+TypeNames = {
+	[REVOLUTE]: 'revolute'
+	[PRISMATIC]: 'prismatic'
+	[DISTANCE]: 'distance'
+	[PULLEY]: 'pulley'
+	[MOUSE]: 'mouse'
+	[GEAR]: 'gear'
+	[WHEEL]: 'wheel'
+	[WELD]: 'weld'
+	[FRICTION]: 'friction'
+	[MOTOR]: 'motor'
+}
+
+{
+	:REVOLUTE
+	:PRISMATIC
+	:DISTANCE
+	:PULLEY
+	:MOUSE
+	:GEAR
+	:WHEEL
+	:WELD
+	:FRICTION
+	:MOTOR
+
+	:TypeNames
+}

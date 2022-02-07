@@ -2,6 +2,7 @@ import RL from yuema
 import 'ffi'
 
 Color = ffi.typeof('Color')
+tempVector = ffi.new('Vector4')
 
 ColorMT = {
 	LIGHTGRAY:  Color(200, 200, 200, 255)
@@ -32,7 +33,12 @@ ColorMT = {
 	RAYWHITE:   Color(245, 245, 245, 255)
 
 	fromInt: RL.GetColor
-	fromNormalized: RL.ColorFromNormalized
+	fromNormalized: (r, g, b, a) ->
+		if type(r) == 'number'
+			tempVector.x, tempVector.y, tempVector.z, tempVector.w = r, g, b, a
+			return RL.ColorFromNormalized(tempVector)
+		RL.ColorFromNormalized(r)
+
 	fromHSV: RL.ColorFromHSV
 
 	getPixelColor: RL.GetPixelColor

@@ -8,9 +8,8 @@ init = (imports) ->
 		if prevRef and prevRef > 0
 			refStore[prevRef] = nil
 			if prevRef == ref
-				while refStore[prevRef] == nil
-					prevRef -= 1
-				ref = prevRef
+				while refStore[ref] == nil
+					ref -= 1
 		return 0 if val == nil
 		ref += 1
 		refStore[ref], refStore[0] = val, ref
@@ -34,6 +33,7 @@ init = (imports) ->
 		yuema.console = ->
 			with ffi.C
 				.AllocConsole!
+				.freopen('CONIN$',  'r', io.stdin)
 				.freopen('CONOUT$', 'w', io.stderr)
 				.freopen('CONOUT$', 'w', io.stdout)
 			print("Console opened.")

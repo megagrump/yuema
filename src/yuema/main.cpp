@@ -14,16 +14,20 @@
 #define PHYSAC_IMPLEMENTATION
 #include "physac.h"
 
+#include "box2dc.h"
+
 #include "raylib_ffi.h"
 #include "rlgl_ffi.h"
 #include "raygui_ffi.h"
 #include "physac_ffi.h"
+#include "box2dc_ffi.h"
 
 FFIExport exports[] = {
 	{ "RL",   "RAYLIB_API", RAYLIB_FFI, &RAYLIB_EXPORTS },
 	{ "RLGL", "RLGL_API",   RLGL_FFI,   &RLGL_EXPORTS   },
 	{ "RG",   "RAYGUI_API", RAYGUI_FFI, &RAYGUI_EXPORTS },
 	{ "PS",   "PHYSAC_API", PHYSAC_FFI, &PHYSAC_EXPORTS },
+	{ "B2D",  "BOX2DC_API", BOX2DC_FFI, &BOX2DC_EXPORTS },
 	{ nullptr }
 };
 

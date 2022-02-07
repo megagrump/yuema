@@ -1,0 +1,121 @@
+import 'ffi'
+import B2D from yuema
+import 'lib.core.util' as :ptr
+import 'lib.math.Vector2'
+import 'lib.box2d._scale'
+import 'lib.box2d.Body'
+import 'lib.box2d.draw'
+import 'lib.box2d.joints'
+
+profile = ffi.new('b2cProfile')
+
+tempVector = Vector2!
+scaleUp, scaleDown = _scale.up, _scale.down
+
+emptyQueryCallback = -> error("Invalid callback")
+emptyContactFilter = -> error("Invalid filter")
+emptyListener = ->
+rayCastCallback = nil
+
+World = ffi.typeof('b2World')
+
+WorldMT = {
+	__new: (gravityX, gravityY) =>
+		world = B2D.b2World_New(scaleDown(gravityX, gravityY))
+		B2D.b2World_SetRayCastCallback(world, world._rayCastCallback)
+		B2D.b2World_SetQueryCallback(world, emptyQueryCallback)
+		B2D.b2World_SetContactFilter(world, emptyContactFilter)
+		B2D.b2World_SetContactListener(world, emptyListener, emptyListener, emptyListener, emptyListener)
+		world
+
+	__gc: => @destroy!
+
+	destroy: =>
+		B2D.b2World_GetContactFilter(@)::free!
+		B2D.b2World_GetRayCastCallback(@)::free!
+		B2D.b2World_GetQueryCallback(@)::free!
+		B2D.b2World_GetBeginContactListener(@)::free!
+		B2D.b2World_GetEndContactListener(@)::free!
+		B2D.b2World_GetPreSolveContactListener(@)::free!
+		B2D.b2World_GetPostSolveContactListener(@)::free!
+		body = @getBodyList!
+		while body
+			body = body::_deinit!::getNext!
+		joint = @getJointList!
+		while joint
+			joint = joint::_deinit!::getNext!
+		B2D.b2World_Destroy(@)
+
+	destroyJoint: (joint) => B2D.b2World_DestroyJoint(@, joint::_deinit!)
+	step: (timeStep, velocityIterations = 8, positionIterations = 3) => B2D.b2World_Step(@, timeStep, velocityIterations, positionIterations)
+	clearForces: => B2D.b2World_ClearForces(@)
+
+	setContactListener: (beginContact, endContact, preSolve, postSolve) =>
+		B2D.b2World_GetBeginContactListener(@)::set(beginContact or emptyListener)
+		B2D.b2World_GetEndContactListener(@)::set(endContact or emptyListener)
+		B2D.b2World_GetPreSolveContactListener(@)::set(preSolve or emptyListener)
+		B2D.b2World_GetPostSolveContactListener(@)::set(postSolve or emptyListener)
+		B2D.b2World_EnableContactListener(@,
+			not not beginContact,
+			not not endContact,
+			not not preSolveContact,
+			not not postSolveContact
+		)
+
+	setContactFilter: (filter) =>
+		B2D.b2World_GetContactFilter(@)::set(filter or emptyContactFilter)
+		B2D.b2World_EnableContactFilter(@, not not filter)
+
+	queryAABB: (minX, minY, maxX, maxY, callback) =>
+		B2D.b2World_GetQueryCallback(@)::set(callback)
+		minX, minY = scaleDown(minX, minY)
+		maxX, maxY = scaleDown(maxX, maxY)
+		B2D.b2World_QueryAABB(@, minX, minY, maxX, maxY)
+
+	_rayCastCallback: (fixture, x, y, nx, ny, fraction) ->
+		x, y = scaleUp(x, y)
+		rayCastCallback(fixture, x, y, nx, ny, fraction)
+
+	rayCast: (x1, y1, x2, y2, callback) =>
+		rayCastCallback = callback
+		x1, y1 = scaleDown(x1, y1)
+		x2, y2 = scaleDown(x2, y2)
+		B2D.b2World_RayCast(@, x1, y1, x2, y2)
+		rayCastCallback = nil
+
+	getBodyList: => ptr(B2D.b2World_GetBodyList(@))
+	getJointList: => ptr(B2D.b2World_GetJointList(@))?::_upCast!
+	getGroundBody: => B2D.b2World_GetGroundBody(@)
+	getContactList: => ptr(B2D.b2World_GetContactList(@))
+	setAllowSleeping: B2D.b2World_SetAllowSleeping
+	getAllowSleeping: B2D.b2World_GetAllowSleeping
+	setWarmStarting: B2D.b2World_SetWarmStarting
+	getWarmStarting: B2D.b2World_GetWarmStarting
+	setContinuousPhysics: B2D.b2World_SetContinuousPhysics
+	getContinuousPhysics: b2World_GetContinuousPhysics
+	setSubStepping: B2D.b2World_SetSubStepping
+	getSubStepping: B2D.b2World_GetSubStepping
+	getProxyCount: B2D.b2World_GetProxyCount
+	getBodyCount: B2D.b2World_GetBodyCount
+	getJointCount: B2D.b2World_GetJointCount
+	getContactCount: B2D.b2World_GetContactCount
+	getTreeHeight: B2D.b2World_GetTreeHeight
+	getTreeBalance: B2D.b2World_GetTreeBalance
+	getTreeQuality: B2D.b2World_GetTreeQuality
+	setGravity: (gravityX, gravityY) => B2D.b2World_SetGravity(@, scaleDown(gravityX, gravityY))
+	getGravity: =>
+		{ :x, :y } = B2D.b2World_GetGravity(@, tempVector)
+		scaleUp(x, y)
+
+	isLocked: B2D.b2World_IsLocked
+	setAutoClearForces: B2D.b2World_SetAutoClearForces
+	getAutoClearForces: B2D.b2World_GetAutoClearForces
+	shiftOrigin: (x, y) => B2D.b2World_ShiftOrigin(@, scaleDown(x, y))
+	getProfile: => B2D.b2World_GetProfile(@, profile)
+	dump: B2D.b2World_Dump
+	debugDraw: draw
+}
+
+WorldMT.__index = WorldMT
+
+ffi.metatype(World, WorldMT)
