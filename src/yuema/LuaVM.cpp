@@ -1,5 +1,5 @@
 #include "LuaVM.h"
-#include "LuaReference.h"
+#include <cstring>
 
 extern "C" {
 	#include "luajit.h"
@@ -26,9 +26,13 @@ local function boot()
 end
 
 local ok, err = xpcall(boot, function(err)
-	return debug.traceback(err, 2)
+	if yue and yue.stp then
+		return yue.stp.stacktrace(err)
+	else
+		return debug.traceback(err, 2)
+	end
 end)
-if not ok then error(err) end
+if not ok then error(err, 2) end
 )code";
 
 void initYue(lua_State *L) {
@@ -44,7 +48,6 @@ LuaVM::LuaVM() {
 	_state = luaL_newstate();
 	luaL_openlibs(_state);
 	luaopen_utf8(_state);
-	register_LuaReference(_state);
 	initYue(_state);
 }
 
@@ -53,7 +56,7 @@ LuaVM::~LuaVM() {
 }
 
 void LuaVM::run(const FFIExport* exports, int argc, char* argv[]) {
-	int err = luaL_loadstring(_state, BOOT);
+	int err = luaL_loadbuffer(_state, BOOT, strlen(BOOT), "@boot.lua");
 	switch(err) {
 		case 0: break;
 		case LUA_ERRSYNTAX: throw LuaError("Syntax error in boot sequence"); break;

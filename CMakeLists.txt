@@ -65,6 +65,15 @@ set(PHYSAC_SOURCE_DIR ${PHYSAC_PROJECT_DIR}/src)
 generate_ffi(${PHYSAC_SOURCE_DIR}/physac.h ${YUEMA_SOURCE_DIR}/physac_ffi.h PHYSAC "")
 ###
 
+### box2d
+set(BOX2D_PROJECT_DIR ${PROJECT_SOURCE_DIR}/src/box2d)
+set(BOX2D_SOURCE_DIR ${BOX2D_PROJECT_DIR}/src)
+set(BOX2D_INCLUDE_DIR ${BOX2D_PROJECT_DIR}/include/box2d)
+option(BOX2D_BUILD_UNIT_TESTS OFF)
+option(BOX2D_BUILD_TESTBED OFF)
+add_subdirectory(${BOX2D_PROJECT_DIR})
+###
+
 ### Yuescript
 set(YUE_SOURCE_DIR src/Yuescript/src)
 
@@ -84,12 +93,12 @@ add_executable(yuema
 	${YUEMA_SOURCE_DIR}/raylib_ffi.h
 	${YUEMA_SOURCE_DIR}/raygui_ffi.h
 	${YUEMA_SOURCE_DIR}/physac_ffi.h
+	${YUEMA_SOURCE_DIR}/box2dc_ffi.h
 	${YUEMA_SOURCE_DIR}/rlgl_ffi.h
-	${YUEMA_SOURCE_DIR}/LuaReference.cpp
 	${YUEMA_SOURCE_DIR}/LuaVM.cpp
 	${YUEMA_SOURCE_DIR}/main.cpp
 )
 
-target_include_directories(yuema PRIVATE ${RAYLIB_SOURCE_DIR} ${RAYGUI_SOURCE_DIR} ${PHYSAC_SOURCE_DIR} ${LUAJIT_SOURCE_DIR})
+target_include_directories(yuema PRIVATE ${RAYLIB_SOURCE_DIR} ${RAYGUI_SOURCE_DIR} ${PHYSAC_SOURCE_DIR} ${LUAJIT_SOURCE_DIR} ${BOX2D_INCLUDE_DIR})
 set_target_properties(yuema PROPERTIES LINK_FLAGS_RELEASE -s)
-target_link_libraries(yuema ${LINKER_OPTS} -lpthread raylib luajit yue)
+target_link_libraries(yuema ${LINKER_OPTS} -lpthread raylib luajit box2d yue)

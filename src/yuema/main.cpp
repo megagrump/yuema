@@ -1,5 +1,7 @@
 #include <cstdbool>
 #include <cstdarg>
+#include <string>
+#include <algorithm>
 #include <iostream>
 #include "LuaVM.h"
 
@@ -25,6 +27,23 @@ FFIExport exports[] = {
 	{ nullptr }
 };
 
+void errorHandler(const char* error) {
+	if(!IsWindowReady())
+		return;
+
+	std::string errorMessage(error);
+	errorMessage.erase(std::remove(errorMessage.begin(), errorMessage.end(), '\r'), errorMessage.end());
+	while(!WindowShouldClose()) {
+		BeginDrawing();
+		ClearBackground((Color){ 32, 40, 48, 255 });
+		GuiDrawIcon(RAYGUI_ICON_DEMON, 20, 20, 2, RED);
+		DrawText("ERROR", 58, 18, 40, RED);
+		DrawText(errorMessage.c_str(), 30, 68, 10, RAYWHITE);
+		EndDrawing();
+		WaitTime(15);
+	}
+}
+
 int main(int argc, char* argv[]) {
 	LuaVM lua;
 	try {
@@ -32,6 +51,7 @@ int main(int argc, char* argv[]) {
 	}
 	catch(const LuaError& e) {
 		std::cout << "ERROR: " << e.what() << "\n";
+		errorHandler(e.what());
 		return -1;
 	}
 	return 0;

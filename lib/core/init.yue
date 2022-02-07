@@ -1,7 +1,24 @@
 init = (imports) ->
 	import 'ffi'
 
-	global yuema = {}
+	refStore = { [0]: 0 }
+
+	pushRef = (val, prevRef) ->
+		ref = refStore[0]
+		if prevRef and prevRef > 0
+			refStore[prevRef] = nil
+			if prevRef == ref
+				while refStore[prevRef] == nil
+					prevRef -= 1
+				ref = prevRef
+		return 0 if val == nil
+		ref += 1
+		refStore[ref], refStore[0] = val, ref
+		ref
+
+	getRef = (ref) -> ref > 0 and refStore[ref] or nil
+
+	global yuema = { :pushRef, :getRef }
 
 	for i = 1, #imports, 4
 		name, type, decl, func = imports[i], imports[i + 1], imports[i + 2], imports[i + 3]
