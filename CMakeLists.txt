@@ -76,6 +76,11 @@ option(BOX2D_BUILD_TESTBED OFF)
 add_subdirectory(${BOX2D_PROJECT_DIR})
 ###
 
+### box2dc
+set(BOX2DC_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/box2dc)
+generate_ffi(${BOX2DC_SOURCE_DIR}/box2dc.h ${YUEMA_SOURCE_DIR}/box2dc_ffi.h BOX2DC "")
+###
+
 ### Yuescript
 set(YUE_SOURCE_DIR src/Yuescript/src)
 
@@ -98,9 +103,10 @@ add_executable(yuema
 	${YUEMA_SOURCE_DIR}/box2dc_ffi.h
 	${YUEMA_SOURCE_DIR}/rlgl_ffi.h
 	${YUEMA_SOURCE_DIR}/LuaVM.cpp
+	${BOX2DC_SOURCE_DIR}/box2dc.cpp
 	${YUEMA_SOURCE_DIR}/main.cpp
 )
 
-target_include_directories(yuema PRIVATE ${RAYLIB_SOURCE_DIR} ${RAYGUI_SOURCE_DIR} ${PHYSAC_SOURCE_DIR} ${LUAJIT_SOURCE_DIR} ${BOX2D_INCLUDE_DIR})
+target_include_directories(yuema PRIVATE ${RAYLIB_SOURCE_DIR} ${RAYGUI_SOURCE_DIR} ${PHYSAC_SOURCE_DIR} ${LUAJIT_SOURCE_DIR} ${BOX2D_INCLUDE_DIR} ${BOX2DC_SOURCE_DIR})
 set_target_properties(yuema PROPERTIES LINK_FLAGS_RELEASE -s)
 target_link_libraries(yuema ${LINKER_OPTS} -lpthread raylib luajit box2d yue)
