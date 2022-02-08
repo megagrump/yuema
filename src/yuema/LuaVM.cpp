@@ -18,6 +18,10 @@ local args = { select(2, ...) }
 
 local function boot()
 	require('lib.core')(imports)
+
+	local log = require('lib.core.log')
+	log.setLevel(log.WARNING)
+
 	local run = (args[2] or 'main')
 		:gsub('%.[lL][uU][aA]$', '')
 		:gsub('%.[yY][uU][eE]$', '')
