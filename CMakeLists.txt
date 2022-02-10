@@ -14,8 +14,10 @@ set(YUEMA_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/yuema)
 
 if(WIN32)
 	set(LINKER_OPTS "-Wl,-subsystem,windows -static")
+	set(EXE_SUFFIX ".exe")
 else()
 	set(LINKER_OPTS "-ldl")
+	set(EXE_SUFFIX "")
 endif()
 
 ### LuaJIT
@@ -34,7 +36,7 @@ set_property(TARGET luajit PROPERTY IMPORTED_LOCATION ${LUAJIT_SOURCE_DIR}/liblu
 function(generate_ffi source target prefix defines)
 	add_custom_command(
 		OUTPUT ${target}
-		COMMAND ${LUAJIT_SOURCE_DIR}/luajit generate_ffi.lua ${source} ${target} ${prefix} ${defines}
+		COMMAND ${LUAJIT_SOURCE_DIR}/luajit${EXE_SUFFIX} generate_ffi.lua ${source} ${target} ${prefix} ${defines}
 		DEPENDS ${source}
 		DEPENDS luajit
 		DEPENDS ${YUEMA_SOURCE_DIR}/tools/generate_ffi.lua
