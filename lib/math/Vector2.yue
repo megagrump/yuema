@@ -69,4 +69,6 @@ Vector2MT = {
 		result
 }
 
+Vector2MT.__index = Vector2MT
+
 ffi.metatype(Vector2, Vector2MT)

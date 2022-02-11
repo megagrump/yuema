@@ -180,6 +180,8 @@ QuaternionMT = {
 	__tostring: => 'Quaternion(%f, %f, %f, %f)'\format(@x, @y, @z, @w)
 }
 
+QuaternionMT.__index = QuaternionMT
+
 ffi.metatype(Quaternion, QuaternionMT)
 
 Quaternion
