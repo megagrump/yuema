@@ -10,6 +10,8 @@ You can use it to write 2D and 3D games in [Lua](https://www.lua.org/) or [Yuesc
 
 ![yuema3](https://user-images.githubusercontent.com/31128870/152654649-9f07a8c1-67a5-494c-8514-f79bb51ff2be.png)
 
+![yuema_box2d](https://user-images.githubusercontent.com/31128870/153551507-26d94ece-6d52-4757-abeb-7d2d6fcc4ebb.png)
+
 ## How to build
 
 Make sure you clone with submodules:
@@ -63,8 +65,7 @@ Some examples can be found in the `examples` directory.
 ./build/yuema examples/gui_controls.yue
 ./build/yuema examples/core_3d_camera_first_person.yue
 ./build/yuema examples/models_mesh_picking.yue
-./build/yuema examples/physics_demo.yue
-./build/yuema examples/physics_movement.lua
+./build/yuema examples/box2d_joints.yue
 ```
 
 You **must** run the examples from the project root. 
