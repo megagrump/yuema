@@ -50,8 +50,8 @@ import 'ffi' as :C
 	pushMatrix: RLGL.rlPushMatrix
 	popMatrix: RLGL.rlPopMatrix
 	loadIdentity: RLGL.rlLoadIdentity
-	rranslatef: RLGL.rlTranslatef
-	eotatef: RLGL.rlRotatef
+	translatef: RLGL.rlTranslatef
+	rotatef: RLGL.rlRotatef
 	scalef: RLGL.rlScalef
 	multMatrixf: RLGL.rlMultMatrixf
 	frustum: RLGL.rlFrustum
