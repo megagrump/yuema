@@ -10,8 +10,6 @@ You can use it to write 2D and 3D games in [Lua](https://www.lua.org/) or [Yuesc
 
 ![yuema3](https://user-images.githubusercontent.com/31128870/152654649-9f07a8c1-67a5-494c-8514-f79bb51ff2be.png)
 
-![yuema4](https://user-images.githubusercontent.com/31128870/152654651-f92a1afc-0b2a-4512-86fd-39dfc8372603.png)
-
 ## How to build
 
 Make sure you clone with submodules:
@@ -76,7 +74,6 @@ You **must** run the examples from the project root.
 * raylib: https://github.com/raysan5/raylib Copyright (c) 2013-2022 Ramon Santamaria
 * raygui: https://github.com/raysan5/raygui Copyright (c) 2014-2022 Ramon Santamaria
 * Box2D: https://github.com/erincatto/box2d Copyright (c) 2019 Erin Catto
-* physac: https://github.com/victorfisac/Physac Copyright (c) 2016-2020 Victor Fisac 
 * LuaJIT: https://github.com/LuaJIT/LuaJIT Copyright (C) 2005-2022 Mike Pall
 * Yuescript: https://github.com/pigpigyyy/Yuescript Copyright (c) 2021 Li Jin
 * luautf8: https://github.com/starwing/luautf8 Copyright (c) 2018 Xavier Wang

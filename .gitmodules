@@ -10,9 +10,6 @@
 [submodule "src/Yuescript"]
 	path = src/Yuescript
 	url = https://github.com/pigpigyyy/Yuescript.git
-[submodule "src/Physac"]
-	path = src/Physac
-	url = https://github.com/victorfisac/Physac.git
 [submodule "src/luautf8"]
 	path = src/luautf8
 	url = https://github.com/starwing/luautf8.git
