@@ -4,6 +4,9 @@ import sqrt, sin, cos, tan from math
 Matrix = ffi.typeof('Matrix')
 
 MatrixMT = {
+	__new: (m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15) =>
+		ffi.new(@, m0, m4, m8, m12, m1, m5, m9, m13, m2, m6, m10, m14, m3, m7, m11, m15)
+
 	identity: -> Matrix(
 		1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -129,6 +132,21 @@ MatrixMT = {
 			vx.y, vy.y, vz.y, 0,
 			vx.z, vy.z, vz.z, 0,
 			 -ex,  -ey,  -ez, 1
+		)
+
+	affine2D: (x, y, a = 0, sx = 1, sy = sx, ox = 0, oy = 0, kx = 0, ky = 0) ->
+		cs, sn = cos(a), sin(a)
+		m0 = cs * sx - ky * sn * sy
+		m1 = sn * sx + ky * cs * sy
+		m4 = kx * cs * sx - sn * sy
+		m5 = kx * sn * sx + cs * sy
+		m12 = x - ox * m0 - oy * m4
+		m13 = y - ox * m1 - oy * m5
+		Matrix(
+			 m0,  m1, 0, 0,
+			 m4,  m5, 0, 0,
+			  0,   0, 1, 0,
+			m12, m13, 0, 1
 		)
 
 	__tostring: => 'Matrix(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f)'::format(
