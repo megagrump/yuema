@@ -240,6 +240,7 @@ MatrixMT = {
 		m1, m5, m9,  m13 = @m1 + rhs.m1, @m5 + rhs.m5,  @m9 + rhs.m9,  @m13 + rhs.m13
 		m2, m6, m10, m14 = @m2 + rhs.m2, @m6 + rhs.m6, @m10 + rhs.m10, @m14 + rhs.m14
 		m3, m7, m11, m15 = @m3 + rhs.m3, @m7 + rhs.m7, @m11 + rhs.m11, @m15 + rhs.m15
+
 		$storeResult!
 
 	subtract: (rhs, target = @) =>
@@ -247,25 +248,27 @@ MatrixMT = {
 		m1, m5, m9,  m13 = @m1 - rhs.m1, @m5 - rhs.m5,  @m9 - rhs.m9,  @m13 - rhs.m13
 		m2, m6, m10, m14 = @m2 - rhs.m2, @m6 - rhs.m6, @m10 - rhs.m10, @m14 - rhs.m14
 		m3, m7, m11, m15 = @m3 - rhs.m3, @m7 - rhs.m7, @m11 - rhs.m11, @m15 - rhs.m15
+
 		$storeResult!
 
 	multiply: (rhs, target = @) =>
-		m0  =  @m0 * rhs.m0 +  @m1 * rhs.m4 +  @m2 *  rhs.m8 +  @m3 * rhs.m12
-		m4  =  @m4 * rhs.m0 +  @m5 * rhs.m4 +  @m6 *  rhs.m8 +  @m7 * rhs.m12
-		m8  =  @m8 * rhs.m0 +  @m9 * rhs.m4 + @m10 *  rhs.m8 + @m11 * rhs.m12
-		m12 = @m12 * rhs.m0 + @m13 * rhs.m4 + @m14 *  rhs.m8 + @m15 * rhs.m12
-		m1  =  @m0 * rhs.m1 +  @m1 * rhs.m5 +  @m2 *  rhs.m9 +  @m3 * rhs.m13
-		m5  =  @m4 * rhs.m1 +  @m5 * rhs.m5 +  @m6 *  rhs.m9 +  @m7 * rhs.m13
-		m9  =  @m8 * rhs.m1 +  @m9 * rhs.m5 + @m10 *  rhs.m9 + @m11 * rhs.m13
-		m13 = @m12 * rhs.m1 + @m13 * rhs.m5 + @m14 *  rhs.m9 + @m15 * rhs.m13
-		m2  =  @m0 * rhs.m2 +  @m1 * rhs.m6 +  @m2 * rhs.m10 +  @m3 * rhs.m14
-		m6  =  @m4 * rhs.m2 +  @m5 * rhs.m6 +  @m6 * rhs.m10 +  @m7 * rhs.m14
-		m10 =  @m8 * rhs.m2 +  @m9 * rhs.m6 + @m10 * rhs.m10 + @m11 * rhs.m14
-		m14 = @m12 * rhs.m2 + @m13 * rhs.m6 + @m14 * rhs.m10 + @m15 * rhs.m14
-		m3  =  @m0 * rhs.m3 +  @m1 * rhs.m7 +  @m2 * rhs.m11 +  @m3 * rhs.m15
-		m7  =  @m4 * rhs.m3 +  @m5 * rhs.m7 +  @m6 * rhs.m11 +  @m7 * rhs.m15
-		m11 =  @m8 * rhs.m3 +  @m9 * rhs.m7 + @m10 * rhs.m11 + @m11 * rhs.m15
-		m15 = @m12 * rhs.m3 + @m13 * rhs.m7 + @m14 * rhs.m11 + @m15 * rhs.m15
+		m0  = rhs.m0 *  @m0 + rhs.m4 *  @m1 +  rhs.m8 *  @m2 + rhs.m12 *  @m3
+		m4  = rhs.m0 *  @m4 + rhs.m4 *  @m5 +  rhs.m8 *  @m6 + rhs.m12 *  @m7
+		m8  = rhs.m0 *  @m8 + rhs.m4 *  @m9 +  rhs.m8 * @m10 + rhs.m12 * @m11
+		m12 = rhs.m0 * @m12 + rhs.m4 * @m13 +  rhs.m8 * @m14 + rhs.m12 * @m15
+		m1  = rhs.m1 *  @m0 + rhs.m5 *  @m1 +  rhs.m9 *  @m2 + rhs.m13 *  @m3
+		m5  = rhs.m1 *  @m4 + rhs.m5 *  @m5 +  rhs.m9 *  @m6 + rhs.m13 *  @m7
+		m9  = rhs.m1 *  @m8 + rhs.m5 *  @m9 +  rhs.m9 * @m10 + rhs.m13 * @m11
+		m13 = rhs.m1 * @m12 + rhs.m5 * @m13 +  rhs.m9 * @m14 + rhs.m13 * @m15
+		m2  = rhs.m2 *  @m0 + rhs.m6 *  @m1 + rhs.m10 *  @m2 + rhs.m14 *  @m3
+		m6  = rhs.m2 *  @m4 + rhs.m6 *  @m5 + rhs.m10 *  @m6 + rhs.m14 *  @m7
+		m10 = rhs.m2 *  @m8 + rhs.m6 *  @m9 + rhs.m10 * @m10 + rhs.m14 * @m11
+		m14 = rhs.m2 * @m12 + rhs.m6 * @m13 + rhs.m10 * @m14 + rhs.m14 * @m15
+		m3  = rhs.m3 *  @m0 + rhs.m7 *  @m1 + rhs.m11 *  @m2 + rhs.m15 *  @m3
+		m7  = rhs.m3 *  @m4 + rhs.m7 *  @m5 + rhs.m11 *  @m6 + rhs.m15 *  @m7
+		m11 = rhs.m3 *  @m8 + rhs.m7 *  @m9 + rhs.m11 * @m10 + rhs.m15 * @m11
+		m15 = rhs.m3 * @m12 + rhs.m7 * @m13 + rhs.m11 * @m14 + rhs.m15 * @m15
+
 		$storeResult!
 
 	determinant: =>
@@ -283,6 +286,7 @@ MatrixMT = {
 		m1, m5, m9,  m13 =  @m4,  @m5,  @m6,  @m7
 		m2, m6, m10, m14 =  @m8,  @m9, @m10, @m11
 		m3, m7, m11, m15 = @m12, @m13, @m14, @m15
+
 		$storeResult!
 
 	invert: (target = @) =>
@@ -317,6 +321,7 @@ MatrixMT = {
 		m13 = (  @m0 * b09 -  @m1 * b07 +  @m2 * b06) * invDet
 		m14 = (-@m12 * b03 + @m13 * b01 - @m14 * b00) * invDet
 		m15 = (  @m8 * b03 -  @m9 * b01 + @m10 * b00) * invDet
+
 		$storeResult!
 
 	normalize: =>
@@ -331,6 +336,7 @@ MatrixMT = {
 		m1, m5, m9,  m13 = @m1 / det,  @m5 / det,  @m9 / det, @m13 / det
 		m2, m6, m10, m14 = @m2 / det,  @m6 / det, @m10 / det, @m14 / det
 		m3, m7, m11, m15 = @m3 / det,  @m7 / det, @m11 / det, @m15 / det
+
 		$storeResult!
 
 	fromFloatV: (v) =>
