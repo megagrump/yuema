@@ -17,7 +17,7 @@ local imports = (...)
 local args = { select(2, ...) }
 
 local function boot()
-	require('lib.core')(imports)
+	require('lib.core')(imports, args)
 
 	local log = require('lib.core.log')
 	log.setLevel(log.WARNING)
