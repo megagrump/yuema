@@ -2,26 +2,60 @@ import 'ffi'
 import sqrt, sin, cos, tan from math
 
 Matrix = ffi.typeof('Matrix')
+ArrayType = ffi.typeof('float[16]')
+
+macro makeResult = -> [[
+if @
+	@set(
+		m0, m4, m8,  m12,
+		m1, m5, m9,  m13,
+		m2, m6, m10, m14,
+		m3, m7, m11, m15
+	)
+else
+	Matrix(
+		m0, m4, m8,  m12,
+		m1, m5, m9,  m13,
+		m2, m6, m10, m14,
+		m3, m7, m11, m15
+	)
+]]
+
+macro storeResult = -> [[
+with target
+	.m0, .m4, .m8,  .m12 = m0, m4, m8,  m12
+	.m1, .m5, .m9,  .m13 = m1, m5, m9,  m13
+	.m2, .m6, .m10, .m14 = m2, m6, m10, m14
+	.m3, .m7, .m11, .m15 = m3, m7, m11, m15
+target
+]]
 
 MatrixMT = {
-	__new: (m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15) =>
-		ffi.new(@, m0, m4, m8, m12, m1, m5, m9, m13, m2, m6, m10, m14, m3, m7, m11, m15)
+	identity: =>
+		m0, m4,  m8, m12 = 1, 0, 0, 0
+		m1, m5,  m9, m13 = 0, 1, 0, 0
+		m2, m6, m10, m14 = 0, 0, 1, 0
+		m3, m7, m11, m15 = 0, 0, 0, 1
 
-	identity: -> Matrix(
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1
-	)
+		$makeResult!
 
-	translate: (x, y, z) -> Matrix(
-		1, 0, 0, x,
-		0, 1, 0, y,
-		0, 0, 1, z,
-		0, 0, 0, 1
-	)
+	set: (@m0, @m4, @m8, @m12, @m1, @m5, @m9, @m13, @m2, @m6, @m10, @m14, @m3, @m7, @m11, @m15) => @
 
-	rotate: (axis, angle) ->
+	translate: (x, y, z) =>
+		if type(@) ~= 'cdata'
+			@, x, y, z = nil, @, x, y
+
+		m0, m4, m8,  m12 = 1, 0, 0, x
+		m1, m5, m9,  m13 = 0, 1, 0, y
+		m2, m6, m10, m14 = 0, 0, 1, z
+		m3, m7, m11, m15 = 0, 0, 0, 1
+
+		$makeResult!
+
+	rotate: (axis, angle) =>
+		if type(@) ~= 'cdata'
+			@, axis, angle = nil, @, axis
+
 		{ :x, :y, :z } = axis
 		lenSq = axis::lengthSquared!
 
@@ -32,162 +66,196 @@ MatrixMT = {
 		sn, cs = sin(angle), cos(angle)
 		t = 1 - cs
 
-		Matrix(
-				x * x * t + cs, y * x * t + z * sn,	z * x * t - y * sn,	0,
-			x * y * t - z * sn,     y * y * t + cs, z * y * t + x * sn, 0,
-			x * z * t + y * sn, y * z * t - x * sn,	    z * z * t + cs, 0,
-							 0,                  0,                  0, 1
-		)
+		m0, m4, m8,  m12 =     x * x * t + cs,  x * y * t - z * sn, x * z * t + y * sn, 0
+		m1, m5, m9,  m13 = y * x * t + z * sn,	    y * y * t + cs, y * z * t - x * sn, 0
+		m2, m6, m10, m14 = z * x * t - y * sn,	z * y * t + x * sn,     z * z * t + cs, 0
+		m3, m7, m11, m15 =                  0,                   0,                  0, 1
 
-	rotateX: (angle) ->
+		$makeResult!
+
+	rotateX: (angle) =>
+		if type(@) ~= 'cdata'
+			@, angle = nil, @
+
 		sn, cs = sin(angle), cos(angle)
-		Matrix(
-			1,  0,   0, 0,
-			0, cs, -sn, 0,
-			0, sn,  cs, 0,
-			0,  0,   0, 1
-		)
+		m0, m4, m8,  m12 = 1,   0,  0, 0
+		m1, m5, m9,  m13 = 0,  cs, sn, 0
+		m2, m6, m10, m14 = 0, -sn, cs, 0
+		m3, m7, m11, m15 = 0,   0,  0, 1
 
-	rotateY: (angle) ->
+		$makeResult!
+
+	rotateY: (angle) =>
+		if type(@) ~= 'cdata'
+			@, angle = nil, @
+
 		sn, cs = sin(angle), cos(angle)
-		Matrix(
-			 cs,  0, sn, 0,
-			  0,  1,  0, 0,
-			-sn,  0, cs, 0,
-			  0,  0,  0, 1
-		)
+		m0, m4, m8,  m12 = cs, 0, -sn, 0
+		m1, m5, m9,  m13 = 0,  1,   0, 0
+		m2, m6, m10, m14 = sn, 0,  cs, 0
+		m3, m7, m11, m15 = 0,  0,   0, 1
 
-	rotateZ: (angle) ->
+		$makeResult!
+
+	rotateZ: (angle) =>
+		if type(@) ~= 'cdata'
+			@, angle = nil, @
+
 		sn, cs = sin(angle), cos(angle)
-		Matrix(
-			cs, -sn, 0, 0,
-			sn,  cs, 0, 0,
-			0,    0, 1, 0,
-			0,    0, 0, 1
-		)
+		m0, m4, m8,  m12 =  cs, sn, 0, 0
+		m1, m5, m9,  m13 = -sn, cs, 0, 0
+		m2, m6, m10, m14 =   0,  0, 1, 0
+		m3, m7, m11, m15 =   0,  0, 0, 1
 
-	rotateXYZ: (angles) ->
+		$makeResult!
+
+	rotateXYZ: (angles) =>
+		if type(@) ~= 'cdata'
+			@, angles = nil, @
+
 		cx, sx = cos(-angles.x), sin(-angles.x)
 		cy, sy = cos(-angles.y), sin(-angles.y)
 		cz, sz = cos(-angles.z), sin(-angles.z)
-		Matrix(
-						   cz * cy,                sz * cy,     -sy, 0
-			cz * sy * sx - sz * cx, sz * sy * sx + cz * cx, cy * sx, 0,
-			cz * sy * cx + sz * sx, sz * sy * cx - cz * sx, cy * cx, 0,
-								 0,                      0,       0, 1
-		)
+		m0, m4, m8,  m12 = cz * cy, cz * sy * sx - sz * cx, cz * sy * cx + sz * sx, 0
+		m1, m5, m9,  m13 = sz * cy, sz * sy * sx + cz * cx, sz * sy * cx - cz * sx, 0
+		m2, m6, m10, m14 =     -sy,                cy * sx,                cy * cx, 0
+		m3, m7, m11, m15 =       0,                      0,                      0, 1
 
-	rotateZYX: (angles) ->
+		$makeResult!
+
+	rotateZYX: (angles) =>
+		if type(@) ~= 'cdata'
+			@, angles = nil, @
+
 		cx, sx = cos(angles.x), sin(angles.x)
 		cy, sy = cos(angles.y), sin(angles.y)
 		cz, sz = cos(angles.z), sin(angles.z)
-		Matrix(
-			cz * cy, cz * sy * sx - cx * sz, sz * sx + cz * cx * sy, 0,
-			cy * sz, cz * cx + sz * sy * sx, cx * sz * sy - cz * sx, 0,
-				-sy,                cy * sx,                cy * cx, 0,
-				  0,                      0,                      0, 1
-		)
+		m0, m4, m8,  m12 =                cz * cy,                cy * sz,     -sy, 0
+		m1, m5, m9,  m13 = cz * sy * sx - cx * sz, cz * cx + sz * sy * sx, cy * sx, 0
+		m2, m6, m10, m14 = sz * sx + cz * cx * sy, cx * sz * sy - cz * sx, cy * cx, 0
+		m3, m7, m11, m15 =                      0,                      0,       0, 1
 
-	scale: (x, y, z) -> Matrix(
-		x, 0, 0, 0,
-		0, y, 0, 0,
-		0, 0, z, 0,
-		0, 0, 0, 1
-	)
+		$makeResult!
 
-	frustum: (left, right, bottom, top, near, far) ->
+	scale: (x, y, z) =>
+		if type(@) ~= 'cdata'
+			@, x, y, z = nil, @, x, y
+
+		m0, m4, m8,  m12 = x, 0, 0, 0
+		m1, m5, m9,  m13 = 0, y, 0, 0
+		m2, m6, m10, m14 = 0, 0, z, 0
+		m3, m7, m11, m15 = 0, 0, 0, 1
+
+		$makeResult!
+
+	frustum: (left, right, bottom, top, near, far) =>
+		if type(@) ~= 'cdata'
+			@, left, right, bottom, top, near, far = nil, @, left, right, bottom, top, near
+
 		rl = right - left
 		tb = top - bottom
 		fn = far - near
-		Matrix(
-				(near * 2) / rl,                   0,                      0,  0,
-							  0,     (near * 2) / tb,                      0,  0,
-			(right + left) / rl, (top + bottom) / tb,     -(far + near) / fn, -1,
-							  0,                   0, -(far * near * 2) / fn,  0
-		)
+		m0, m4, m8,  m12 = (near * 2) / rl,               0, (right + left) / rl,                      0
+		m1, m5, m9,  m13 =               0, (near * 2) / tb, (top + bottom) / tb,                      0
+		m2, m6, m10, m14 =               0,               0,  -(far + near) / fn, -(far * near * 2) / fn
+		m3, m7, m11, m15 =               0,               0,                  -1,                      0
 
-	perspective: (fovy, aspect, near, far) ->
+		$makeResult!
+
+	perspective: (fovy, aspect, near, far) =>
+		if type(@) ~= 'cdata'
+			@, fovy, aspect, near, far = nil, @, fovy, aspect, near
+
 		top = near * tan(fovy * .5)
 		right = top * aspect
-		Matrix.frustum(-right, right, -top, top, near, far)
+		Matrix.frustum(@, -right, right, -top, top, near, far)
 
-	ortho: (left, right, bottom, top, near, far) ->
+	ortho: (left, right, bottom, top, near, far) =>
+		if type(@) ~= 'cdata'
+			@, left, right, bottom, top, near, far = nil, @, left, right, bottom, top, near
+
 		rl = right - left
 		tb = top - bottom
 		fn = far - near
-		Matrix(
-						   2 / rl,                     0,                   0, 0,
-								0,                2 / tb,                   0, 0,
-								0,                     0,             -2 / fn, 0,
-			-(left + right ) / rl, -(top + bottom ) / tb, -(far + near ) / fn, 1
-		)
+		m0, m4, m8,  m12 = 2 / rl,      0,       0, -(left + right ) / rl
+		m1, m5, m9,  m13 =      0, 2 / tb,       0, -(top + bottom ) / tb
+		m2, m6, m10, m14 =      0,      0, -2 / fn,   -(far + near ) / fn
+		m3, m7, m11, m15 =      0,      0,       0,                     1
 
-	lookAt: (eye, target, up) ->
+		$makeResult!
+
+	lookAt: (eye, target, up) =>
+		if type(@) ~= 'cdata'
+			@, eye, target, up = nil, @, eye, target
+
 		vz = eye::subtract(target)::normalize!
 		vx = up::crossProduct(vz)::normalize!
 		vy = vz::crossProduct(vx)
 		ex, ey, ez = vx::dotProduct(eye), vy::dotProduct(eye), vz::dotProduct(eye)
-		Matrix(
-			vx.x, vy.x, vz.x, 0,
-			vx.y, vy.y, vz.y, 0,
-			vx.z, vy.z, vz.z, 0,
-			 -ex,  -ey,  -ez, 1
-		)
+		m0, m4, m8,  m12 = vx.x, vx.y, vx.z, -ex
+		m1, m5, m9,  m13 = vy.x, vy.y, vy.z, -ey
+		m2, m6, m10, m14 = vz.x, vz.y, vz.z, -ez
+		m3, m7, m11, m15 =    0,    0,    0,   1
 
-	affine2D: (x, y, a = 0, sx = 1, sy = sx, ox = 0, oy = 0, kx = 0, ky = 0) ->
+		$makeResult!
+
+	affine2D: (x, y, a = 0, sx = 1, sy = sx, ox = 0, oy = 0, kx = 0, ky = 0) =>
+		if type(@) ~= 'cdata'
+			@, x, y, a, sx, sy, ox, oy, kx, ky = nil, @, x, y, a, sx, sy, ox, oy, kx
+
 		cs, sn = cos(a), sin(a)
 		m0 = cs * sx - ky * sn * sy
 		m1 = sn * sx + ky * cs * sy
+		m2, m3 = 0, 0
 		m4 = kx * cs * sx - sn * sy
 		m5 = kx * sn * sx + cs * sy
+		m6, m7 = 0, 0
+		m8, m9, m10, m11 = 0, 0, 1, 0
 		m12 = x - ox * m0 - oy * m4
 		m13 = y - ox * m1 - oy * m5
-		Matrix(
-			 m0,  m1, 0, 0,
-			 m4,  m5, 0, 0,
-			  0,   0, 1, 0,
-			m12, m13, 0, 1
-		)
+		m14, m15 = 0, 1
+
+		$makeResult!
 
 	__tostring: => 'Matrix(%f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f, %f)'::format(
-		@m0, @m1, @m2, @m3,
-		@m4, @m5, @m6, @m7,
-		@m8, @m9, @m10, @m11,
-		@m12, @m13, @m14, @m15
+		@m0, @m4,  @m8, @m12,
+		@m1, @m5,  @m9, @m13,
+		@m2, @m6, @m10, @m14,
+		@m3, @m7, @m11, @m15
 	)
 
-	add: (rhs) => Matrix(
-		 @m0 +  rhs.m0,  @m1 +  rhs.m1,  @m2 +  rhs.m2,  @m3 +  rhs.m3,
-		 @m4 +  rhs.m4,  @m5 +  rhs.m5,  @m6 +  rhs.m6,  @m7 +  rhs.m7,
-		 @m8 +  rhs.m8,  @m9 +  rhs.m9, @m10 + rhs.m10, @m11 + rhs.m11,
-		@m12 + rhs.m12, @m13 + rhs.m13, @m14 + rhs.m14, @m15 + rhs.m15
-	)
+	add: (rhs, target = @) =>
+		m0, m4, m8,  m12 = @m0 + rhs.m0, @m4 + rhs.m4,  @m8 + rhs.m8,  @m12 + rhs.m12
+		m1, m5, m9,  m13 = @m1 + rhs.m1, @m5 + rhs.m5,  @m9 + rhs.m9,  @m13 + rhs.m13
+		m2, m6, m10, m14 = @m2 + rhs.m2, @m6 + rhs.m6, @m10 + rhs.m10, @m14 + rhs.m14
+		m3, m7, m11, m15 = @m3 + rhs.m3, @m7 + rhs.m7, @m11 + rhs.m11, @m15 + rhs.m15
+		$storeResult!
 
-	subtract: (rhs) => Matrix(
-		 @m0 -  rhs.m0,  @m1 -  rhs.m1,  @m2 -  rhs.m2,  @m3 -  rhs.m3,
-		 @m4 -  rhs.m4,  @m5 -  rhs.m5,  @m6 -  rhs.m6,  @m7 -  rhs.m7,
-		 @m8 -  rhs.m8,  @m9 -  rhs.m9, @m10 - rhs.m10, @m11 - rhs.m11,
-		@m12 - rhs.m12, @m13 - rhs.m13, @m14 - rhs.m14, @m15 - rhs.m15
-	)
+	subtract: (rhs, target = @) =>
+		m0, m4, m8,  m12 = @m0 - rhs.m0, @m4 - rhs.m4,  @m8 - rhs.m8,  @m12 - rhs.m12
+		m1, m5, m9,  m13 = @m1 - rhs.m1, @m5 - rhs.m5,  @m9 - rhs.m9,  @m13 - rhs.m13
+		m2, m6, m10, m14 = @m2 - rhs.m2, @m6 - rhs.m6, @m10 - rhs.m10, @m14 - rhs.m14
+		m3, m7, m11, m15 = @m3 - rhs.m3, @m7 - rhs.m7, @m11 - rhs.m11, @m15 - rhs.m15
+		$storeResult!
 
-	multiply: (rhs) => Matrix(
-		 @m0 * rhs.m0 +  @m1 * rhs.m4 +  @m2 *  rhs.m8 +  @m3 * rhs.m12,
-		 @m0 * rhs.m1 +  @m1 * rhs.m5 +  @m2 *  rhs.m9 +  @m3 * rhs.m13,
-		 @m0 * rhs.m2 +  @m1 * rhs.m6 +  @m2 * rhs.m10 +  @m3 * rhs.m14,
-		 @m0 * rhs.m3 +  @m1 * rhs.m7 +  @m2 * rhs.m11 +  @m3 * rhs.m15,
-		 @m4 * rhs.m0 +  @m5 * rhs.m4 +  @m6 *  rhs.m8 +  @m7 * rhs.m12,
-		 @m4 * rhs.m1 +  @m5 * rhs.m5 +  @m6 *  rhs.m9 +  @m7 * rhs.m13,
-		 @m4 * rhs.m2 +  @m5 * rhs.m6 +  @m6 * rhs.m10 +  @m7 * rhs.m14,
-		 @m4 * rhs.m3 +  @m5 * rhs.m7 +  @m6 * rhs.m11 +  @m7 * rhs.m15,
-		 @m8 * rhs.m0 +  @m9 * rhs.m4 + @m10 *  rhs.m8 + @m11 * rhs.m12,
-		 @m8 * rhs.m1 +  @m9 * rhs.m5 + @m10 *  rhs.m9 + @m11 * rhs.m13,
-		 @m8 * rhs.m2 +  @m9 * rhs.m6 + @m10 * rhs.m10 + @m11 * rhs.m14,
-		 @m8 * rhs.m3 +  @m9 * rhs.m7 + @m10 * rhs.m11 + @m11 * rhs.m15,
-		@m12 * rhs.m0 + @m13 * rhs.m4 + @m14 *  rhs.m8 + @m15 * rhs.m12,
-		@m12 * rhs.m1 + @m13 * rhs.m5 + @m14 *  rhs.m9 + @m15 * rhs.m13,
-		@m12 * rhs.m2 + @m13 * rhs.m6 + @m14 * rhs.m10 + @m15 * rhs.m14,
-		@m12 * rhs.m3 + @m13 * rhs.m7 + @m14 * rhs.m11 + @m15 * rhs.m15
-	)
+	multiply: (rhs, target = @) =>
+		m0  =  @m0 * rhs.m0 +  @m1 * rhs.m4 +  @m2 *  rhs.m8 +  @m3 * rhs.m12
+		m4  =  @m4 * rhs.m0 +  @m5 * rhs.m4 +  @m6 *  rhs.m8 +  @m7 * rhs.m12
+		m8  =  @m8 * rhs.m0 +  @m9 * rhs.m4 + @m10 *  rhs.m8 + @m11 * rhs.m12
+		m12 = @m12 * rhs.m0 + @m13 * rhs.m4 + @m14 *  rhs.m8 + @m15 * rhs.m12
+		m1  =  @m0 * rhs.m1 +  @m1 * rhs.m5 +  @m2 *  rhs.m9 +  @m3 * rhs.m13
+		m5  =  @m4 * rhs.m1 +  @m5 * rhs.m5 +  @m6 *  rhs.m9 +  @m7 * rhs.m13
+		m9  =  @m8 * rhs.m1 +  @m9 * rhs.m5 + @m10 *  rhs.m9 + @m11 * rhs.m13
+		m13 = @m12 * rhs.m1 + @m13 * rhs.m5 + @m14 *  rhs.m9 + @m15 * rhs.m13
+		m2  =  @m0 * rhs.m2 +  @m1 * rhs.m6 +  @m2 * rhs.m10 +  @m3 * rhs.m14
+		m6  =  @m4 * rhs.m2 +  @m5 * rhs.m6 +  @m6 * rhs.m10 +  @m7 * rhs.m14
+		m10 =  @m8 * rhs.m2 +  @m9 * rhs.m6 + @m10 * rhs.m10 + @m11 * rhs.m14
+		m14 = @m12 * rhs.m2 + @m13 * rhs.m6 + @m14 * rhs.m10 + @m15 * rhs.m14
+		m3  =  @m0 * rhs.m3 +  @m1 * rhs.m7 +  @m2 * rhs.m11 +  @m3 * rhs.m15
+		m7  =  @m4 * rhs.m3 +  @m5 * rhs.m7 +  @m6 * rhs.m11 +  @m7 * rhs.m15
+		m11 =  @m8 * rhs.m3 +  @m9 * rhs.m7 + @m10 * rhs.m11 + @m11 * rhs.m15
+		m15 = @m12 * rhs.m3 + @m13 * rhs.m7 + @m14 * rhs.m11 + @m15 * rhs.m15
+		$storeResult!
 
 	determinant: =>
 		@m12 * @m9 *  @m6 *  @m3 - @m8 * @m13 *  @m6 *  @m3 - @m12 * @m5 * @m10 *  @m3 + @m4 * @m13 * @m10 *  @m3 +
@@ -199,14 +267,14 @@ MatrixMT = {
 
 	trace: => @m0 + @m5 + @m10 + @m15
 
-	transpose: => Matrix(
-		@m0, @m4,  @m8, @m12,
-		@m1, @m5,  @m9, @m13,
-		@m2, @m6, @m10, @m14,
-		@m3, @m7, @m11, @m15
-	)
+	transpose: (target = @) =>
+		m0, m4, m8,  m12 =  @m0,  @m1,  @m2,  @m3
+		m1, m5, m9,  m13 =  @m4,  @m5,  @m6,  @m7
+		m2, m6, m10, m14 =  @m8,  @m9, @m10, @m11
+		m3, m7, m11, m15 = @m12, @m13, @m14, @m15
+		$storeResult!
 
-	invert: =>
+	invert: (target = @) =>
 		b00 =  @m0 *  @m5 -  @m1 *  @m4
 		b01 =  @m0 *  @m6 -  @m2 *  @m4
 		b02 =  @m0 *  @m7 -  @m3 *  @m4
@@ -222,42 +290,57 @@ MatrixMT = {
 
 		invDet = 1 / (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06)
 
-		Matrix(
-			(  @m5 * b11 -  @m6 * b10 +  @m7 * b09) * invDet,
-			( -@m1 * b11 +  @m2 * b10 -  @m3 * b09) * invDet,
-			( @m13 * b05 - @m14 * b04 + @m15 * b03) * invDet,
-			( -@m9 * b05 + @m10 * b04 - @m11 * b03) * invDet,
-			( -@m4 * b11 +  @m6 * b08 -  @m7 * b07) * invDet,
-			(  @m0 * b11 -  @m2 * b08 +  @m3 * b07) * invDet,
-			(-@m12 * b05 + @m14 * b02 - @m15 * b01) * invDet,
-			(  @m8 * b05 - @m10 * b02 + @m11 * b01) * invDet,
-			(  @m4 * b10 -  @m5 * b08 +  @m7 * b06) * invDet,
-			( -@m0 * b10 +  @m1 * b08 -  @m3 * b06) * invDet,
-			( @m12 * b04 - @m13 * b02 + @m15 * b00) * invDet,
-			( -@m8 * b04 +  @m9 * b02 - @m11 * b00) * invDet,
-			( -@m4 * b09 +  @m5 * b07 -  @m6 * b06) * invDet,
-			(  @m0 * b09 -  @m1 * b07 +  @m2 * b06) * invDet,
-			(-@m12 * b03 + @m13 * b01 - @m14 * b00) * invDet,
-			(  @m8 * b03 -  @m9 * b01 + @m10 * b00) * invDet
-		)
+		m0  = (  @m5 * b11 -  @m6 * b10 +  @m7 * b09) * invDet
+		m1  = ( -@m1 * b11 +  @m2 * b10 -  @m3 * b09) * invDet
+		m2  = ( @m13 * b05 - @m14 * b04 + @m15 * b03) * invDet
+		m3  = ( -@m9 * b05 + @m10 * b04 - @m11 * b03) * invDet
+		m4  = ( -@m4 * b11 +  @m6 * b08 -  @m7 * b07) * invDet
+		m5  = (  @m0 * b11 -  @m2 * b08 +  @m3 * b07) * invDet
+		m6  = (-@m12 * b05 + @m14 * b02 - @m15 * b01) * invDet
+		m7  = (  @m8 * b05 - @m10 * b02 + @m11 * b01) * invDet
+		m8  = (  @m4 * b10 -  @m5 * b08 +  @m7 * b06) * invDet
+		m9  = ( -@m0 * b10 +  @m1 * b08 -  @m3 * b06) * invDet
+		m10 = ( @m12 * b04 - @m13 * b02 + @m15 * b00) * invDet
+		m11 = ( -@m8 * b04 +  @m9 * b02 - @m11 * b00) * invDet
+		m12 = ( -@m4 * b09 +  @m5 * b07 -  @m6 * b06) * invDet
+		m13 = (  @m0 * b09 -  @m1 * b07 +  @m2 * b06) * invDet
+		m14 = (-@m12 * b03 + @m13 * b01 - @m14 * b00) * invDet
+		m15 = (  @m8 * b03 -  @m9 * b01 + @m10 * b00) * invDet
+		$storeResult!
 
 	normalize: =>
-		det = @m12 * @m9 *  @m6 * @m3 -  @m8 * @m13 *  @m6 *  @m3 - @m12 * @m5 * @m10 *  @m3 + @m4 * @m13 * @m10 *  @m3 +
+		det = @m12 * @m9 *  @m6 *  @m3 - @m8 * @m13 *  @m6 *  @m3 - @m12 * @m5 * @m10 *  @m3 + @m4 * @m13 * @m10 *  @m3 +
 			   @m8 * @m5 * @m14 *  @m3 - @m4 *  @m9 * @m14 *  @m3 - @m12 * @m9 *  @m2 *  @m7 + @m8 * @m13 *  @m2 *  @m7 +
 			  @m12 * @m1 * @m10 *  @m7 - @m0 * @m13 * @m10 *  @m7 -  @m8 * @m1 * @m14 *  @m7 + @m0 *  @m9 * @m14 *  @m7 +
 			  @m12 * @m5 *  @m2 * @m11 - @m4 * @m13 *  @m2 * @m11 - @m12 * @m1 *  @m6 * @m11 + @m0 * @m13 *  @m6 * @m11 +
 			   @m4 * @m1 * @m14 * @m11 - @m0 *  @m5 * @m14 * @m11 -  @m8 * @m5 *  @m2 * @m15 + @m4 *  @m9 *  @m2 * @m15 +
 			   @m8 * @m1 *  @m6 * @m15 - @m0 *  @m9 *  @m6 * @m15 -  @m4 * @m1 * @m10 * @m15 + @m0 *  @m5 * @m10 * @m15
 
-		Matrix(
-			 @m0 / det,  @m1 / det,  @m2 / det,  @m3 / det,
-			 @m4 / det,  @m5 / det,  @m6 / det,  @m7 / det,
-			 @m8 / det,  @m9 / det, @m10 / det, @m11 / det,
-			@m12 / det, @m13 / det, @m14 / det, @m15 / det
-		)
+		m0, m4, m8,  m12 = @m0 / det,  @m4 / det,  @m8 / det, @m12 / det
+		m1, m5, m9,  m13 = @m1 / det,  @m5 / det,  @m9 / det, @m13 / det
+		m2, m6, m10, m14 = @m2 / det,  @m6 / det, @m10 / det, @m14 / det
+		m3, m7, m11, m15 = @m3 / det,  @m7 / det, @m11 / det, @m15 / det
+		$storeResult!
 
-	toFloatV: =>
-		ffi.new('float[16]', @m0, @m1, @m2, @m3, @m4, @m5, @m6, @m7, @m8, @m9, @m10, @m11, @m12, @m13, @m14, @m15)
+	toFloatV: (target) =>
+		target or= ArrayType!
+		target[0] = @m0
+		target[1] = @m1
+		target[2] = @m2
+		target[3] = @m3
+		target[4] = @m4
+		target[5] = @m5
+		target[6] = @m6
+		target[7] = @m7
+		target[8] = @m8
+		target[9] = @m9
+		target[10] = @m10
+		target[11] = @m11
+		target[12] = @m12
+		target[13] = @m13
+		target[14] = @m14
+		target[15] = @m15
+		target
 }
 
 MatrixMT.__index = MatrixMT
