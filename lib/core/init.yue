@@ -1,4 +1,4 @@
-init = (imports) ->
+init = (imports, args) ->
 	import 'ffi'
 
 	refStore = { [0]: 0 }
@@ -17,27 +17,11 @@ init = (imports) ->
 
 	getRef = (ref) -> ref > 0 and refStore[ref] or nil
 
-	global yuema = { :pushRef, :getRef }
+	global yuema = { :pushRef, :getRef, :args }
 
 	for i = 1, #imports, 4
 		name, type, decl, func = imports[i], imports[i + 1], imports[i + 2], imports[i + 3]
 		ffi.cdef(decl)
 		yuema[name] = ffi.cast('%s*'::format(type), func)
-
-	if ffi.os == 'Windows'
-		ffi.cdef([[
-			typedef struct FILE FILE;
-			void AllocConsole();
-			FILE *freopen(const char*, const char*, FILE*);
-		]])
-		yuema.console = ->
-			with ffi.C
-				.AllocConsole!
-				.freopen('CONIN$',  'r', io.stdin)
-				.freopen('CONOUT$', 'w', io.stderr)
-				.freopen('CONOUT$', 'w', io.stdout)
-			print("Console opened.")
-	else
-		yuema.console = ->
 
 init

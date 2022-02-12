@@ -1,0 +1,17 @@
+import 'ffi'
+
+export openConsole = if ffi.os == 'Windows'
+	ffi.cdef([[
+		typedef struct FILE FILE;
+		void AllocConsole();
+		FILE *freopen(const char*, const char*, FILE*);
+	]])
+	->
+		with ffi.C
+			.AllocConsole!
+			.freopen('CONIN$',  'r', io.stdin)
+			.freopen('CONOUT$', 'w', io.stderr)
+			.freopen('CONOUT$', 'w', io.stdout)
+		print("Console opened.")
+else
+	-> nil
