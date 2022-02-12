@@ -1,0 +1,18 @@
+import 'lib.util.Stack'
+
+class Pool
+	new: (@_construct, @_initialize, @_deinitialize) =>
+		@_stack = Stack!
+
+	pop: (...) =>
+		item = @_stack::pop!
+		unless item
+			item = @._construct(...)
+		elseif @_initialize
+			@._initialize(item, ...)
+		item
+
+	push: (item) =>
+		@._deinitialize(item) if @_deinitialize
+		@_stack::push(item)
+		item
