@@ -49,6 +49,7 @@ ColorMT = {
 	__tostring: => 'Color(%d, %d, %d, %d)'\format(@r, @g, @b, @a)
 
 	set: (@r, @g, @b, @a) =>
+	get: => @r, @g, @b, @a
 	fade: RL.Fade
 	alpha: RL.ColorAlpha
 	alphaBlend: (dst, tint) => RL.ColorAlphaBlend(dst, @, tint)

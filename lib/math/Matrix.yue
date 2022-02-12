@@ -41,6 +41,17 @@ MatrixMT = {
 
 	set: (@m0, @m4, @m8, @m12, @m1, @m5, @m9, @m13, @m2, @m6, @m10, @m14, @m3, @m7, @m11, @m15) => @
 
+	copy: (m) =>
+		if not m
+			@, m = nil, @
+
+		m0, m4,  m8, m12 = m.m0, m.m4, m.m8, m.m12
+		m1, m5,  m9, m13 = m.m1, m.m5, m.m9, m.m13
+		m2, m6, m10, m14 = m.m2, m.m6, m.m10, m.m14
+		m3, m7, m11, m15 = m.m3, m.m7, m.m11, m.m15
+
+		$makeResult!
+
 	translate: (x, y, z) =>
 		if type(@) ~= 'cdata'
 			@, x, y, z = nil, @, x, y
@@ -322,25 +333,24 @@ MatrixMT = {
 		m3, m7, m11, m15 = @m3 / det,  @m7 / det, @m11 / det, @m15 / det
 		$storeResult!
 
-	toFloatV: (target) =>
-		target or= ArrayType!
-		target[0] = @m0
-		target[1] = @m1
-		target[2] = @m2
-		target[3] = @m3
-		target[4] = @m4
-		target[5] = @m5
-		target[6] = @m6
-		target[7] = @m7
-		target[8] = @m8
-		target[9] = @m9
-		target[10] = @m10
-		target[11] = @m11
-		target[12] = @m12
-		target[13] = @m13
-		target[14] = @m14
-		target[15] = @m15
-		target
+	fromFloatV: (v) =>
+		if not v
+			@, v = nil, @
+
+		m0, m4,  m8, m12 = v[0], v[4],  v[8], v[12]
+		m1, m5,  m9, m13 = v[1], v[5],  v[9], v[13]
+		m2, m6, m10, m14 = v[2], v[6], v[10], v[11]
+		m3, m7, m11, m15 = v[3], v[7], v[11], v[15]
+
+		$makeResult!
+
+	toFloatV: (v) =>
+		v or= ArrayType!
+		v[0], v[4],  v[8], v[12] = @m0, @m4,  @m8, @m12
+		v[1], v[5],  v[9], v[13] = @m1, @m5,  @m9, @m13
+		v[2], v[6], v[10], v[11] = @m2, @m6, @m10, @m14
+		v[3], v[7], v[11], v[15] = @m3, @m7, @m11, @m15
+		v
 }
 
 MatrixMT.__index = MatrixMT

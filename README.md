@@ -12,6 +12,10 @@ You can use it to write 2D and 3D games in [Lua](https://www.lua.org/) or [Yuesc
 
 ![yuema_box2d](https://user-images.githubusercontent.com/31128870/153551507-26d94ece-6d52-4757-abeb-7d2d6fcc4ebb.png)
 
+## Work in progress!
+
+The API is not stable and will change frequently.
+
 ## How to build
 
 Make sure you clone with submodules:

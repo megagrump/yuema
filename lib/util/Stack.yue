@@ -1,0 +1,19 @@
+class Stack
+	new: =>
+		@[0] = 0
+
+	push: (item) =>
+		n = @[0] + 1
+		@[0], @[n] = n, item
+		n
+
+	pop: =>
+		n = @[0]
+		return if n == 0
+		item = @[n]
+		@[0], @[n] = n - 1, nil
+		item
+
+	peek: (n) => @[n]
+
+	size: => @[0]
