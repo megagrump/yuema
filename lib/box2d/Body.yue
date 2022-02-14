@@ -151,7 +151,7 @@ BodyMT = {
 	getGravityScale: B2D.b2Body_GetGravityScale
 	setGravityScale: B2D.b2Body_SetGravityScale
 	setType: (type) => B2D.b2Body_SetType(@, BodyTypes[type])
-	getType: => BodyTypes[B2D.b2Body_GetType(@)]
+	getType: => BodyTypes[tonumber(B2D.b2Body_GetType(@))]
 	setBullet: B2D.b2Body_SetBullet
 	isBullet: B2D.b2Body_IsBullet
 	setSleepingAllowed: B2D.b2Body_SetSleepingAllowed
