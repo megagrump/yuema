@@ -1,0 +1,2 @@
+# linguist doesn not support yuescript (yet); use MoonScript as a fallback
+*.yue linguist-language=MoonScript
