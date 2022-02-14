@@ -28,8 +28,16 @@ FFIExport exports[] = {
 };
 
 void errorHandler(const char* error) {
-	if(!IsWindowReady())
-		return;
+	// this is ugly but there's no other way to reset raylib's state
+	// TODO: implement a better error display
+	int width = 800;
+	int height = 600;
+	if(IsWindowReady()) {
+		width = GetScreenWidth();
+		height = GetScreenHeight();
+		CloseWindow();
+	}
+	InitWindow(width, height, "ERROR");
 
 	std::string errorMessage(error);
 	errorMessage.erase(std::remove(errorMessage.begin(), errorMessage.end(), '\r'), errorMessage.end());
