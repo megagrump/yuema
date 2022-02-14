@@ -28,7 +28,7 @@ ShapePtr = ffi.typeof('b2Shape*')
 
 ShapeMT = {
 	__gc: => B2D.b2Shape_Destroy(@_downCast!)
-	getType: => TypeNames[B2D.b2Shape_GetType(@)]
+	getType: => TypeNames[tonumber(B2D.b2Shape_GetType(@))]
 	getChildCount: => B2D.b2Shape_GetChildCount(@_downCast!)
 	testPoint: (tx, ty, angle, x, y) =>
 		tx, ty = scaleDown(tx, ty)
