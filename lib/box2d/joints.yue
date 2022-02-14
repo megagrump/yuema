@@ -50,7 +50,7 @@ jointCast = ffi.new([[
 --- Joint ---
 
 JointMT = {
-	getType: => TypeNames[B2D.b2Joint_GetType(@)]
+	getType: => TypeNames[tonumber(B2D.b2Joint_GetType(@))]
 	getBodyA: => B2D.b2Joint_GetBodyA(@_downCast!)
 	getBodyB: => B2D.b2Joint_GetBodyB(@_downCast!)
 	getAnchorA: =>
