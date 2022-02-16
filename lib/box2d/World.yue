@@ -12,32 +12,34 @@ profile = ffi.new('b2cProfile')
 tempVector = Vector2!
 scaleUp, scaleDown = _scale.up, _scale.down
 
-emptyQueryCallback = -> error("Invalid callback")
 emptyContactFilter = -> error("Invalid filter")
 emptyListener = ->
 rayCastCallback = nil
+queryCallback = nil
 
 World = ffi.typeof('b2World')
 
 WorldMT = {
 	__new: (gravityX, gravityY) =>
 		world = B2D.b2World_New(scaleDown(gravityX, gravityY))
-		B2D.b2World_SetRayCastCallback(world, world._rayCastCallback)
-		B2D.b2World_SetQueryCallback(world, emptyQueryCallback)
-		B2D.b2World_SetContactFilter(world, emptyContactFilter)
-		B2D.b2World_SetContactListener(world, emptyListener, emptyListener, emptyListener, emptyListener)
+		with B2D
+			.b2World_SetRayCastCallback(world, world._rayCastCallback)
+			.b2World_SetQueryCallback(world, world._queryCallback)
+			.b2World_SetContactFilter(world, emptyContactFilter)
+			.b2World_SetContactListener(world, emptyListener, emptyListener, emptyListener, emptyListener)
 		world
 
 	__gc: => @destroy!
 
 	destroy: =>
-		B2D.b2World_GetContactFilter(@)::free!
-		B2D.b2World_GetRayCastCallback(@)::free!
-		B2D.b2World_GetQueryCallback(@)::free!
-		B2D.b2World_GetBeginContactListener(@)::free!
-		B2D.b2World_GetEndContactListener(@)::free!
-		B2D.b2World_GetPreSolveContactListener(@)::free!
-		B2D.b2World_GetPostSolveContactListener(@)::free!
+		with B2D
+			.b2World_GetContactFilter(@)::free!
+			.b2World_GetRayCastCallback(@)::free!
+			.b2World_GetQueryCallback(@)::free!
+			.b2World_GetBeginContactListener(@)::free!
+			.b2World_GetEndContactListener(@)::free!
+			.b2World_GetPreSolveContactListener(@)::free!
+			.b2World_GetPostSolveContactListener(@)::free!
 		body = @getBodyList!
 		while body
 			body = body::_deinit!::getNext!
@@ -51,26 +53,30 @@ WorldMT = {
 	clearForces: => B2D.b2World_ClearForces(@)
 
 	setContactListener: (beginContact, endContact, preSolve, postSolve) =>
-		B2D.b2World_GetBeginContactListener(@)::set(beginContact or emptyListener)
-		B2D.b2World_GetEndContactListener(@)::set(endContact or emptyListener)
-		B2D.b2World_GetPreSolveContactListener(@)::set(preSolve or emptyListener)
-		B2D.b2World_GetPostSolveContactListener(@)::set(postSolve or emptyListener)
-		B2D.b2World_EnableContactListener(@,
-			not not beginContact,
-			not not endContact,
-			not not preSolveContact,
-			not not postSolveContact
-		)
+		with B2D
+			.b2World_GetBeginContactListener(@)::set(beginContact or emptyListener)
+			.b2World_GetEndContactListener(@)::set(endContact or emptyListener)
+			.b2World_GetPreSolveContactListener(@)::set(preSolve or emptyListener)
+			.b2World_GetPostSolveContactListener(@)::set(postSolve or emptyListener)
+			.b2World_EnableContactListener(@,
+				not not beginContact,
+				not not endContact,
+				not not preSolveContact,
+				not not postSolveContact
+			)
 
 	setContactFilter: (filter) =>
 		B2D.b2World_GetContactFilter(@)::set(filter or emptyContactFilter)
 		B2D.b2World_EnableContactFilter(@, not not filter)
 
+	_queryCallback: (fixture) => queryCallback(fixture)
+
 	queryAABB: (minX, minY, maxX, maxY, callback) =>
-		B2D.b2World_GetQueryCallback(@)::set(callback)
+		queryCallback = callback
 		minX, minY = scaleDown(minX, minY)
 		maxX, maxY = scaleDown(maxX, maxY)
 		B2D.b2World_QueryAABB(@, minX, minY, maxX, maxY)
+		queryCallback = nil
 
 	_rayCastCallback: (fixture, x, y, nx, ny, fraction) ->
 		x, y = scaleUp(x, y)
