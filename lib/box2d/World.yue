@@ -69,7 +69,7 @@ WorldMT = {
 		B2D.b2World_GetContactFilter(@)::set(filter or emptyContactFilter)
 		B2D.b2World_EnableContactFilter(@, not not filter)
 
-	_queryCallback: (fixture) => queryCallback(fixture)
+	_queryCallback: (fixture) -> queryCallback(fixture)
 
 	queryAABB: (minX, minY, maxX, maxY, callback) =>
 		queryCallback = callback

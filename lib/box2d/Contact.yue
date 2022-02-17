@@ -1,6 +1,7 @@
 import 'ffi'
 import 'lib.box2d._scale'
 import 'lib.math.Vector2'
+import 'lib.core.util' as :ptr
 import B2D from yuema
 
 scaleUp, scaleDown = _scale.up, _scale.down
@@ -14,10 +15,10 @@ ContactMT = {
 	isTouching: B2D.b2Contact_IsTouching
 	setEnabled: B2D.b2Contact_SetEnabled
 	isEnabled: B2D.b2Contact_IsEnabled
-	getNext: B2D.b2Contact_GetNext
-	getFixtureA: B2D.b2Contact_GetFixtureA
+	getNext: => ptr(B2D.b2Contact_GetNext(@))
+	getFixtureA: => ptr(B2D.b2Contact_GetFixtureA(@))
 	getChildIndexA: B2D.b2Contact_GetChildIndexA
-	getFixtureB: B2D.b2Contact_GetFixtureB
+	getFixtureB: => ptr(B2D.b2Contact_GetFixtureB(@))
 	getChildIndexB: B2D.b2Contact_GetChildIndexB
 	setFriction: B2D.b2Contact_SetFriction
 	getFriction: B2D.b2Contact_GetFriction

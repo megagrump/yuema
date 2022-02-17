@@ -12,12 +12,7 @@
 #include "b2_friction_joint.h"
 #include "b2_motor_joint.h"
 #include "box2dc.h"
-
-inline Vector2 *convertVector(const b2Vec2& v, Vector2 *output) {
-	output->x = v.x;
-	output->y = v.y;
-	return output;
-}
+#include "util.h"
 
 int b2Joint_GetType(b2Joint *joint) { return joint->GetType(); }
 

@@ -1,12 +1,7 @@
 #include "b2_fixture.h"
 #include "b2_contact.h"
 #include "box2dc.h"
-
-inline Vector2 *convertVector(const b2Vec2& v, Vector2 *output) {
-	output->x = v.x;
-	output->y = v.y;
-	return output;
-}
+#include "util.h"
 
 static b2WorldManifold worldManifold;
 

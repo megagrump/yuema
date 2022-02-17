@@ -3,22 +3,7 @@
 #include "b2_edge_shape.h"
 #include "b2_polygon_shape.h"
 #include "box2dc.h"
-
-static b2Vec2 tempPolygon[b2_maxPolygonVertices];
-
-inline Vector2 *convertVector(const b2Vec2& v, Vector2 *output) {
-	output->x = v.x;
-	output->y = v.y;
-	return output;
-}
-
-inline b2Vec2* convertPolygon(const Vector2 *vertices, int count) {
-	for(int i = 0; i < count; ++i) {
-		tempPolygon[i].x = vertices[i].x;
-		tempPolygon[i].y = vertices[i].y;
-	}
-	return tempPolygon;
-}
+#include "util.h"
 
 b2cMassData *b2Shape_ComputeMass(b2Shape *shape, float density, b2cMassData *output) {
 	b2MassData data;
