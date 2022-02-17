@@ -210,7 +210,7 @@ MatrixMT = {
 
 		$makeResult!
 
-	affine2D: (x, y, a = 0, sx = 1, sy = sx, ox = 0, oy = 0, kx = 0, ky = 0) =>
+	affine2D: (x, y, a, sx, sy, ox, oy, kx, ky) =>
 		if type(@) ~= 'cdata'
 			@, x, y, a, sx, sy, ox, oy, kx, ky = nil, @, x, y, a, sx, sy, ox, oy, kx
 

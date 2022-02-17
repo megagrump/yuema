@@ -1,10 +1,9 @@
-m = { k, v for k, v in pairs(require('lib.math.funcs')) }
-m.Vector2 = require('lib.math.Vector2')
-m.Vector3 = require('lib.math.Vector3')
-m.Quaternion = require('lib.math.Quaternion')
-m.Matrix = require('lib.math.Matrix')
-m.RNG = require('lib.math.RNG')
-m.noise2d = require('lib.math.noise2d')
-m.noise3d = require('lib.math.noise3d')
-
-setmetatable(m, { __index: math })
+with { k, v for k, v in pairs(require('lib.math.funcs')) }
+	.# = __index: math
+	.Vector2 = require('lib.math.Vector2')
+	.Vector3 = require('lib.math.Vector3')
+	.Quaternion = require('lib.math.Quaternion')
+	.Matrix = require('lib.math.Matrix')
+	.RNG = require('lib.math.RNG')
+	.noise2d = require('lib.math.noise2d')
+	.noise3d = require('lib.math.noise3d')
