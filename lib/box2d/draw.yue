@@ -18,7 +18,7 @@ makeColor = (r, g, b, a) ->
 	colorCache[hash] = color
 	color
 
-proxy.DrawPolygon =(vertices, count, r, g, b, a) ->
+proxy.DrawPolygon = (vertices, count, r, g, b, a) ->
 	color = makeColor(r, g, b, a)
 	for i = 0, count - 1
 		n = (i + 1) % count
@@ -42,7 +42,8 @@ proxy.DrawSolidCircle = (x, y, radius, ax, ay, r, g, b, a) ->
 	radius = scaleUp(radius)
 	color = makeColor(r, g, b, a)
 	draw.circle(x, y, radius, color)
-	--draw.line(x, y, x + ax * radius, y + ay * radius, color)
+	color2 = makeColor(1 - r, 1 - g, 1 - b, a)
+	draw.line(x, y, x + ax * radius, y + ay * radius, color2)
 
 proxy.DrawSegment = (x1, y1, x2, y2, r, g, b, a) ->
 	x1, y1 = scaleUp(x1, y1)
