@@ -5,7 +5,6 @@ with yuema
 	.data = require('lib.core.data')
 	.draw = require('lib.core.draw')
 	.filesystem = require('lib.core.filesystem')
-	.gl = require('lib.core.gl')
 	.input = require('lib.core.input')
 	.log = require('lib.core.log')
 	.text = require('lib.core.text')
