@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.10)
+
 if(DEFINED CMAKE_BUILD_TYPE)
 	set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "Build type")
 else()
@@ -5,8 +7,6 @@ else()
 endif()
 
 project(yuema)
-
-cmake_minimum_required(VERSION 3.10)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED False)
 
@@ -72,6 +72,15 @@ add_subdirectory(${BOX2D_PROJECT_DIR})
 
 ### box2dc
 set(BOX2DC_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src/box2dc)
+add_library(box2dc OBJECT
+	${BOX2DC_SOURCE_DIR}/box2dc.cpp
+	${BOX2DC_SOURCE_DIR}/world.cpp
+	${BOX2DC_SOURCE_DIR}/shapes.cpp
+	${BOX2DC_SOURCE_DIR}/joints.cpp
+	${BOX2DC_SOURCE_DIR}/contact.cpp
+)
+add_dependencies(box2dc box2d)
+target_include_directories(box2dc PRIVATE ${BOX2D_INCLUDE_DIR} ${RAYLIB_SOURCE_DIR})
 generate_ffi(${BOX2DC_SOURCE_DIR}/box2dc.h ${YUEMA_SOURCE_DIR}/box2dc_ffi.h BOX2DC "")
 ###
 
@@ -96,12 +105,8 @@ add_executable(yuema
 	${YUEMA_SOURCE_DIR}/box2dc_ffi.h
 	${YUEMA_SOURCE_DIR}/rlgl_ffi.h
 	${YUEMA_SOURCE_DIR}/LuaVM.cpp
-	${BOX2DC_SOURCE_DIR}/box2dc.cpp
-	${BOX2DC_SOURCE_DIR}/world.cpp
-	${BOX2DC_SOURCE_DIR}/shapes.cpp
-	${BOX2DC_SOURCE_DIR}/joints.cpp
-	${BOX2DC_SOURCE_DIR}/contact.cpp
 	${YUEMA_SOURCE_DIR}/main.cpp
+	$<TARGET_OBJECTS:box2dc>
 )
 
 target_include_directories(yuema PRIVATE ${RAYLIB_SOURCE_DIR} ${RAYGUI_SOURCE_DIR} ${LUAJIT_SOURCE_DIR} ${BOX2D_INCLUDE_DIR} ${BOX2DC_SOURCE_DIR})

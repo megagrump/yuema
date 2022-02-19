@@ -1,6 +1,10 @@
 #pragma once
 #include "raylib.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct b2World b2World;
 typedef struct b2Body b2Body;
 typedef struct b2Contact b2Contact;
@@ -471,3 +475,7 @@ typedef struct {
 } b2cDraw;
 
 void b2Draw_Draw(b2World *world, b2cDraw *draw);
+
+#ifdef __cplusplus
+}
+#endif

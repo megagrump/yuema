@@ -5,12 +5,7 @@
 #include "b2_draw.h"
 #include "b2_world_callbacks.h"
 #include "box2dc.h"
-
-inline Vector2 *convertVector(const b2Vec2& v, Vector2 *output) {
-	output->x = v.x;
-	output->y = v.y;
-	return output;
-}
+#include "util.h"
 
 // --------- b2Body ---------------
 

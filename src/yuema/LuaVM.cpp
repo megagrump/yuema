@@ -25,7 +25,7 @@ local function boot()
 	local run = (args[2] or 'main')
 		:gsub('%.[lL][uU][aA]$', '')
 		:gsub('%.[yY][uU][eE]$', '')
-		:gsub('/', '.')
+		:gsub('[/\\]', '.')
 	require(run)
 end
 
