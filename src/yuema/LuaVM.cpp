@@ -12,31 +12,39 @@ extern "C" {
 
 static const char BOOT[] = R"code(
 package.path = package.path .. ';?/init.lua'
+yuema = {
+	args = { select(2, ...) },
+}
 
-local imports = (...)
-local args = { select(2, ...) }
+do
+	local ffi = require('ffi')
+	local imports = (...)
 
-local function boot()
-	require('lib.core')(imports, args)
-
-	local log = require('lib.ray.log')
-	log.setLevel(log.WARNING)
-
-	local run = (args[2] or 'main')
-		:gsub('%.[lL][uU][aA]$', '')
-		:gsub('%.[yY][uU][eE]$', '')
-		:gsub('[/\\]', '.')
-	require(run)
-end
-
-local ok, err = xpcall(boot, function(err)
-	if yue and yue.stp then
-		return yue.stp.stacktrace(err)
-	else
-		return debug.traceback(err, 2)
+	for i = 1, #imports, 4 do
+		local name, type, decl, func = imports[i], imports[i + 1], imports[i + 2], imports[i + 3]
+		ffi.cdef(decl)
+		yuema[name] = ffi.cast(('%s*'):format(type), func)
 	end
-end)
-if not ok then error(err, 2) end
+
+	local function boot()
+		require('lib.core')
+
+		local run = (yuema.args[2] or 'main')
+			:gsub('%.[lL][uU][aA]$', '')
+			:gsub('%.[yY][uU][eE]$', '')
+			:gsub('[/\\]', '.')
+		require(run)
+	end
+
+	local ok, err = xpcall(boot, function(err)
+		if yue and yue.stp then
+			return yue.stp.stacktrace(err)
+		else
+			return debug.traceback(err, 2)
+		end
+	end)
+	if not ok then error(err, 2) end
+end
 )code";
 
 void initYue(lua_State *L) {

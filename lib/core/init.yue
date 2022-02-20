@@ -1,6 +1,4 @@
-global yuema = {}
-
-initRefStore = ->
+do
 	refStore = { [0]: 0 }
 
 	yuema.pushRef = (val, prevRef) ->
@@ -17,15 +15,4 @@ initRefStore = ->
 
 	yuema.getRef = (ref) -> ref > 0 and refStore[ref] or nil
 
-init = (imports, args) ->
-	import 'ffi'
-
-	yuema.args = args
-	initRefStore!
-
-	for i = 1, #imports, 4
-		name, type, decl, func = imports[i], imports[i + 1], imports[i + 2], imports[i + 3]
-		ffi.cdef(decl)
-		yuema[name] = ffi.cast('%s*'::format(type), func)
-
-init
+yuema

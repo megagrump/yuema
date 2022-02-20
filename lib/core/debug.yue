@@ -1,17 +1,15 @@
 import 'ffi'
 
-if ffi.os == 'Windows'
-	ffi.cdef([[
-		typedef struct FILE FILE;
-		void AllocConsole();
-		FILE *freopen(const char*, const char*, FILE*);
-	]])
-
 consoleOpen = false
 
 export openConsole = ->
 	return if consoleOpen
 	if ffi.os == 'Windows'
+		ffi.cdef([[
+			typedef struct FILE FILE;
+			void AllocConsole();
+			FILE *freopen(const char*, const char*, FILE*);
+		]])
 		with ffi.C
 			.AllocConsole!
 			.freopen('CONIN$',  'r', io.stdin)

@@ -1,7 +1,7 @@
 import 'ffi' as :C
 import RL from yuema
 
-{
+log = {
 	ALL:     C.LOG_ALL
 	TRACE:   C.LOG_TRACE
 	DEBUG:   C.LOG_DEBUG
@@ -14,3 +14,7 @@ import RL from yuema
 	trace: RL.TraceLog
 	setLevel: RL.SetTraceLogLevel
 }
+
+log.setLevel(log.WARNING)
+
+log
