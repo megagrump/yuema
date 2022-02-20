@@ -19,7 +19,7 @@ local args = { select(2, ...) }
 local function boot()
 	require('lib.core')(imports, args)
 
-	local log = require('lib.core.log')
+	local log = require('lib.ray.log')
 	log.setLevel(log.WARNING)
 
 	local run = (args[2] or 'main')

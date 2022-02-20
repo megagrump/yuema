@@ -1,6 +1,6 @@
 import 'ffi'
 import RL from yuema
-import 'lib.core.data' as :memFree
+import 'lib.ray.data' as :memFree
 
 {
 	loadCodepoints: (text) ->

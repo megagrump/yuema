@@ -1,6 +1,6 @@
 import 'ffi'
-import 'lib.core.Color'
-import 'lib.core.util' as :ptr
+import 'lib.ray.Color'
+import 'lib.util.ptr'
 import C from ffi
 import RL from yuema
 

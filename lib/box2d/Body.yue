@@ -1,5 +1,5 @@
 import 'ffi'
-import 'lib.core.util' as :ptr
+import 'lib.util.ptr'
 import 'lib.math.Vector2'
 import 'lib.box2d._scale'
 import B2D from yuema

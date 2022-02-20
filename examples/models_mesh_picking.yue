@@ -12,7 +12,7 @@
 --   Adapted for Yuema by megagrump@pm.me
 --
 --*******************************************************************************************
-import 'lib.core.all' as {
+import 'lib.ray' as {
 	:window
 	:time
 	:input

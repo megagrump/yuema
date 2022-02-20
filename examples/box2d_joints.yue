@@ -1,6 +1,6 @@
 import 'ffi'
 import 'lib.box2d'
-import 'lib.core.all' as {
+import 'lib.ray' as {
 	:window
 	:draw
 	:util

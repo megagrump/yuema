@@ -1,0 +1,3 @@
+ptr = => @ ~= nil and @ or nil -- NULL -> nil, because NULL is a truthy value in LuaJIT
+
+ptr

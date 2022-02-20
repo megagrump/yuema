@@ -1,0 +1,99 @@
+require('table.new')
+require('table.clear')
+import floor from math
+import insert from table
+
+MAX_SORT_CHUNK = 72
+
+stablesortcmp = (a, b) -> a < b
+
+insertion_sort = (array, first, last, cmp) ->
+	for i = first + 1, last
+		k, v = first, array[i]
+		for j = i, first + 1, -1
+			if cmp(v, array[j - 1])
+				array[j] = array[j - 1]
+			else
+				k = j
+				break
+		array[k] = v
+
+merge = (array, workspace, low, middle, high, cmp) ->
+	i = 1
+	-- Copy first half of array to auxiliary array
+	for j = low, middle
+		workspace[i] = array[j]
+		i += 1
+
+	i, j, k = 1, middle + 1, low
+	while true
+		break if k >= j or j > high
+		if cmp(array[j], workspace[i])
+			array[k] = array[j]
+			j += 1
+		else
+			array[k] = workspace[i]
+			i += 1
+		k += 1
+
+	-- Copy back any remaining elements of first half
+	for k = k, j - 1
+		array[k] = workspace[i]
+		i += 1
+
+merge_sort = (array, workspace, low, high, cmp) ->
+	if high - low < MAX_SORT_CHUNK
+		insertion_sort(array, low, high, cmp)
+	else
+		middle = floor((low + high) / 2)
+		merge_sort(array, workspace, low, middle, cmp)
+		merge_sort(array, workspace, middle + 1, high, cmp)
+		merge(array, workspace, low, middle, high, cmp)
+
+binsearchcmp = (a, b) -> b - a
+
+binsearch = (t, item, low, high, cmp) ->
+	return if high < low
+	mid = floor((low + high) / 2)
+	rel = cmp(t[mid], item)
+	return mid if rel == 0
+	return binsearch(t, item, mid + 1, high, cmp) if rel > 0
+	binsearch(t, item, low, mid - 1, cmp)
+
+insertsorted = (t, item, low, high, cmp) ->
+	return low, insert(t, low, item) if high < low
+	mid = floor((low + high) / 2)
+	rel = cmp(t[mid], item)
+	return mid, insert(t, mid, item) if rel == 0
+	return insertsorted(t, item, mid + 1, high, cmp) if rel > 0
+	insertsorted(t, item, low, mid - 1, cmp)
+
+with {}
+	.# = __index: table
+
+	.indexof = (item) =>
+		return i for i = 1, #@ when item == @[i]
+
+	.keyof = (item) =>
+		return k for k, v in pairs(@) when item == v
+
+	.swapout = (index) =>
+		l = #@
+		@[index] = @[l]
+		@[l] = nil
+
+	.binsearch = (item, cmp = binsearchcmp) =>
+		binsearch(@, item, 1, #@, cmp)
+
+	.insertsorted = (item, cmp = binsearchcmp) =>
+		insertsorted(@, item, 1, #@, cmp)
+
+	.stablesort = (cmp = stablesortcmp) =>
+		n = #@
+		return @ if n < 2
+
+		h = floor((n + 1) / 2)
+		workspace = table.new(h, 0)
+		workspace[h] = @[1]
+		merge_sort(@, workspace, 1, n, cmp)
+		@

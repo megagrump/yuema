@@ -1,7 +1,7 @@
 import 'ffi'
 import 'lib.box2d._scale'
 import 'lib.math.Vector2'
-import 'lib.core.util' as :ptr
+import 'lib.util.ptr'
 import B2D from yuema
 
 scaleUp, scaleDown = _scale.up, _scale.down

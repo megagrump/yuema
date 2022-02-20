@@ -1,7 +1,7 @@
 import B2D from yuema
 import 'ffi'
-import 'lib.core.draw'
-import 'lib.core.Color'
+import 'lib.ray.draw'
+import 'lib.ray.Color'
 import 'lib.box2d._scale'
 
 scaleUp = _scale.up

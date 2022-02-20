@@ -1,7 +1,7 @@
 import 'ffi'
 import RL from yuema
 import C from ffi
-import 'lib.core.util' as :ptr
+import 'lib.util.ptr'
 
 GlyphInfo = ffi.typeof('GlyphInfo')
 Font = ffi.typeof('Font')

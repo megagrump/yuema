@@ -1,6 +1,6 @@
 import 'ffi'
 import RL from yuema
-import 'lib.core.util' as :ptr
+import 'lib.util.ptr'
 
 {
 	loadData: (fileName) ->

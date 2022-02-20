@@ -2,8 +2,6 @@ import 'ffi'
 import RL from yuema
 
 {
-	ptr: => @ ~= nil and @ or nil -- NULL -> nil, because NULL is a truthy value in LuaJIT
-
 	setClipboardText: RL.SetClipboardText
 	getClipboardText: -> ffi.string(RL.GetClipboardText!)
 

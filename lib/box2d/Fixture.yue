@@ -1,7 +1,7 @@
 import 'ffi'
 import B2D from yuema
-import 'lib.core.util' as :ptr
-import 'lib.core.Rectangle'
+import 'lib.util.ptr'
+import 'lib.ray.Rectangle'
 import 'lib.box2d._scale'
 import 'lib.box2d.ShapeType' as :TypeNames
 

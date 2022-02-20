@@ -27,18 +27,18 @@
 --   Adapted for yuema by megagrump@pm.me
 --
 --*********************************************************************************************/
-import 'lib.core.all' as {
+import 'lib.ray' as {
 	:window
 	:draw
 	:input
 	:time
 	:filesystem
+	:gui
 	:Color
 	:Rectangle
 }
 
 import 'lib.math.Vector2'
-import 'lib.gui'
 import keyboard from input
 
 screenWidth = 690
