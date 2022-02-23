@@ -5,6 +5,9 @@ import 'lib.ray.Rectangle'
 import 'lib.box2d._scale'
 import 'lib.box2d.ShapeType' as :TypeNames
 
+scaleUp1, scaleDown1 = _scale.up1, _scale.down1
+scaleUp2, scaleDown2 = _scale.up2, _scale.down2
+
 tempFilter = ffi.new('b2cFilter')
 tempRayCast = ffi.new('b2cRayCastOutput')
 tempMassData = ffi.new('b2cMassData')
@@ -32,15 +35,15 @@ FixtureMT = {
 
 	testPoint: B2D.b2Fixture_TestPoint
 	rayCast: (x1, y1, x2, y2, maxFraction, childIndex) =>
-		x1, y1 = _scale.down(x1, y1)
-		x2, y2 = _scale.down(x2, y2)
+		x1, y1 = scaleDown2(x1, y1)
+		x2, y2 = scaleDown2(x2, y2)
 		result = B2D.b2Fixture_RayCast(@, x1, y1, x2, y2, maxFraction, childIndex, tempRayCast)
 		result.hit, result.nx, result.ny, result.fraction
 
 	getMassData: =>
 		data = B2D.b2Fixture_GetMassData(@, tempMassData)
-		x, y = _scale.up(data.x, data.y)
-		inertia = _scale.up(_scale.up(data.inertia))
+		x, y = scaleUp2(data.x, data.y)
+		inertia = scaleUp1(scaleUp1(data.inertia))
 		x, y, data.mass, inertia
 
 	setDensity: B2D.b2Fixture_SetDensity
@@ -53,8 +56,8 @@ FixtureMT = {
 	setRestitutionThreshold: B2D.b2Fixture_SetRestitutionThreshold
 	getAABB: (childIndex = 0) =>
 		aabb = B2D.b2Fixture_GetAABB(@, childIndex, tempRect)
-		x, y = _scale.up(aabb.x, aabb.y)
-		w, h = _scale.up(aabb.width, aabb.height)
+		x, y = scaleUp2(aabb.x, aabb.y)
+		w, h = scaleUp2(aabb.width, aabb.height)
 		x, y, w, h
 
 	dump: B2D.b2Fixture_Dump

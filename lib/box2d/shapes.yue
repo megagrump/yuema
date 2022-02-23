@@ -19,7 +19,8 @@ tempVector = Vector2!
 tempRect = Rectangle!
 tempMassData = ffi.new('b2cMassData')
 tempRayCast = ffi.new('b2cRayCastOutput')
-scaleUp, scaleDown = _scale.up, _scale.down
+scaleUp1, scaleDown1 = _scale.up1, _scale.down1
+scaleUp2, scaleDown2 = _scale.up2, _scale.down2
 
 --- Shape ---
 
@@ -31,28 +32,28 @@ ShapeMT = {
 	getType: => TypeNames[tonumber(B2D.b2Shape_GetType(@))]
 	getChildCount: => B2D.b2Shape_GetChildCount(@_downCast!)
 	testPoint: (tx, ty, angle, x, y) =>
-		tx, ty = scaleDown(tx, ty)
-		x, y = scaleDown(x, y)
+		tx, ty = scaleDown2(tx, ty)
+		x, y = scaleDown2(x, y)
 		B2D.b2Shape_TestPoint(@_downCast!, tx, ty, angle, x, y)
 
 	rayCast: (tx, ty, angle, x1, y1, x2, y2, maxFraction, childIndex = 0) =>
-		tx, ty = scaleDown(tx, ty)
-		x1, y1 = scaleDown(x1, y1)
-		x2, y2 = scaleDown(x2, y2)
+		tx, ty = scaleDown2(tx, ty)
+		x1, y1 = scaleDown2(x1, y1)
+		x2, y2 = scaleDown2(x2, y2)
 		B2D.b2Shape_RayCast(@_downCast!, tx, ty, angle, x1, y1, x2, y2, maxFraction, childIndex, tempRayCast)
 		tempRayCast.hit, tempRayCast.nx, tempRayCast.ny, tempRayCast.fraction
 
 	computeAABB: (x, y, a, childIndex = 0) =>
-		x, y = scaleDown(x, y)
+		x, y = scaleDown2(x, y)
 		r = B2D.b2Shape_ComputeAABB(@_downCast!, x, y, a, childIndex, tempRect)
-		bx, by = scaleUp(r.x, r.y)
-		w, h = scaleUp(r.width, r.height)
+		bx, by = scaleUp2(r.x, r.y)
+		w, h = scaleUp2(r.width, r.height)
 		bx, by, w, h
 
 	computeMass: (density) =>
 		data = b2Shape_ComputeMass(@_downCast!, density, tempMassData)
-		x, y = scaleUp(data.x, data.y)
-		inertia = scaleUp(scaleUp(data.inertia))
+		x, y = scaleUp2(data.x, data.y)
+		inertia = scaleUp1(scaleUp1(data.inertia))
 		x, y, data.mass, inertia
 
 	_upCast: =>
@@ -68,22 +69,22 @@ ffi.metatype(Shape, ShapeMT)
 CircleShape = ffi.typeof('b2CircleShape')
 
 CircleShapeMT = {
-	__new: (radius) => B2D.b2CircleShape_New(scaleDown(radius))
+	__new: (radius) => B2D.b2CircleShape_New(scaleDown1(radius))
 	__gc: ShapeMT.__gc
 
 	setPosition: (x, y) =>
-		x, y = scaleDown(x, y)
+		x, y = scaleDown2(x, y)
 		B2D.b2CircleShape_SetPosition(@, x, y)
 
 	getPosition: =>
 		{ :x, :y } = B2D.b2CircleShape_GetPosition(@, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	setRadius: (radius) =>
-		radius = scaleDown(radius)
+		radius = scaleDown1(radius)
 		B2D.b2CircleShape_SetRadius(@, radius)
 
-	getRadius: => scaleUp(B2D.b2CircleShape_GetRadius(@))
+	getRadius: => scaleUp1(B2D.b2CircleShape_GetRadius(@))
 
 	getType: => 'circle'
 	getChildCount: ShapeMT.getChildCount
@@ -106,11 +107,11 @@ EdgeShape = ffi.typeof('b2EdgeShape')
 
 EdgeShapeMT = {
 	__new: (x0, y0, x1, y1, x2, y2, x3, y3) =>
-		x0, y0 = scaleDown(x0, y0)
-		x1, y1 = scaleDown(x1, y1)
+		x0, y0 = scaleDown2(x0, y0)
+		x1, y1 = scaleDown2(x1, y1)
 		shape = if x2
-			x2, y2 = scaleDown(x2, y2)
-			x3, y3 = scaleDown(x3, y3)
+			x2, y2 = scaleDown2(x2, y2)
+			x3, y3 = scaleDown2(x3, y3)
 			B2D.b2EdgeShape_NewOneSided(x0, y0, x1, y1, x2, y2, x3, y3)
 		else
 			B2D.b2EdgeShape_NewTwoSided(x0, y0, x1, y1)
@@ -119,33 +120,33 @@ EdgeShapeMT = {
 	__gc: ShapeMT.__gc
 
 	setOneSided: (x0, y0, x1, y1, x2, y2, x3, y3) =>
-		x0, y0 = scaleDown(x0, y0)
-		x1, y1 = scaleDown(x1, y1)
-		x2, y2 = scaleDown(x2, y2)
-		x3, y3 = scaleDown(x3, y3)
+		x0, y0 = scaleDown2(x0, y0)
+		x1, y1 = scaleDown2(x1, y1)
+		x2, y2 = scaleDown2(x2, y2)
+		x3, y3 = scaleDown2(x3, y3)
 		B2D.b2EdgeShape_SetOneSided(@, x0, y0, x1, y1, x2, y2, x3, y3)
 
 	setTwoSided: (x1, y1, x2, y2) =>
-		x0, y0 = scaleDown(x1, y1)
-		x1, y1 = scaleDown(x2, y2)
+		x0, y0 = scaleDown2(x1, y1)
+		x1, y1 = scaleDown2(x2, y2)
 		B2D.b2EdgeShape_SetTwoSided(@, x1, y1, x2, y2)
 
 	isOneSided: B2D.b2EdgeShape_IsOneSided
 
 	getVertices: (target = {}) =>
 		{ :x, :y } = B2D.b2EdgeShape_GetVertex(@, 1, tempVector)
-		target[1], target[2] = scaleUp(x, y)
+		target[1], target[2] = scaleUp2(x, y)
 		{ :x, :y } = B2D.b2EdgeShape_GetVertex(@, 2, tempVector)
-		target[3], target[4] = scaleUp(x, y)
+		target[3], target[4] = scaleUp2(x, y)
 		target
 
 	getPreviousVertex: =>
 		{ :x, :y } = B2D.b2EdgeShape_GetVertex(@, 0, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getNextVertex: =>
 		{ :x, :y } = B2D.b2EdgeShape_GetVertex(@, 2, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getType: => 'edge'
 	getChildCount: ShapeMT.getChildCount
@@ -171,7 +172,7 @@ convertVertices = (vertices, n) ->
 	verts = ffi.new('Vector2[?]', nverts)
 	j = 1
 	for i = 0, nverts - 1
-		verts[i].x, verts[i].y = scaleDown(vertices[j], vertices[j + 1])
+		verts[i].x, verts[i].y = scaleDown2(vertices[j], vertices[j + 1])
 		j += 2
 	verts, nverts
 
@@ -197,7 +198,7 @@ PolygonShapeMT = {
 		n = @getVertexCount!
 		for i = 0, n - 1
 			{ :x, :y } = B2D.b2PolygonShape_GetVertex(@, i, tempVector)
-			x, y = scaleUp(x, y)
+			x, y = scaleUp2(x, y)
 			target[i * 2 + 1] = x
 			target[i * 2 + 2] = y
 		target
@@ -248,8 +249,8 @@ ChainShapeMT = {
 		n = #vertices
 		assert(n >= 4 and n % 2 == 0, "Incomplete vertices for ChainShape")
 		verts, nverts = convertVertices(vertices, n)
-		x1, y1 = scaleDown(x1, y1)
-		x2, y2 = scaleDown(x2, y2)
+		x1, y1 = scaleDown2(x1, y1)
+		x2, y2 = scaleDown2(x2, y2)
 		B2D.b2ChainShape_NewChain(verts, nverts, x1, y1, x2, y2)
 
 	getVertexCount: B2D.b2ChainShape_GetVertexCount
@@ -257,26 +258,26 @@ ChainShapeMT = {
 		n = @getVertexCount!
 		for i = 0, n - 1
 			{ :x, :y } = B2D.b2ChainShape_GetVertex(@, i, tempVector)
-			x, y = scaleUp(x, y)
+			x, y = scaleUp2(x, y)
 			target[i * 2 + 1] = x
 			target[i * 2 + 2] = y
 		target
 
 	setPrevVertex: (x, y) =>
-		x, y = scaleDown(x, y)
+		x, y = scaleDown2(x, y)
 		B2D.b2ChainShape_SetPrevVertex(@, x, y)
 
 	getPrevVertex: =>
 		{ :x, :y } = B2D.b2ChainShape_GetPrevVertex(@, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	setNextVertex: (x, y) =>
-		x, y = scaleDown(x, y)
+		x, y = scaleDown2(x, y)
 		B2D.b2ChainShape_SetNextVertex(@, x, y)
 
 	getNextVertex: =>
 		{ :x, :y } = B2D.b2ChainShape_GetNextVertex(@, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getType: =>'chain'
 	getChildCount: ShapeMT.getChildCount

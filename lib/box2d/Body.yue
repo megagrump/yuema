@@ -7,7 +7,8 @@ import B2D from yuema
 tempVector = Vector2!
 tempMassData = ffi.new('b2cMassData')
 
-scaleUp, scaleDown = _scale.up, _scale.down
+scaleUp1, scaleDown1 = _scale.up1, _scale.down1
+scaleUp2, scaleDown2 = _scale.up2, _scale.down2
 
 Body = ffi.typeof('b2Body')
 
@@ -24,21 +25,21 @@ BodyTypes = {
 BodyMT = {
 	__new: (world, x, y, angle = 0, type = 'static') =>
 		t = BodyTypes[type] or error("Invalid body type #{type}")
-		x, y = scaleDown(x, y)
+		x, y = scaleDown2(x, y)
 		B2D.b2World_CreateBody(world, x, y, angle, t)
 
 	destroy: => B2D.b2World_DestroyBody(@getWorld!, @_deinit!)
 	createFixture: (shape, density = 1) => B2D.b2Body_CreateFixture(@, shape::_downCast!, density)
 	destroyFixture: (fixture) => B2D.b2Body_DestroyFixture(@, fixture::_deinit!)
 	setTransform: (x, y, angle) =>
-		x, y = scaleDown(x, y)
+		x, y = scaleDown2(x, y)
 		B2D.b2Body_SetTransform(@, x, y, angle)
 
-	setPosition: (x, y) => @setTransform(x, y, @getAngle)
+	setPosition: (x, y) => @setTransform(x, y, @getAngle!)
 
 	getPosition: =>
 		{ :x, :y } = B2D.b2Body_GetPosition(@, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	setAngle: (angle) =>
 		{ :x, :y } = B2D.b2Body_GetPosition(@, tempVector)
@@ -47,101 +48,101 @@ BodyMT = {
 	getAngle: B2D.b2Body_GetAngle
 	getWorldCenter: =>
 		{ :x, :y } = B2D.b2Body_GetWorldCenter(@, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getLocalCenter: =>
 		{ :x, :y } = B2D.b2Body_GetLocalCenter(@, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
-	setLinearVelocity: (x, y) => B2D.b2Body_SetLinearVelocity(@, scaleDown(x, y))
+	setLinearVelocity: (x, y) => B2D.b2Body_SetLinearVelocity(@, scaleDown2(x, y))
 	getLinearVelocity: =>
 		{ :x, :y } = B2D.b2Body_GetLinearVelocity(@, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	setAngularVelocity: B2D.b2Body_SetAngularVelocity
 	getAngularVelocity: B2D.b2Body_GetAngularVelocity
 	applyForce: (forceX, forceY, x, y, wake = true) =>
-		forceX, forceY = scaleDown(forceX, forceY)
-		x, y = scaleDown(x, y)
+		forceX, forceY = scaleDown2(forceX, forceY)
+		x, y = scaleDown2(x, y)
 		B2D.b2Body_ApplyForce(@, forceX, forceY, x, y, wake)
 
 	applyForceToCenter: (forceX, forceY, wake = true) =>
-		forceX, forceY = scaleDown(forceX, forceY)
+		forceX, forceY = scaleDown2(forceX, forceY)
 		B2D.b2Body_ApplyForceToCenter(@, forceX, forceY, wake)
 
 	applyTorque: (torque, wake = true) =>
-		torque = scaleDown(scaleDown(torque))
+		torque = scaleDown1(scaleDown1(torque))
 		B2D.b2Body_ApplyTorque(@, torque, wake)
 
 	applyLinearImpulse: (impulseX, impulseY, x, y, wake = true) =>
-		impulseX, impulseY = scaleDown(impulseX, impulseY)
-		x, y = scaleDown(x, y)
+		impulseX, impulseY = scaleDown2(impulseX, impulseY)
+		x, y = scaleDown2(x, y)
 		B2D.b2Body_ApplyLinearImpulse(@, impulseX, impulseY, x, y, wake)
 
 	applyLinearImpulseToCenter: (impulseX, impulseY, wake = true) =>
-		impulseX, impulseY = scaleDown(impulseX, impulseY)
+		impulseX, impulseY = scaleDown2(impulseX, impulseY)
 		B2D.b2Body_ApplyLinearImpulseToCenter(@, impulseX, impulseY, wake)
 
 	applyAngularImpulse: (impulse, wake = true) => B2D.b2Body_ApplyAngularImpulse(@, impulse, wake)
 
 	getMass: B2D.b2Body_GetMass
-	getInertia: => scaleUp(scaleUp(B2D.b2Body_GetInertia(@)))
+	getInertia: => scaleUp1(scaleUp1(B2D.b2Body_GetInertia(@)))
 
 	getMassData: =>
 		data = B2D.b2Body_GetMassData(@, tempMassData)
-		x, y = scaleUp(data.x, data.y)
-		inertia = scaleUp(scaleUp(data.inertia))
+		x, y = scaleUp2(data.x, data.y)
+		inertia = scaleUp1(scaleUp1(data.inertia))
 		x, y, data.mass, inertia
 
 	setMassData: (x, y, mass, inertia) =>
-		x, y = scaleDown(x, y)
-		inertia = scaleDown(scaleDown(inertia))
+		x, y = scaleDown2(x, y)
+		inertia = scaleDown1(scaleDown1(inertia))
 		B2D.b2Body_SetMassData(@, x, y, mass, inertia)
 
 	resetMassData: B2D.b2Body_ResetMassData
 	getWorldPoint: (localX, localY) =>
-		localX, localY = scaleDown(localX, localY)
+		localX, localY = scaleDown2(localX, localY)
 		{ :x, :y } = B2D.b2Body_GetWorldPoint(@, localX, localY, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getWorldPoints: (points, output = points) =>
 		for i = 1, #points, 2
-			x, y = scaleDown(points[i], points[i + 1])
+			x, y = scaleDown2(points[i], points[i + 1])
 			B2D.b2Body_GetWorldPoint(@, x, y, tempVector)
-			output[i], output[i + 1] = scaleUp(tempVector.x, tempVector.y)
+			output[i], output[i + 1] = scaleUp2(tempVector.x, tempVector.y)
 		output
 
 	getWorldVector: (localX, localY) =>
-		localX, localY = scaleDown(localX, localY)
+		localX, localY = scaleDown2(localX, localY)
 		{ :x, :y } = B2D.b2Body_GetWorldVector(@, localX, localY, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getLocalPoint: (worldX, worldY) =>
-		worldX, worldY = scaleDown(worldX, worldY)
+		worldX, worldY = scaleDown2(worldX, worldY)
 		{ :x, :y } = B2D.b2Body_GetLocalPoint(@, worldX, worldY, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getLocalPoints: (points, output = points) =>
 		for i = 1, #points, 2
-			x, y = scaleDown(points[i], points[i + 1])
+			x, y = scaleDown2(points[i], points[i + 1])
 			B2D.b2Body_GetLocalPoint(@, x, y, tempVector)
-			output[i], output[i + 1] = scaleUp(tempVector.x, tempVector.y)
+			output[i], output[i + 1] = scaleUp2(tempVector.x, tempVector.y)
 		output
 
 	getLocalVector: (worldX, worldY) =>
-		worldX, worldY = scaleDown(worldX, worldY)
+		worldX, worldY = scaleDown2(worldX, worldY)
 		{ :x, :y } = B2D.b2Body_GetLocalVector(@, worldX, worldY, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getLinearVelocityFromWorldPoint: (worldX, worldY) =>
-		worldX, worldY = scaleDown(worldX, worldY)
+		worldX, worldY = scaleDown2(worldX, worldY)
 		{ :x, :y } = B2D.b2Body_GetLinearVelocityFromWorldPoint(@, worldX, worldY, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getLinearVelocityFromLocalPoint: (localX, localY) =>
-		localX, localY = scaleDown(localX, localY)
+		localX, localY = scaleDown2(localX, localY)
 		{ :x, :y } = B2D.b2Body_GetLinearVelocityFromLocalPoint(@, localX, localY, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	getLinearDamping: B2D.b2Body_GetLinearDamping
 	setLinearDamping: B2D.b2Body_SetLinearDamping

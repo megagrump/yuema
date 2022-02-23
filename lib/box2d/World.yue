@@ -10,18 +10,24 @@ import 'lib.box2d.joints'
 profile = ffi.new('b2cProfile')
 
 tempVector = Vector2!
-scaleUp, scaleDown = _scale.up, _scale.down
+scaleUp2, scaleDown2 = _scale.up2, _scale.down2
 
 emptyContactFilter = -> error("Invalid filter")
 emptyListener = ->
 rayCastCallback = nil
 queryCallback = nil
 
+doRayCast = (x1, y1, x2, y2) => B2D.b2World_RayCast(@, x1, y1, x2, y2)
+jit.off(doRayCast) -- callbacks from jitted code are problematic
+
+doQuery = (minX, minY, maxX, maxY) => B2D.b2World_QueryAABB(@, minX, minY, maxX, maxY)
+jit.off(doQuery) -- callbacks from jitted code are problematic
+
 World = ffi.typeof('b2World')
 
 WorldMT = {
 	__new: (gravityX, gravityY) =>
-		world = B2D.b2World_New(scaleDown(gravityX, gravityY))
+		world = ffi.gc(B2D.b2World_New(scaleDown2(gravityX, gravityY)), => @destroy!)
 		with B2D
 			.b2World_SetRayCastCallback(world, world._rayCastCallback)
 			.b2World_SetQueryCallback(world, world._queryCallback)
@@ -29,9 +35,8 @@ WorldMT = {
 			.b2World_SetContactListener(world, emptyListener, emptyListener, emptyListener, emptyListener)
 		world
 
-	__gc: => @destroy!
-
 	destroy: =>
+		ffi.gc(@, nil)
 		with B2D
 			.b2World_GetContactFilter(@)::free!
 			.b2World_GetRayCastCallback(@)::free!
@@ -58,6 +63,7 @@ WorldMT = {
 			.b2World_GetEndContactListener(@)::set(endContact or emptyListener)
 			.b2World_GetPreSolveContactListener(@)::set(preSolve or emptyListener)
 			.b2World_GetPostSolveContactListener(@)::set(postSolve or emptyListener)
+
 			.b2World_EnableContactListener(@,
 				not not beginContact,
 				not not endContact,
@@ -73,20 +79,20 @@ WorldMT = {
 
 	queryAABB: (minX, minY, maxX, maxY, callback) =>
 		queryCallback = callback
-		minX, minY = scaleDown(minX, minY)
-		maxX, maxY = scaleDown(maxX, maxY)
-		B2D.b2World_QueryAABB(@, minX, minY, maxX, maxY)
+		minX, minY = scaleDown2(minX, minY)
+		maxX, maxY = scaleDown2(maxX, maxY)
+		doQuery(@, minX, minY, maxX, maxY)
 		queryCallback = nil
 
 	_rayCastCallback: (fixture, x, y, nx, ny, fraction) ->
-		x, y = scaleUp(x, y)
+		x, y = scaleUp2(x, y)
 		rayCastCallback(fixture, x, y, nx, ny, fraction)
 
 	rayCast: (x1, y1, x2, y2, callback) =>
 		rayCastCallback = callback
-		x1, y1 = scaleDown(x1, y1)
-		x2, y2 = scaleDown(x2, y2)
-		B2D.b2World_RayCast(@, x1, y1, x2, y2)
+		x1, y1 = scaleDown2(x1, y1)
+		x2, y2 = scaleDown2(x2, y2)
+		doRayCast(@, x1, y1, x2, y2)
 		rayCastCallback = nil
 
 	getBodyList: => ptr(B2D.b2World_GetBodyList(@))
@@ -108,19 +114,21 @@ WorldMT = {
 	getTreeHeight: B2D.b2World_GetTreeHeight
 	getTreeBalance: B2D.b2World_GetTreeBalance
 	getTreeQuality: B2D.b2World_GetTreeQuality
-	setGravity: (gravityX, gravityY) => B2D.b2World_SetGravity(@, scaleDown(gravityX, gravityY))
+	setGravity: (gravityX, gravityY) => B2D.b2World_SetGravity(@, scaleDown2(gravityX, gravityY))
 	getGravity: =>
 		{ :x, :y } = B2D.b2World_GetGravity(@, tempVector)
-		scaleUp(x, y)
+		scaleUp2(x, y)
 
 	isLocked: B2D.b2World_IsLocked
 	setAutoClearForces: B2D.b2World_SetAutoClearForces
 	getAutoClearForces: B2D.b2World_GetAutoClearForces
-	shiftOrigin: (x, y) => B2D.b2World_ShiftOrigin(@, scaleDown(x, y))
+	shiftOrigin: (x, y) => B2D.b2World_ShiftOrigin(@, scaleDown2(x, y))
 	getProfile: => B2D.b2World_GetProfile(@, profile)
 	dump: B2D.b2World_Dump
 	debugDraw: draw
 }
+
+jit.off(WorldMT.step) -- required to make callbacks work
 
 WorldMT.__index = WorldMT
 

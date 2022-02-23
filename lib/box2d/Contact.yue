@@ -4,7 +4,8 @@ import 'lib.math.Vector2'
 import 'lib.util.ptr'
 import B2D from yuema
 
-scaleUp, scaleDown = _scale.up, _scale.down
+scaleUp1, scaleDown1 = _scale.up1, _scale.down1
+scaleUp2, scaleDown2 = _scale.up2, _scale.down2
 
 Contact = ffi.typeof('b2Contact')
 
@@ -29,8 +30,8 @@ ContactMT = {
 	setRestitutionThreshold: B2D.b2Contact_SetRestitutionThreshold
 	getRestitutionThreshold: B2D.b2Contact_GetRestitutionThreshold
 	resetRestitutionThreshold: B2D.b2Contact_ResetRestitutionThreshold
-	setTangentSpeed: (speed) => B2D.b2Contact_SetTangentSpeed(@, scaleDown(speed))
-	getTangentSpeed: => scaleUp(b2Contact_GetTangentSpeed(@))
+	setTangentSpeed: (speed) => B2D.b2Contact_SetTangentSpeed(@, scaleDown1(speed))
+	getTangentSpeed: => scaleUp1(b2Contact_GetTangentSpeed(@))
 	getNormal: =>
 		{ :x, :y } = B2D.b2Contact_GetNormal(@, tempVector)
 		x, y
@@ -38,11 +39,11 @@ ContactMT = {
 	getPoints: =>
 		n = B2D.b2Contact_GetPoints(@, contactPoints)
 		return if n == 0
-		{ :x1, :y1 } = contactPoints[0]
-		scaleUp(x1, y1)
+		x1, y1 = contactPoints[0].x, contactPoints[0].y
+		scaleUp2(x1, y1)
 		return x1, y1 if n == 1
-		{ :x2, :y2 } = contactPoints[1]
-		scaleUp(x1, y1)
+		x2, y2 = contactPoints[1].x, contactPoints[1].y
+		scaleUp2(x2, y2)
 		x1, y1, x2, y2
 }
 

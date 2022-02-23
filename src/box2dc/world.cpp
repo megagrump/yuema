@@ -44,6 +44,9 @@ private:
 
 class ContactListener : public b2ContactListener {
 public:
+	ContactListener() : b2ContactListener(), m_doBegin(false), m_doEnd(false), m_doPreSolve(false), m_doPostSolve(false) {
+	}
+
 	void Set(b2cContactListener begin, b2cContactListener end, b2cContactListener pre, b2cPostContactListener post) {
 		m_begin = begin;
 		m_end = end;
@@ -63,10 +66,10 @@ public:
 	b2cContactListener GetPreSolve() const { return m_preSolve; }
 	b2cPostContactListener GetPostSolve() const { return m_postSolve; }
 
-	void BeginContact(b2Contact* contact) { if(m_doBegin) m_begin(contact); }
-	void EndContact(b2Contact* contact) { if(m_doEnd) m_end(contact); }
-	void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) { if(m_doPreSolve) m_preSolve(contact); }
-	void PostSolve(b2Contact* contact, const b2ContactImpulse* impulse) { if(m_doPostSolve) m_postSolve(contact); } // TODO: impulse
+	void BeginContact(b2Contact *contact) { if(m_doBegin) m_begin(contact); }
+	void EndContact(b2Contact *contact) { if(m_doEnd) m_end(contact); }
+	void PreSolve(b2Contact *contact, const b2Manifold *oldManifold) { if(m_doPreSolve) m_preSolve(contact); }
+	void PostSolve(b2Contact *contact, const b2ContactImpulse *impulse) { if(m_doPostSolve) m_postSolve(contact); } // TODO: impulse
 private:
 	bool m_doBegin, m_doEnd, m_doPreSolve, m_doPostSolve;
 	b2cContactListener m_begin, m_end, m_preSolve;
@@ -123,7 +126,7 @@ public:
 
 	void SetContactListener(b2cContactListener begin, b2cContactListener end, b2cContactListener pre, b2cPostContactListener post) {
 		m_contactListener.Set(begin, end, pre, post);
-		if(!begin && !end && !pre && !post)
+		if(!(begin || end || pre || post))
 			EnableContactListener(false, false, false, false);
 	}
 

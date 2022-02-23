@@ -4,7 +4,7 @@ import 'lib.ray.draw'
 import 'lib.ray.Color'
 import 'lib.box2d._scale'
 
-scaleUp = _scale.up
+scaleUp1, scaleUp2 = _scale.up1, _scale.up2
 tempVerts = ffi.new('Vector2[8]')
 proxy = ffi.new('b2cDraw')
 
@@ -22,39 +22,39 @@ proxy.DrawPolygon = (vertices, count, r, g, b, a) ->
 	color = makeColor(r, g, b, a)
 	for i = 0, count - 1
 		n = (i + 1) % count
-		x1, y1 = scaleUp(vertices[i].x, vertices[i].y)
-		x2, y2 = scaleUp(vertices[n].x, vertices[n].y)
+		x1, y1 = scaleUp2(vertices[i].x, vertices[i].y)
+		x2, y2 = scaleUp2(vertices[n].x, vertices[n].y)
 		draw.line(x1, y1, x2, y2, color)
 
 proxy.DrawSolidPolygon = (vertices, count, r, g, b, a) ->
 	color = makeColor(r, g, b, a)
 	for i = 0, count - 1
-		tempVerts[i].x, tempVerts[i].y = scaleUp(vertices[i].x, vertices[i].y)
+		tempVerts[i].x, tempVerts[i].y = scaleUp2(vertices[i].x, vertices[i].y)
 	draw.triangleFan(tempVerts, count, color)
 
 proxy.DrawCircle = (x, y, radius, r, g, b, a) ->
-	x, y = scaleUp(x, y)
-	radius = scaleUp(radius)
+	x, y = scaleUp2(x, y)
+	radius = scaleUp1(radius)
 	draw.circleLines(x, y, radius, makeColor(r, g, b, a))
 
 proxy.DrawSolidCircle = (x, y, radius, ax, ay, r, g, b, a) ->
-	x, y = scaleUp(x, y)
-	radius = scaleUp(radius)
+	x, y = scaleUp2(x, y)
+	radius = scaleUp1(radius)
 	color = makeColor(r, g, b, a)
 	draw.circle(x, y, radius, color)
 	color2 = makeColor(1 - r, 1 - g, 1 - b, a)
 	draw.line(x, y, x + ax * radius, y + ay * radius, color2)
 
 proxy.DrawSegment = (x1, y1, x2, y2, r, g, b, a) ->
-	x1, y1 = scaleUp(x1, y1)
-	x2, y2 = scaleUp(x2, y2)
+	x1, y1 = scaleUp2(x1, y1)
+	x2, y2 = scaleUp2(x2, y2)
 	draw.line(x1, y1, x2, y2, makeColor(r, g, b, a))
 
 proxy.DrawTransform = (x, y, angle) ->
-	x, y = scaleUp(x, y)
+	x, y = scaleUp2(x, y)
 
 proxy.DrawPoint = (x, y, size, r, g, b, a) ->
-	x, y = scaleUp(x, y)
+	x, y = scaleUp2(x, y)
 	draw.circle(x, y, size, makeColor(r, g, b, a))
 
 debugDraw = (world) ->
