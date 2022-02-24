@@ -1,4 +1,8 @@
-import min, max from math
+import pi, floor, ceil, min, max from math
+
+export tau = pi * 2
+
+export round = (n) -> n < 0 and ceil(n - .5) or floor(n + .5)
 
 export clamp = (n, lo, hi) -> min(hi, max(lo, n))
 
@@ -9,3 +13,4 @@ export normalize = (value, lo, hi) -> (value - lo) / (hi - lo)
 export remap = (value, inLo, inHi, outLo, outHi) ->
 	(value - inLo) / (inHi - inLo) * (outHi - outLo) + outLo
 
+export angleDirection = (frm, to) -> frm + ((to - frm + tau + pi) % tau) - pi

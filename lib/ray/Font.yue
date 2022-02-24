@@ -18,7 +18,9 @@ FontMT = {
 	__gc: RL.UnloadFont
 
 	load: (fileName) -> Font(RL.LoadFont(fileName))
-	loadEx: (fileName, fontSize, fontChars, glyphCount) -> Font(RL.LoadFontEx(fileName, fontSize, fontChars, glyphCount))
+	loadEx: (fileName, fontSize, fontChars = nil, glyphCount = 0) ->
+		Font(RL.LoadFontEx(fileName, fontSize, fontChars, glyphCount))
+
 	loadFromImage: (image, key, firstChar) -> Font(RL.LoadFontFromImage(image, key, firstChar))
 
 	loadFromMemory: (fileType, fileData, dataSize, fontSize, fontChars, glyphCount) ->

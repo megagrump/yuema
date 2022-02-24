@@ -22,13 +22,17 @@ Vector2MT = {
 	negate: => Vector2(-@x, -@y)
 	divide: (rhs) => Vector2(@x / rhs.x, @y / rhs.y)
 
+	distanceSqr: (rhs) =>
+		dx, dy = @x - rhs.x, @y - rhs.y
+		dx * dx + dy * dy
+
 	distance: (rhs) =>
 		dx, dy = @x - rhs.x, @y - rhs.y
 		sqrt(dx * dx + dy * dy)
 
 	normalize: =>
 		result = Vector2!
-		len = @length!
+		len = sqrt(@x * @x + @y * @y)
 		if len > 0
 			result.x, result.y = @x / len, @y / len
 		result
@@ -44,7 +48,7 @@ Vector2MT = {
 	)
 
 	reflect: (normal) =>
-		dot = @dotProduct(normal)
+		dot = @x * normal.x + @y * normal.y
 		Vector2(
 			@v.x - (2 * normal.x) * dot,
 			@v.y - (2 * normal.y) * dot
