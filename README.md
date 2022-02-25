@@ -74,6 +74,23 @@ Some examples can be found in the `examples` directory.
 
 You **must** run the examples from the project root. 
 
+# How to make your own game with yuema
+
+You currently have to manually bootstrap new projects, but it's simple:
+
+1. Build yuema or download a binary release.
+2. Create a new directory for your project, for example `/home/alice/myproject` or `C:\projects\myproject`.
+3. Copy the yuema executable (`yuema` or `yuema.exe` on Windows) to the project directory and rename it, for example `myproject` (or `myproject.exe`).
+4. Copy the `lib` directory to the project directory.
+5. Create a `main.lua` or `main.yue` file in the project directory. This is your project's entry point.
+```
+myproject          <-- project directory
+  /lib             <-- library code
+  main.yue         <-- code entry point
+  myproject(.exe)  <-- executable
+```
+You can run your project by starting `myproject` from the project directory.
+
 ## Code and libraries used in this project
 
 * raylib: https://github.com/raysan5/raylib Copyright (c) 2013-2022 Ramon Santamaria
