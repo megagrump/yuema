@@ -1,5 +1,3 @@
-import 'ffi'
-import 'lib.box2d'
 import 'lib.ray' as {
 	:window
 	:draw
@@ -8,8 +6,7 @@ import 'lib.ray' as {
 	:input
 	:Color
 }
-import min from math
-import mouse from input
+import 'lib.box2d'
 
 world = box2d.World(0, 300)
 text = {}
@@ -269,7 +266,7 @@ drawWorld = ->
 
 accum = 1 / 60
 stepWorld = ->
-	dt = min(1 / 30, time.getFrameTime!)
+	dt = math.min(1 / 30, time.getFrameTime!)
 	accum += dt
 	while accum >= 1 / 60
 		world::step(1 / 60)
@@ -294,7 +291,7 @@ while not window.shouldClose!
 		motor::applyLinearImpulseToCenter(0, -70) unless motor::isAwake!
 		weld::applyLinearImpulseToCenter(0, -50) unless weld::isAwake!
 
-		mx, my = mouse.getX!, mouse.getY!
+		mx, my = input.mouse.getX!, input.mouse.getY!
 		if mx >= 220 and my >= 130 and mx < 320 and my < 230
 			mouseJoint::setTarget(mx, my)
 
