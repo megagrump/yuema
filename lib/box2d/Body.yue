@@ -23,7 +23,7 @@ BodyTypes = {
 }
 
 BodyMT = {
-	__new: (world, x, y, angle = 0, type = 'static') =>
+	__new: (world, x, y, angle, type) =>
 		t = BodyTypes[type] or error("Invalid body type #{type}")
 		x, y = scaleDown2(x, y)
 		B2D.b2World_CreateBody(world, x, y, angle, t)

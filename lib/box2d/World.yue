@@ -54,6 +54,8 @@ WorldMT = {
 			joint = joint::_deinit!::getNext!
 		B2D.b2World_Destroy(@)
 
+	createBody: (x, y, type = 'dynamic', angle = 0) => Body(@, x, y, angle, type)
+
 	destroyJoint: (joint) => B2D.b2World_DestroyJoint(@, joint::_deinit!)
 	step: (timeStep, velocityIterations = 8, positionIterations = 3) => B2D.b2World_Step(@, timeStep, velocityIterations, positionIterations)
 	clearForces: => B2D.b2World_ClearForces(@)

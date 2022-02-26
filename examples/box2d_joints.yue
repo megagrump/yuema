@@ -14,10 +14,10 @@ text = {}
 do -- revolute
 	x, y = 10, 20
 	text.revolute = { x + 80, y + 5 }
-	walls = with box2d.Body(world, x, y)
+	walls = with world::createBody(x, y, 'static')
 		::createFixture(box2d.ChainShape({ 0, 0, 0, 320, 200, 320, 200, 0 }))
 
-	spinner = with box2d.Body(world, x + 100, y + 210, 0, 'dynamic')
+	spinner = with world::createBody(x + 100, y + 210)
 		::createFixture(box2d.PolygonShape.createBox(180, 10))
 
 	BALLCOLORS = { Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW }
@@ -25,7 +25,7 @@ do -- revolute
 	for i = 0, 20
 		bx = i % 7 + 1
 		by = 30 + (i / 7) * 26
-		with box2d.Body(world, x + bx * 26, y + by, 0, 'dynamic')
+		with world::createBody(x + bx * 26, y + by)
 			::createFixture(box2d.CircleShape(12), .1)
 				::setRestitution(.5)
 			::setUserData(BALLCOLORS[math.random(#BALLCOLORS)])
@@ -39,13 +39,13 @@ do -- distance joint
 	x, y = 220, 20
 	text.distance = { x + 30, y + 5 }
 
-	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+	world::createBody(x, y, 'static')::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
 
-	ball1 = with box2d.Body(world, x + 20, y + 20, 0, 'dynamic')
+	ball1 = with world::createBody(x + 20, y + 20)
 		::createFixture(box2d.CircleShape(10), .1)
 			::setRestitution(.5)
 
-	ball2 = with box2d.Body(world, x + 50, y + 20, 0, 'dynamic')
+	ball2 = with world::createBody(x + 50, y + 20)
 		::createFixture(box2d.CircleShape(10))
 			::setRestitution(1)
 
@@ -59,14 +59,14 @@ do -- prismatic joint
 	x, y = 330, 20
 	text.prismatic = { x + 28, y + 5 }
 
-	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+	world::createBody(x, y, 'static')::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
 
-	ball1 = with box2d.Body(world, x + 20, y + 20, 0, 'dynamic')
+	ball1 = with world::createBody(x + 20, y + 20)
 		::createFixture(box2d.CircleShape(10))
 			::setRestitution(.5)
 		::setUserData(Color.BLUE)
 
-	ball2 = with box2d.Body(world, x + 20, y + 20, 0, 'dynamic')
+	ball2 = with world::createBody(x + 20, y + 20)
 		::createFixture(box2d.CircleShape(10))
 		::setUserData(Color.YELLOW)
 
@@ -80,13 +80,13 @@ pulley = nil
 do -- pulley joint
 	x, y = 440, 20
 	text.pulley = { x + 35, y + 5 }
-	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+	world::createBody(x, y, 'static')::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
 
-	bodyA = with box2d.Body(world, x + 20, y + 50, 0, 'dynamic')
+	bodyA = with world::createBody(x + 20, y + 50)
 		::createFixture(box2d.PolygonShape.createBox(20, 20))
 		::setSleepingAllowed(false)
 
-	bodyB = with box2d.Body(world, x + 80, y + 50, 0, 'dynamic')
+	bodyB = with world::createBody(x + 80, y + 50)
 		::createFixture(box2d.PolygonShape.createBox(20, 20))
 		::setSleepingAllowed(false)
 
@@ -99,13 +99,13 @@ do -- mouse joint
 	x, y = 220, 130
 	text.mouse = { x + 35, y + 5 }
 
-	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+	world::createBody(x, y, 'static')::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
 
-	bodyA = with box2d.Body(world, x + 20, y + 50, 0, 'dynamic')
+	bodyA = with world::createBody(x + 20, y + 50)
 		::createFixture(box2d.PolygonShape.createBox(20, 20))
 			::setRestitution(.7)
 
-	bodyB = with box2d.Body(world, x + 80, y + 50, 0, 'dynamic')
+	bodyB = with world::createBody(x + 80, y + 50)
 		::createFixture(box2d.PolygonShape.createBox(20, 20))
 		::setSleepingAllowed(false)
 
@@ -117,9 +117,9 @@ do -- gear joint
 	x, y = 330, 130
 	text.gear = { x + 40, y + 5 }
 
-	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+	world::createBody(x, y, 'static')::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
 
-	bodyA = with box2d.Body(world, x + 20, y + 50, 0, 'dynamic')
+	bodyA = with world::createBody(x + 20, y + 50)
 		::createFixture(box2d.CircleShape(20))
 
 	joint1 = with box2d.RevoluteJoint(world::getGroundBody!, bodyA, bodyA::getPosition!)
@@ -127,7 +127,7 @@ do -- gear joint
 		::setMaxMotorTorque(100)
 		::enableMotor(true)
 
-	bodyB = with box2d.Body(world, x + 70, y + 50, 0, 'dynamic')
+	bodyB = with world::createBody(x + 70, y + 50)
 		::createFixture(box2d.CircleShape(30))
 
 	joint2 = box2d.RevoluteJoint(world::getGroundBody!, bodyB, bodyB::getPosition!)
@@ -138,12 +138,12 @@ wheel = do -- wheel joint
 	x, y = 440, 130
 	text.wheel = { x + 35, y + 5 }
 
-	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+	world::createBody(x, y, 'static')::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
 
-	box = with box2d.Body(world, x + 50, y + 50, 0, 'static')
+	box = with world::createBody(x + 50, y + 50, 'static')
 		::createFixture(box2d.PolygonShape.createBox(10, 50))
 
-	wheel = with box2d.Body(world, x + 50, y + 50, 0, 'dynamic')
+	wheel = with world::createBody(x + 50, y + 50)
 		::createFixture(box2d.CircleShape(20))
 
 	with box2d.WheelJoint(box, wheel, x + 50, y + 50, 0, 1)
@@ -160,14 +160,14 @@ weld = do -- weld joint
 	x, y = 220, 240
 	text.weld = { x + 40, y + 5 }
 
-	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+	world::createBody(x, y, 'static')::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
 
-	bodyA = with box2d.Body(world, x + 20, y + 20, 0, 'dynamic')
+	bodyA = with world::createBody(x + 20, y + 20)
 		::createFixture(box2d.CircleShape(10))
 			::setRestitution(.5)
 		::setUserData(Color.RED)
 
-	bodyB = with box2d.Body(world, x + 50, y + 20, 0, 'dynamic')
+	bodyB = with world::createBody(x + 50, y + 20)
 		::createFixture(box2d.CircleShape(20))
 			::setRestitution(.5)
 		::setUserData(Color.GREEN)
@@ -179,12 +179,12 @@ motor = do -- motor joint
 	x, y = 330, 240
 	text.motor = { x + 35, y + 5 }
 
-	box2d.Body(world, x, y)::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
+	world::createBody(x, y, 'static')::createFixture(box2d.ChainShape({ 0, 0, 0, 100, 100, 100, 100, 0 }))
 
-	bodyA = with box2d.Body(world, x + 50, y + 50)
+	bodyA = with world::createBody(x + 50, y + 50, 'static')
 		::createFixture(box2d.CircleShape(5))
 
-	bodyB = with box2d.Body(world, x + 50, y + 50, 0, 'dynamic')
+	bodyB = with world::createBody(x + 50, y + 50)
 		::createFixture(box2d.PolygonShape.createBox(85, 10))
 
 	box2d.MotorJoint(bodyA, bodyB)
