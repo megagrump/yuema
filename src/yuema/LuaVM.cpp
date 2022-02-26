@@ -11,7 +11,7 @@ extern "C" {
 }
 
 static const char BOOT[] = R"code(
-package.path = package.path .. ';?/init.lua'
+package.path = '?.lua;?/init.lua'
 yuema = {
 	args = { select(2, ...) },
 }
@@ -37,11 +37,7 @@ do
 	end
 
 	local ok, err = xpcall(boot, function(err)
-		if yue and yue.stp then
-			return yue.stp.stacktrace(err)
-		else
-			return debug.traceback(err, 2)
-		end
+		return yue.traceback(err)
 	end)
 	if not ok then error(err, 2) end
 end
