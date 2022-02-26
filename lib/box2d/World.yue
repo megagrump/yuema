@@ -11,6 +11,7 @@ profile = ffi.new('b2cProfile')
 
 tempVector = Vector2!
 scaleUp2, scaleDown2 = _scale.up2, _scale.down2
+tempCount = ffi.new('size_t[1]')
 
 emptyContactFilter = -> error("Invalid filter")
 emptyListener = ->
@@ -77,12 +78,21 @@ WorldMT = {
 
 	_queryCallback: (fixture) -> queryCallback(fixture)
 
+	-- query AABB with callback; this is slow - better use getFixturesFromAABB
 	queryAABB: (minX, minY, maxX, maxY, callback) =>
 		queryCallback = callback
 		minX, minY = scaleDown2(minX, minY)
 		maxX, maxY = scaleDown2(maxX, maxY)
 		doQuery(@, minX, minY, maxX, maxY)
 		queryCallback = nil
+
+	getFixturesFromAABB: (minX, minY, maxX, maxY, target = {}) =>
+		minX, minY = scaleDown2(minX, minY)
+		maxX, maxY = scaleDown2(maxX, maxY)
+		fixtures = B2D.b2World_GetFixturesFromAABB(@, minX, minY, maxX, maxY, tempCount)
+		n = tonumber(tempCount[0])
+		target[i + 1] = fixtures[i] for i = 0, n - 1
+		target, n
 
 	_rayCastCallback: (fixture, x, y, nx, ny, fraction) ->
 		x, y = scaleUp2(x, y)

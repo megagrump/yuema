@@ -1,3 +1,4 @@
+#include <vector>
 #include "b2_world.h"
 #include "b2_world_callbacks.h"
 #include "b2_body.h"
@@ -26,6 +27,20 @@ public:
 	}
 private:
 	b2cQueryCallback m_callback;
+};
+
+class AABBQueryCollector : public b2QueryCallback {
+public:
+	void Reset() { m_fixtures.clear(); }
+	size_t GetCount() const { return m_fixtures.size(); }
+	b2Fixture **GetFixtures() { return m_fixtures.data(); }
+
+	bool ReportFixture(b2Fixture *fixture) override {
+		m_fixtures.push_back(fixture);
+		return true;
+	}
+private:
+	std::vector<b2Fixture*> m_fixtures;
 };
 
 extern b2ContactFilter b2_defaultFilter;
@@ -143,10 +158,23 @@ public:
 		b2World::QueryAABB(&m_query, aabb);
 	}
 
+	b2Fixture **GetFixturesFromAABB(float minX, float minY, float maxX, float maxY, size_t *count) {
+		static b2AABB aabb;
+		aabb.lowerBound.x = minX;
+		aabb.lowerBound.y = minY;
+		aabb.upperBound.x = maxX;
+		aabb.upperBound.y = maxY;
+		m_collector.Reset();
+		b2World::QueryAABB(&m_collector, aabb);
+		*count = m_collector.GetCount();
+		return m_collector.GetFixtures();
+	}
+
 	b2Body *GetGroundBody() const { return m_groundBody; }
 private:
 	RayCaster m_rayCaster;
 	AABBQuery m_query;
+	AABBQueryCollector m_collector;
 	ContactFilter m_contactFilter;
 	ContactListener m_contactListener;
 	b2Body *m_groundBody;
@@ -236,6 +264,10 @@ void b2World_ClearForces(b2World *world) { world->ClearForces(); }
 void b2World_DebugDraw(b2World *world) { world->DebugDraw(); }
 void b2World_QueryAABB(b2World *world, float minX, float minY, float maxX, float maxY) {
 	static_cast<b2cWorld*>(world)->QueryAABB(minX, minY, maxX, maxY);
+}
+
+b2Fixture **b2World_GetFixturesFromAABB(b2World *world, float minX, float minY, float maxX, float maxY, size_t *count) {
+	return static_cast<b2cWorld*>(world)->GetFixturesFromAABB(minX, minY, maxX, maxY, count);
 }
 
 void b2World_RayCast(b2World *world, float x1, float y1, float x2, float y2) {

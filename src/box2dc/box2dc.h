@@ -61,6 +61,7 @@ void b2World_DestroyJoint(b2World *world, b2Joint *joint);
 void b2World_Step(b2World *world, float timeStep, int velocityIterations, int positionIterations);
 void b2World_ClearForces(b2World *world);
 void b2World_QueryAABB(b2World *world, float minX, float minY, float maxX, float maxY);
+b2Fixture **b2World_GetFixturesFromAABB(b2World *world, float minX, float minY, float maxX, float maxY, size_t *count);
 void b2World_RayCast(b2World *world, float x1, float y1, float x2, float y2);
 b2Body *b2World_GetBodyList(b2World *world);
 b2Joint *b2World_GetJointList(b2World *world);
